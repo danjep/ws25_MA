@@ -1,0 +1,136 @@
+% Umlaute in der Datei erlauben, auf deutsch umstellen
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[nottoc,numbib]{tocbibind}
+%\usepackage{mathptmx} % Hier steckt Times drin
+%\usepackage{fontspec}
+%\setmainfont{Times New Roman}
+
+
+% Mathesymbole und Ähnliches
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mdframed}
+%\usepackage{microtype}
+\usepackage{stmaryrd}
+\newcommand{\blitz}{\textcolor{red}{\lightning}}
+
+
+% Für Code
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{citeblue}{rgb}{0,0.3,0.55}
+\lstset{frame=l,
+  language=Java,
+  basicstyle={\small\ttfamily},
+  numberstyle=\tiny\color{blue},
+  keywordstyle=\color{purple},
+  commentstyle=\small\color{gray},
+  stringstyle=\color{orange},
+  breaklines=true,
+  tabsize=2
+}
+
+% Pseudocode
+\usepackage[vlined, linesnumbered, ruled]{algorithm2e}
+\SetKwComment{Comment}{/* }{*/}
+%\SetKwInput{KwData}{Input}
+%\SetKwInput{KwResult}{Output}
+\IncMargin{1.5em}
+
+% Abbildungen
+\usepackage{tikz}
+\usetikzlibrary{arrows,calc,shapes,positioning}
+\usepackage{wrapfig}
+\usepackage{caption}
+
+% quotation
+\RequirePackage{csquotes}
+\usepackage[backend=biber, style=alphabetic]{biblatex}
+%\usepackage[citecolor=black, urlcolor=black, linkcolor=black]{hyperref}
+\usepackage[citecolor=citeblue, urlcolor=citeblue, linkcolor=citeblue]{hyperref}
+\hypersetup{colorlinks=true}
+\usepackage[german, nameinlink]{cleveref}
+
+
+% Reelle, Natürliche, Ganze, Rationale Zahlen
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+
+% Definitionsboxen
+\usepackage[most]{tcolorbox}
+%\definecolor{darkgray}{RGB}{70,90,70}
+\definecolor{examblue}{rgb}{0,0.2,0.55}
+\newenvironment{defi}[1]{%
+\begin{tcolorbox}[colback=darkgray!5!white, colframe=darkgray!75!black, title={{\sffamily} \textbf{#1}}]
+}{
+\end{tcolorbox}}
+
+
+% Formelboxen
+\newenvironment{formel}[1]{%
+\begin{tcolorbox}[colback=white, colframe=violet!85!black, title={\sffamily \textbf{#1}}]
+}{
+\end{tcolorbox}}
+
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+
+\newtheorem{proposition}{Proposition}[section]
+\crefname{proposition}{Proposition}{Propositionen}
+
+\newtheorem{property}{Eigenschaft}[section]
+\crefname{property}{Eigenschaft}{Eigenschaften}
+
+\newtheorem{lemma}{Lemma}[section]
+\crefname{lemma}{Lemma}{Lemmata}
+
+%\newtheorem{definition}{Definition}[section]
+\mdfdefinestyle{theoremstyle}{%
+linecolor=red,middlelinewidth=2pt,%
+frametitlerule=true,%
+frametitlebackgroundcolor=darkgray!60,
+frametitlerulewidth=1pt,
+innertopmargin=\topskip,
+}
+\mdfsetup{skipabove=\topskip , skipbelow=\topskip}
+\mdfdefinestyle{defistyle}{linecolor=darkgray, linewidth=2pt, roundcorner=15pt, frametitlebackgroundcolor=gray!40, frametitlefont=\bfseries, theoremtitlefont=\bfseries, innertopmargin=5pt}
+\mdtheorem[style=defistyle]{definition}{Definition}[section]
+
+
+% Beispiele
+
+\newcounter{excount}
+\theoremstyle{definition}
+\newtheorem{exi}[excount]{Beispiel}
+\crefname{example}{Beispiel}{Beispiele}
+\newenvironment{example}[2]{%
+\begin{tcolorbox}[colback=white, colframe=examblue!85!black, title={\begin{exi}\label{#2} \textbf{#1}\end{exi}}]
+}{
+\end{tcolorbox}}
+
+
+
+
+% Für Vektoren
+\newcommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+\def\spvec#1{\left(\vcenter{\halign{\hfil$##$\hfil\cr \spvecA#1;;}}\right)}
+\def\spvecA#1;{\if;#1;\else #1\cr \expandafter \spvecA \fi}
+
+\usepackage{lipsum}
+
+% PDFs includen
+\usepackage{pdfpages}
+
+\tikzstyle{white} = [circle, minimum width=0.4cm, text centered, draw=black, fill=white]
+\tikzstyle{blank} = [circle, minimum width=0.6cm, text centered, draw=black, fill=lightgray]
+\tikzstyle{client} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=darkgray]
+\tikzstyle{location} = [circle, minimum width=0.6cm, text centered, text=black, draw=black, fill=cyan]
+\tikzstyle{facility} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=purple]
+\tikzstyle{edge} = [thick,>=stealth]
+\tikzstyle{arrow} = [thick,-stealth]

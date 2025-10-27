@@ -1,0 +1,48 @@
+%% commenting macros
+
+% use this to hide larger blocks of material:
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+
+% Define colors for authors
+\definecolor{johannescolor}{rgb}{0.2,0.6,0.6}
+\definecolor{danjecolor}{rgb}{0,0.7,0}
+
+% Define colors for general macros
+\definecolor{todocolor}{rgb}{0.9,0.1,0.1}
+\definecolor{changedcolor}{rgb}{0.42,0.27,0.57}
+\definecolor{addedcolor}{rgb}{0.867,0.176,0.361}
+\definecolor{sourcecolor}{rgb}{0.25,0.4,0.7}
+
+% General comment macro
+\newcommand{\nbc}[3]{
+    {\colorbox{#3}{\bfseries\sffamily\scriptsize\textcolor{white}{#1}}}
+    {\textcolor{#3}{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}}
+}
+\newcommand{\cbs}[3]{
+    {\colorbox{#2}{\bfseries\sffamily\scriptsize\textcolor{white}{#1}}}
+}
+  
+% Define individual comments for authors
+\newcommand{\johannes}[1]{\nbc{Johannes}{#1}{johannescolor}}
+\newcommand{\danje}[1]{\nbc{Danje}{#1}{danjecolor}}
+
+% Define general helper macros
+\newcommand{\todo}[1]{\nbc{TODO}{#1}{todocolor}}
+\newcommand{\changed}[1]{\nbc{CHANGED}{#1}{changedcolor}}
+\newcommand{\added}[1]{\nbc{ADDED}{#1}{addedcolor}}
+\newcommand{\source}[1]{\cbs{SOURCE MISSING}{sourcecolor}}
+
+\newcommand{\redacted}[1]{\emph{[anonymized for review]}}
+%\renewcommand{\redacted}[1]{#1}
+
+% Use this to temporarily hide reviewing comments, todos, etc.:
+%  \renewcommand{\jane}[1]{}
+%  \renewcommand{\john}[1]{}
+
+% Use this to make "changed" items appear normal:
+%\renewcommand{\changed}[1]{#1}
+%\renewcommand{\added}[1]{#1}
+%\renewcommand{\todo}[1]{}
+
+%% end commenting macros

@@ -1,0 +1,28 @@
+\documentclass[a4paper,12pt, german]{article}
+\usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+\usepackage[onehalfspacing]{setspace}
+\usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+%\fancyhead[R]{\itshape \leftmark}
+\cfoot{\thepage}
+
+\input{includes/commenting}
+\input{includes/preamble}
+
+\addbibresource{includes/quellen.bib}
+
+
+\begin{document}
+
+\includepdf{includes/Titelseite/build/title.pdf}
+
+
+\section{Introduction}\label{sec:intro}
+Memory Consistency Models describe how threads are allowed to interact with each other when it comes to shared memory. 
+
+
+
+\end{document}
+
