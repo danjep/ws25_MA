@@ -1,6 +1,6 @@
 \documentclass[a4paper,12pt, german]{article}
 \usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
-\usepackage[onehalfspacing]{setspace}
+\usepackage[singlespacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -16,13 +16,42 @@
 
 \begin{document}
 
-\includepdf{includes/Titelseite/build/title.pdf}
+%\includepdf{includes/Titelseite/build/title.pdf}
+
+\noindent \begin{Huge}\textbf{Aufgabenstellung zur Masterarbeit}\end{Huge} \\
+Danje Petersen
 
 
-\section{Introduction}\label{sec:intro}
-Memory Consistency Models describe how threads are allowed to interact with each other when it comes to shared memory. 
+\section{Motivation}
+Modern computers come with a set of processors that can run simultaniously. To utilize this for their advantage, developers started to design their programs to use multiple concurrent running threads.
+Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
+The classic example is the following: \\
+\todo{Grafik}
+\\
+Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return. 
+These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. 
+\begin{itemize}
+\item Concurrency als Problem evtl mit Beispiel
 
+\end{itemize}
 
+\section{Current Developements}
+
+\begin{itemize}
+\item CAT Sprache
+\item KATER Tool
+\item KATI Tool
+\item RAT-CAT-SAT
+\end{itemize}
+
+\section{Aufgabe}
+
+\begin{itemize}
+\item Beweissystem erstellen, dass
+\item Invarianten benutzt
+\item Inklusion direkt behandelt
+\item nicht auf Eventebene auflöst
+\end{itemize}
 
 \end{document}
 

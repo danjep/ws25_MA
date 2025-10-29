@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  27 OCT 2025 11:51
+This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  29 OCT 2025 17:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1655,39 +1655,42 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 Package pdflscape Info: Auto-detected driver: dvipdfm (xetex) on input line 98.
 
 ))
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf, page 1>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf, page 1>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf, page 1>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf, page 1>
-File: includes/Titelseite/build/title.pdf Graphic file (type pdf)
-<use includes/Titelseite/build/title.pdf, page 1>
+LaTeX Font Info:    Trying to load font information for U+msa on input line 29.
+
+
+(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 29.
+
+
+(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+stmry on input line 2
+9.
+
+(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/stmaryrd\ustmry.fd)
+LaTeX Font Info:    Font shape `TU/lmss/m/it' in size <10.95> not available
+(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 29.
 
 [1
 
-] [2]
-(C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabenstellung.aux)
+] (C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabenstellung.aux)
 Package rerunfilecheck Info: File `Aufgabenstellung.out' has not changed.
-(rerunfilecheck)             Checksum: 9814C2D956916ADB9290ECA4E25C967A;103.
+(rerunfilecheck)             Checksum: 89073CA09A7F48ED0D835DDBBA5249F6;322.
 Package logreq Info: Writing requests to 'Aufgabenstellung.run.xml'.
 \openout1 = `Aufgabenstellung.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 45263 strings out of 411463
- 922086 string characters out of 5818008
- 1896845 words of memory out of 5000000
- 64886 multiletter control sequences out of 15000+600000
- 512671 words of font info for 36 fonts, out of 8000000 for 9000
+ 45331 strings out of 411463
+ 923081 string characters out of 5818008
+ 1907762 words of memory out of 5000000
+ 64921 multiletter control sequences out of 15000+600000
+ 517995 words of font info for 65 fonts, out of 8000000 for 9000
  1352 hyphenation exceptions out of 8191
- 105i,17n,107p,691b,3863s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 105i,11n,107p,691b,3863s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabens
-tellung.pdf (2 pages).
+tellung.pdf (1 page).
