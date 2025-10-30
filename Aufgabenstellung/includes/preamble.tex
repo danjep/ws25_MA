@@ -1,6 +1,6 @@
 % Umlaute in der Datei erlauben, auf deutsch umstellen
 \usepackage[utf8]{inputenc}
-\usepackage[ngerman]{babel}
+%\usepackage[ngerman]{babel}
 \usepackage[nottoc,numbib]{tocbibind}
 %\usepackage{mathptmx} % Hier steckt Times drin
 %\usepackage{fontspec}
@@ -48,12 +48,14 @@
 
 % quotation
 \RequirePackage{csquotes}
-\usepackage[backend=biber, style=alphabetic]{biblatex}
+\usepackage[backend=biber, style=numeric]{biblatex}
 %\usepackage[citecolor=black, urlcolor=black, linkcolor=black]{hyperref}
 \usepackage[citecolor=citeblue, urlcolor=citeblue, linkcolor=citeblue]{hyperref}
 \hypersetup{colorlinks=true}
-\usepackage[german, nameinlink]{cleveref}
+\usepackage[english, nameinlink]{cleveref}
 
+
+\newcommand{\bangle}[1]{\langle #1 \rangle}
 
 % Reelle, Natürliche, Ganze, Rationale Zahlen
 \newcommand{\R}{\ensuremath{\mathbb{R}}}
@@ -104,7 +106,6 @@ innertopmargin=\topskip,
 
 
 % Beispiele
-
 \newcounter{excount}
 \theoremstyle{definition}
 \newtheorem{exi}[excount]{Beispiel}

@@ -1,0 +1,68 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{Alg+14}{article}{}
+      \name{author}{3}{}{%
+        {{hash=ab3c145de719fd61234960cc55b23c27}{%
+           family={Alglave},
+           familyi={A\bibinitperiod},
+           given={Jade},
+           giveni={J\bibinitperiod}}}%
+        {{hash=6e290efab614501d57bc84c863ce21ab}{%
+           family={Maranget},
+           familyi={M\bibinitperiod},
+           given={Luc},
+           giveni={L\bibinitperiod}}}%
+        {{hash=be0cf212fa97eb5a6ca43eefedfc56a5}{%
+           family={Tautschnig},
+           familyi={T\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{fa47c8fc5fc069b9635a744557645055}
+      \strng{fullhash}{fa47c8fc5fc069b9635a744557645055}
+      \strng{bibnamehash}{fa47c8fc5fc069b9635a744557645055}
+      \strng{authorbibnamehash}{fa47c8fc5fc069b9635a744557645055}
+      \strng{authornamehash}{fa47c8fc5fc069b9635a744557645055}
+      \strng{authorfullhash}{fa47c8fc5fc069b9635a744557645055}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0164-0925}
+      \field{journaltitle}{ACM Transactions on Programming Languages and Systems}
+      \field{number}{2}
+      \field{title}{Herding Cats: Modelling, simulation, testing and data mining for weak memory}
+      \field{volume}{36}
+      \field{year}{2014}
+      \field{pages}{1\bibrangedash 74}
+      \range{pages}{74}
+      \verb{doi}
+      \verb 10.1145/2627752
+      \endverb
+      \verb{file}
+      \verb Alglave, Maranget et al. 2014 - Herding Cats:Attachments/Alglave, Maranget et al. 2014 - Herding Cats.pdf:application/pdf
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

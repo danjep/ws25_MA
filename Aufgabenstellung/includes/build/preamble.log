@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  15 MAR 2024 17:31
+This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  30 OCT 2025 15:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -15,18 +15,6 @@ Type  H <return>  for immediate help.
                                                   
 l.2 \usepackage[utf8]{
                       inputenc}
-\usepackage may only appear in the document preamble, i.e.,
-between \documentclass and \begin{document}.
-
-
-! LaTeX Error: \usepackage before \documentclass.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.3 \usepackage[ngerman]{
-                         babel}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
@@ -582,8 +570,8 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.51 \usepackage[backend=biber, style=alphabetic]{
-                                                  biblatex}
+l.51 \usepackage[backend=biber, style=numeric]{
+                                               biblatex}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
@@ -642,8 +630,8 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.55 \usepackage[german, nameinlink]{
-                                     cleveref}
+l.55 \usepackage[english, nameinlink]{
+                                      cleveref}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
@@ -659,13 +647,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.65 \usepackage[most]{
+l.67 \usepackage[most]{
                        tcolorbox}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.67 \definecolor
+l.69 \definecolor
                  {examblue}{rgb}{0,0.2,0.55}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -680,7 +668,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.67 \definecolor{e
+l.69 \definecolor{e
                    xamblue}{rgb}{0,0.2,0.55}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -707,12 +695,12 @@ Missing character: There is no . in font nullfont!
 Missing character: There is no 5 in font nullfont!
 Missing character: There is no 5 in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 67--72
+Overfull \hbox (20.0pt too wide) in paragraph at lines 69--74
 []
  []
 
 ! Undefined control sequence.
-l.81 \theoremstyle
+l.83 \theoremstyle
                   {definition}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -727,7 +715,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.81 \theoremstyle{d
+l.83 \theoremstyle{d
                     efinition}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -750,14 +738,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.82 \newtheorem{theorem}{Theorem}[section]
+l.84 \newtheorem{theorem}{Theorem}[section]
                                            
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 81--83
+Overfull \hbox (20.0pt too wide) in paragraph at lines 83--85
 []
  []
 
@@ -769,14 +757,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.84 ...theorem{proposition}{Proposition}[section]
+l.86 ...theorem{proposition}{Proposition}[section]
                                                   
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 ! Undefined control sequence.
-l.85 \crefname
+l.87 \crefname
               {proposition}{Proposition}{Propositionen}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -791,7 +779,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.85 \crefname{p
+l.87 \crefname{p
                 roposition}{Proposition}{Propositionen}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -832,7 +820,7 @@ Missing character: There is no n in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no n in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 85--86
+Overfull \hbox (20.0pt too wide) in paragraph at lines 87--88
 [] 
  []
 
@@ -844,14 +832,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.87 \newtheorem{property}{Eigenschaft}[section]
+l.89 \newtheorem{property}{Eigenschaft}[section]
                                                 
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 ! Undefined control sequence.
-l.88 \crefname
+l.90 \crefname
               {property}{Eigenschaft}{Eigenschaften}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -866,7 +854,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.88 \crefname{p
+l.90 \crefname{p
                 roperty}{Eigenschaft}{Eigenschaften}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -904,7 +892,7 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no n in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 88--89
+Overfull \hbox (20.0pt too wide) in paragraph at lines 90--91
 [] 
  []
 
@@ -916,14 +904,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.90 \newtheorem{lemma}{Lemma}[section]
+l.92 \newtheorem{lemma}{Lemma}[section]
                                        
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 ! Undefined control sequence.
-l.91 \crefname
+l.93 \crefname
               {lemma}{Lemma}{Lemmata}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -938,7 +926,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.91 \crefname{l
+l.93 \crefname{l
                 emma}{Lemma}{Lemmata}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -961,12 +949,12 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no a in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 91--92
+Overfull \hbox (20.0pt too wide) in paragraph at lines 93--94
 [] 
  []
 
 ! Undefined control sequence.
-l.94 \mdfdefinestyle
+l.96 \mdfdefinestyle
                     {theoremstyle}{%
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -981,7 +969,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.94 \mdfdefinestyle{t
+l.96 \mdfdefinestyle{t
                       heoremstyle}{%
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1132,7 +1120,7 @@ Missing character: There is no = in font nullfont!
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    }
-l.100 }
+l.102 }
        
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1142,7 +1130,7 @@ delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 
 ! Undefined control sequence.
-l.101 \mdfsetup
+l.103 \mdfsetup
                {skipabove=\topskip , skipbelow=\topskip}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1163,7 +1151,7 @@ Missing character: There is no = in font nullfont!
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    s
-l.101 \mdfsetup{skipabove=\topskip , sk
+l.103 \mdfsetup{skipabove=\topskip , sk
                                        ipbelow=\topskip}
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1185,7 +1173,7 @@ Missing character: There is no = in font nullfont!
 ! Missing number, treated as zero.
 <to be read again> 
                    }
-l.101 ...{skipabove=\topskip , skipbelow=\topskip}
+l.103 ...{skipabove=\topskip , skipbelow=\topskip}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1194,7 +1182,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    }
-l.101 ...{skipabove=\topskip , skipbelow=\topskip}
+l.103 ...{skipabove=\topskip , skipbelow=\topskip}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1204,7 +1192,7 @@ delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 
 ! Undefined control sequence.
-l.102 \mdfdefinestyle
+l.104 \mdfdefinestyle
                      {defistyle}{linecolor=darkgray, linewidth=2pt, roundcor...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1321,7 +1309,7 @@ Missing character: There is no n in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.103 \mdtheorem
+l.105 \mdtheorem
                 [style=defistyle]{definition}{Definition}[section]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1376,62 +1364,62 @@ Missing character: There is no o in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no ] in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 94--104
+Overfull \hbox (20.0pt too wide) in paragraph at lines 96--106
 []
  []
 
 
-Overfull \hbox (3.19pt too wide) in paragraph at lines 94--104
+Overfull \hbox (3.19pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 ,
  []
 
 
-Overfull \hbox (19.96pt too wide) in paragraph at lines 94--104
+Overfull \hbox (19.96pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 the-
  []
 
 
-Overfull \hbox (9.58pt too wide) in paragraph at lines 94--104
+Overfull \hbox (9.58pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 o-
  []
 
 
-Overfull \hbox (30.76pt too wide) in paragraph at lines 94--104
+Overfull \hbox (30.76pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 remti-
  []
 
 
-Overfull \hbox (16.76pt too wide) in paragraph at lines 94--104
+Overfull \hbox (16.76pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 tle-
  []
 
 
-Overfull \hbox (31.93001pt too wide) in paragraph at lines 94--104
+Overfull \hbox (31.93001pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 font=,
  []
 
 
-Overfull \hbox (13.41pt too wide) in paragraph at lines 94--104
+Overfull \hbox (13.41pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 in-
  []
 
 
-Overfull \hbox (20.23pt too wide) in paragraph at lines 94--104
+Overfull \hbox (20.23pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 ner-
  []
 
 
-Overfull \hbox (20.44pt too wide) in paragraph at lines 94--104
+Overfull \hbox (20.44pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 top-
  []
 
 
-Overfull \hbox (23.74pt too wide) in paragraph at lines 94--104
+Overfull \hbox (23.74pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 mar-
  []
 
 
-Overfull \hbox (40.88pt too wide) in paragraph at lines 94--104
+Overfull \hbox (40.88pt too wide) in paragraph at lines 96--106
 \TU/lmr/bx/n/10 gin=5pt
  []
 
@@ -1439,7 +1427,7 @@ Overfull \hbox (40.88pt too wide) in paragraph at lines 94--104
 ! Undefined control sequence.
 <recently read> \theoremstyle 
                               
-l.109 \theoremstyle
+l.110 \theoremstyle
                    {definition}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1454,7 +1442,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.109 \theoremstyle{d
+l.110 \theoremstyle{d
                      efinition}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1470,7 +1458,7 @@ Missing character: There is no i in font nullfont!
 Missing character: There is no o in font nullfont!
 Missing character: There is no n in font nullfont!
 ! Undefined control sequence.
-l.111 \crefname
+l.112 \crefname
                {example}{Beispiel}{Beispiele}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1503,7 +1491,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 109--116
+Overfull \hbox (20.0pt too wide) in paragraph at lines 110--117
 []
  []
 
@@ -1514,7 +1502,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.125 \usepackage{
+l.126 \usepackage{
                   lipsum}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
@@ -1526,13 +1514,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.128 \usepackage{
+l.129 \usepackage{
                   pdfpages}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.130 \tikzstyle
+l.131 \tikzstyle
                 {white} = [circle, minimum width=0.4cm, text centered, draw=...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1547,7 +1535,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.130 \tikzstyle{w
+l.131 \tikzstyle{w
                   hite} = [circle, minimum width=0.4cm, text centered, draw=...
 
 You're in trouble here.  Try typing  <return>  to proceed.
@@ -1622,7 +1610,7 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.131 \tikzstyle
+l.132 \tikzstyle
                 {blank} = [circle, minimum width=0.6cm, text centered, draw=...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1703,7 +1691,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no y in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.132 \tikzstyle
+l.133 \tikzstyle
                 {client} = [circle, minimum width=0.6cm, text centered, text...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1795,7 +1783,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no y in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.133 \tikzstyle
+l.134 \tikzstyle
                 {location} = [circle, minimum width=0.6cm, text centered, te...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1885,7 +1873,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.134 \tikzstyle
+l.135 \tikzstyle
                 {facility} = [circle, minimum width=0.6cm, text centered, te...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1977,7 +1965,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.135 \tikzstyle
+l.136 \tikzstyle
                 {edge} = [thick,>=stealth]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2008,7 +1996,7 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no h in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.136 \tikzstyle
+l.137 \tikzstyle
                 {arrow} = [thick,-stealth]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2046,11 +2034,11 @@ Missing character: There is no ] in font nullfont!
 
  
 Here is how much of TeX's memory you used:
- 1034 strings out of 411463
- 15677 string characters out of 5818008
+ 1035 strings out of 411463
+ 15661 string characters out of 5818008
  1843290 words of memory out of 5000000
- 21350 multiletter control sequences out of 15000+600000
+ 21351 multiletter control sequences out of 15000+600000
  512303 words of font info for 34 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 40i,1n,48p,256b,71s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 40i,1n,48p,253b,71s stack positions out of 10000i,1000n,20000p,200000b,200000s
 No pages of output.

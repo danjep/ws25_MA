@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt, german]{article}
+\documentclass[a4paper,12pt, english]{article}
 \usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[singlespacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
@@ -18,12 +18,16 @@
 
 %\includepdf{includes/Titelseite/build/title.pdf}
 
-\noindent \begin{Huge}\textbf{Aufgabenstellung zur Masterarbeit}\end{Huge} \\
-Danje Petersen
+\title{Aufgabenstellung zur Masterarbeit}
+\author{Danje Petersen}
+
+\maketitle
+%\noindent \begin{Huge}\textbf{Aufgabenstellung zur Masterarbeit}\end{Huge} \\
+%Danje Petersen
 
 
 \section{Motivation}
-Modern computers come with a set of processors that can run simultaniously. To utilize this for their advantage, developers started to design their programs to use multiple concurrent running threads.
+Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrent running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
 The classic example is the following: \\
 \todo{Grafik}
@@ -36,12 +40,28 @@ These memory consistency models describe how threads are allowed to interact wit
 \end{itemize}
 
 \section{Current Developements}
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14}. Axiomatic models work by constraining relations on memory access. Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}.
+
+\begin{figure}[h]
+\begin{align*}
+\langle cat\rangle &:= \texttt{let } [\texttt{rec}]~  \langle name\rangle = \langle rel\rangle \mid \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
+\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \\
+\langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel} \mid \bangle{base\_set} \times \bangle{base\_set} \\
+\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid \emptyset \\
+\bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
+\end{align*}
+\caption{The CAT language. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement \cite{Alg+14}}   
+\label{cat}
+\end{figure}
+
+While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model means checking if a given model guarantees certain properties for every program that can be executed under it. The first tool to tackle this issue was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests.
+
 
 \begin{itemize}
-\item CAT Sprache
-\item KATER Tool
-\item KATI Tool
-\item RAT-CAT-SAT
+
+\item \todo{KATER Tool}
+\item \todo{KATI Tool}
+\item \todo{RAT-CAT-SAT}
 \end{itemize}
 
 \section{Aufgabe}
@@ -52,6 +72,10 @@ These memory consistency models describe how threads are allowed to interact wit
 \item Inklusion direkt behandelt
 \item nicht auf Eventebene auflöst
 \end{itemize}
+
+
+
+\printbibliography
 
 \end{document}
 
