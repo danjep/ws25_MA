@@ -62,6 +62,88 @@
       \verb Alglave, Maranget et al. 2014 - Herding Cats:Attachments/Alglave, Maranget et al. 2014 - Herding Cats.pdf:application/pdf
       \endverb
     \endentry
+    \entry{Kok+23}{article}{}
+      \name{author}{3}{}{%
+        {{hash=77d7b6ac4cc3d8e15046fe0ea0d91e22}{%
+           family={Kokologiannakis},
+           familyi={K\bibinitperiod},
+           given={Michalis},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fc5d6b0cddd3c8957316a2ead6fcc46e}{%
+           family={Lahav},
+           familyi={L\bibinitperiod},
+           given={Ori},
+           giveni={O\bibinitperiod}}}%
+        {{hash=63c94d1b9a9e52fc0ce7d6a4e66393e3}{%
+           family={Vafeiadis},
+           familyi={V\bibinitperiod},
+           given={Viktor},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{63d61464d7bcee62421ef85a97b5bd71}
+      \strng{fullhash}{63d61464d7bcee62421ef85a97b5bd71}
+      \strng{bibnamehash}{63d61464d7bcee62421ef85a97b5bd71}
+      \strng{authorbibnamehash}{63d61464d7bcee62421ef85a97b5bd71}
+      \strng{authornamehash}{63d61464d7bcee62421ef85a97b5bd71}
+      \strng{authorfullhash}{63d61464d7bcee62421ef85a97b5bd71}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the ACM on Programming Languages}
+      \field{number}{POPL}
+      \field{title}{Kater: Automating Weak Memory Model Metatheory and Consistency Checking}
+      \field{volume}{7}
+      \field{year}{2023}
+      \field{pages}{544\bibrangedash 572}
+      \range{pages}{29}
+      \verb{doi}
+      \verb 10.1145/3571212
+      \endverb
+      \verb{file}
+      \verb Kokologiannakis, Lahav et al. 2023 - Kater Automating Weak Memory Model:Attachments/Kokologiannakis, Lahav et al. 2023 - Kater Automating Weak Memory Model.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{Kou+24}{article}{}
+      \name{author}{3}{}{%
+        {{hash=51593236bd9665d2eebaba62985a4db7}{%
+           family={Koutsouridis},
+           familyi={K\bibinitperiod},
+           given={Aristotelis},
+           giveni={A\bibinitperiod}}}%
+        {{hash=77d7b6ac4cc3d8e15046fe0ea0d91e22}{%
+           family={Kokologiannakis},
+           familyi={K\bibinitperiod},
+           given={Michalis},
+           giveni={M\bibinitperiod}}}%
+        {{hash=63c94d1b9a9e52fc0ce7d6a4e66393e3}{%
+           family={Vafeiadis},
+           familyi={V\bibinitperiod},
+           given={Viktor},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{83b91c36bb8805382afba6e189b129bc}
+      \strng{fullhash}{83b91c36bb8805382afba6e189b129bc}
+      \strng{bibnamehash}{83b91c36bb8805382afba6e189b129bc}
+      \strng{authorbibnamehash}{83b91c36bb8805382afba6e189b129bc}
+      \strng{authornamehash}{83b91c36bb8805382afba6e189b129bc}
+      \strng{authorfullhash}{83b91c36bb8805382afba6e189b129bc}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In the weak memory consistency literature, the semantics of concurrent programs is typically defined as a constraint on execution graphs, expressed in relational algebra. Prior work has shown that basic metatheoretic questions about memory models are decidable as long as they can be expressed as irreflexivity and emptiness constraints over Kleene Algebra with Tests (KAT), a condition that rules out practical memory models such the C/C++ and the Linux kernel models. In this paper, we extend these results to memory models containing arbitrary intersections with uninterpreted relations. We can thus automatically establish compilation correctness and derive efficient incremental consistency checkers for RC11, LKMM, and other memory models. LIPIcs, Vol. 311, 35th International Conference on Concurrency Theory (CONCUR 2024), pages 33:1-33:16}
+      \field{journaltitle}{LIPIcs, Volume 311, CONCUR 2024}
+      \field{title}{Automating Memory Model Metatheory with Intersections: Schloss Dagstuhl -- Leibniz-Zentrum für Informatik}
+      \field{volume}{311}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.4230/LIPICS.CONCUR.2024.33
+      \endverb
+      \verb{file}
+      \verb Koutsouridis, Kokologiannakis et al. 2024 - Automating Memory Model Metatheory:Attachments/Koutsouridis, Kokologiannakis et al. 2024 - Automating Memory Model Metatheory.pdf:application/pdf
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput
