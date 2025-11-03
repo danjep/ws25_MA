@@ -13,12 +13,11 @@
 
 \addbibresource{includes/quellen.bib}
 
-
 \begin{document}
 
 %\includepdf{includes/Titelseite/build/title.pdf}
 
-\title{Aufgabenstellung zur Masterarbeit}
+\title{Task for the Master's Thesis}
 \author{Danje Petersen}
 
 \maketitle
@@ -27,15 +26,34 @@
 
 
 \section{Motivation}
-Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrent running threads.
+Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
 The classic example is the following: \\
-\todo{Grafik}
-\\
+
+\begin{figure}[h]\label{example}
+\centering
+\begin{tabular}{c||c}
+\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
+%Thread 1: & Thread 2:\\[4mm]
+
+\texttt{x=1;} & \texttt{y=1;} \\
+\texttt{a=y;} & \texttt{b=x;} \\
+\end{tabular}
+\caption{Example of two threads using the same variables. Depending on how the threads are scheduled, the resulting values could feature any combination of $1$ and $0$ for the variables $a$ and $b$.}
+\end{figure}
+
 Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return. 
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. 
 
-\section{Current Developements}
+\todo{Warum ist es wichtig die Modelle zu verifizieren?}
+
+\section{Current Research}
+
+\todo{Einordnung in ein weiter gefasstes Feld von Memory Consistency} \\
+
+\todo{Fragen die sich in diesem Forschungsfeld stellen (siehe Kater paper)}\\
+
+\todo{was bedeutet "weak" memory?} \\
 In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14}. Axiomatic models work by constraining relations on memory access.
 
 \begin{figure}[h]
@@ -55,24 +73,14 @@ Some very basic examples for these relations are the \textit{program order} (po)
 While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model means checking if a given model guarantees certain properties for every program that can be executed under it. The first tool to tackle this issue was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests. This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition. The formula consists of a negated subformula representing the memory model and a subformula for the condition. \\
-The formaula is then decomposed until there exists a program execution that fulfills it or it is determined unsatisfiable.
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition. The formula consists of a negated subformula representing the memory model and a subformula for the condition. \\
+The formula is then decomposed until there exists a program execution that fulfills it or it is determined unsatisfiable.
 
 
-\begin{itemize}
-
-\item \todo{RAT-CAT-SAT}
-\end{itemize}
-
-\section{Aufgabe}
-
-\begin{itemize}
-\item Beweissystem erstellen, dass
-\item Invarianten benutzt
-\item Inklusion direkt behandelt
-\item nicht auf Eventebene auflöst
-\end{itemize}
-
+\section{Task}
+The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current node.
+The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
+The student is supposed to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
 
 
 \printbibliography

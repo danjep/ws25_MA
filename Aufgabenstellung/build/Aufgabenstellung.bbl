@@ -62,6 +62,32 @@
       \verb Alglave, Maranget et al. 2014 - Herding Cats:Attachments/Alglave, Maranget et al. 2014 - Herding Cats.pdf:application/pdf
       \endverb
     \endentry
+    \entry{GruMey25}{article}{}
+      \name{author}{2}{}{%
+        {{hash=f6ca015e7724545a0c60aebf7c042c41}{%
+           family={Grünke},
+           familyi={G\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=48b1c09148ec2487d4cc3f6fbf47e2ae}{%
+           family={Meyer},
+           familyi={M\bibinitperiod},
+           given={Roland},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{209dc31e016a889e358ca7f2aa9dee40}
+      \strng{fullhash}{209dc31e016a889e358ca7f2aa9dee40}
+      \strng{bibnamehash}{209dc31e016a889e358ca7f2aa9dee40}
+      \strng{authorbibnamehash}{209dc31e016a889e358ca7f2aa9dee40}
+      \strng{authornamehash}{209dc31e016a889e358ca7f2aa9dee40}
+      \strng{authorfullhash}{209dc31e016a889e358ca7f2aa9dee40}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{RAT-CAT-SAT: Model Checking Memory Consistency Models}
+      \field{year}{2025}
+    \endentry
     \entry{Kok+23}{article}{}
       \name{author}{3}{}{%
         {{hash=77d7b6ac4cc3d8e15046fe0ea0d91e22}{%
