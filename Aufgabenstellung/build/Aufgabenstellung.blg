@@ -1,15 +1,15 @@
 [0] Config.pm:307> INFO - This is Biber 2.19
 [0] Config.pm:310> INFO - Logfile is 'build/Aufgabenstellung.blg'
-[158] biber-MSWIN64:340> INFO - === 
-[206] Biber.pm:419> INFO - Reading 'build/Aufgabenstellung.bcf'
-[380] Biber.pm:979> INFO - Found 4 citekeys in bib section 0
-[403] Biber.pm:4419> INFO - Processing section 0
-[422] Biber.pm:4610> INFO - Looking for bibtex file 'includes/quellen.bib' for section 0
-[483] bibtex.pm:1713> INFO - LaTeX decoding ...
-[494] bibtex.pm:1519> INFO - Found BibTeX data source 'includes/quellen.bib'
-[583] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[583] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[583] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
-[583] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[590] bbl.pm:660> INFO - Writing 'build/Aufgabenstellung.bbl' with encoding 'UTF-8'
-[595] bbl.pm:763> INFO - Output to build/Aufgabenstellung.bbl
+[296] biber-MSWIN64:340> INFO - === 
+[406] Biber.pm:419> INFO - Reading 'build/Aufgabenstellung.bcf'
+[605] Biber.pm:979> INFO - Found 13 citekeys in bib section 0
+[633] Biber.pm:4419> INFO - Processing section 0
+[681] Biber.pm:4610> INFO - Looking for bibtex file 'includes/quellen.bib' for section 0
+[783] bibtex.pm:1713> INFO - LaTeX decoding ...
+[832] bibtex.pm:1519> INFO - Found BibTeX data source 'includes/quellen.bib'
+[1093] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[1093] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[1093] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[1093] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[1160] bbl.pm:660> INFO - Writing 'build/Aufgabenstellung.bbl' with encoding 'UTF-8'
+[1173] bbl.pm:763> INFO - Output to build/Aufgabenstellung.bbl

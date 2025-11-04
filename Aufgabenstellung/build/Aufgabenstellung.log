@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  3 NOV 2025 17:16
+This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  4 NOV 2025 16:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1611,24 +1611,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 29--32
 
  []
 
-LaTeX Font Info:    Font shape `TU/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 48.
-
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 54--55
-
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 [1
 
-] [2] [3]
+]
+LaTeX Font Info:    Font shape `TU/lmss/m/it' in size <10.95> not available
+(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 53.
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--77
+
+ []
+
+[2] [3] [4]
 (C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabenstellung.aux)
 Package rerunfilecheck Info: File `Aufgabenstellung.out' has not changed.
 (rerunfilecheck)             Checksum: C50AAA8A4C6E8047B3A077298FE1B9CB;282.
@@ -1637,13 +1635,13 @@ Package logreq Info: Writing requests to 'Aufgabenstellung.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 44275 strings out of 411463
- 905099 string characters out of 5818008
- 1865290 words of memory out of 5000000
- 63886 multiletter control sequences out of 15000+600000
+ 44312 strings out of 411463
+ 906345 string characters out of 5818008
+ 1863290 words of memory out of 5000000
+ 63923 multiletter control sequences out of 15000+600000
  523011 words of font info for 93 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 105i,12n,107p,957b,4924s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 105i,12n,107p,1708b,4935s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabens
-tellung.pdf (3 pages).
+tellung.pdf (4 pages).

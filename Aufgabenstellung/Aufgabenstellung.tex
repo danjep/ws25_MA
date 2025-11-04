@@ -1,6 +1,6 @@
 \documentclass[a4paper,12pt, english]{article}
 \usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
-\usepackage[singlespacing]{setspace}
+\usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -43,13 +43,12 @@ The classic example is the following: \\
 \end{figure}
 
 Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return. 
-These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. 
-
-\todo{Warum ist es wichtig die Modelle zu verifizieren?}
+These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is important to ensure that the model gives the guarantees it promises since programmers might rely on them. Recent verification efforts for models have found bugs that could have altered the behaviour of programs \cite{GruMey25}.
+Therefore it is an important field of research, especially for software used for critical infrastructure and projects. 
 
 \section{Current Research}
-
-\todo{Einordnung in ein weiter gefasstes Feld von Memory Consistency} \\
+In the field of memory consistency models current research is aimed at a variety of issues.
+One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
 
 \todo{Fragen die sich in diesem Forschungsfeld stellen (siehe Kater paper)}\\
 
@@ -74,7 +73,11 @@ While the tool that Alglave et al. developed allows to test certain programs in 
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition. The formula consists of a negated subformula representing the memory model and a subformula for the condition. \\
-The formula is then decomposed until there exists a program execution that fulfills it or it is determined unsatisfiable.
+The formula is then decomposed until there exists a program execution that fulfills it or it is determined unsatisfiable.\\
+
+Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
+Can the popular models written in CAT be transformed into ones that are written in rational CAT?
+Is it possible to verify compiler transformations?
 
 
 \section{Task}
