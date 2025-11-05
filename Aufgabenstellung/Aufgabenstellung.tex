@@ -48,7 +48,7 @@ Therefore it is an important field of research, especially for software used for
 
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
-One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
+ One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} memory consistency models.
 
 \todo{Fragen die sich in diesem Forschungsfeld stellen (siehe Kater paper)}\\
 
@@ -69,11 +69,12 @@ In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory
 
 Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}.
 
-While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model means checking if a given model guarantees certain properties for every program that can be executed under it. The first tool to tackle this issue was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests. This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
+While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model means checking if a given model guarantees certain properties for every program that can be executed under it. For this purpose, the memory model in question will be compared to a model that is defined by just that property. The first tool to tackle this issue was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests. This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition. The formula consists of a negated subformula representing the memory model and a subformula for the condition. \\
-The formula is then decomposed until there exists a program execution that fulfills it or it is determined unsatisfiable.\\
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition.
+By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop}$ and then a formula $\neg \phi_M \land \phi_{M_{prop}}$ it proves if the given model is stronger than the condition that is to be tested.
+The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?

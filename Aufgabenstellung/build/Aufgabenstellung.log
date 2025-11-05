@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  4 NOV 2025 16:34
+This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  5 NOV 2025 16:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1622,14 +1622,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 53--54
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 75--77
+Underfull \hbox (badness 10000) in paragraph at lines 75--78
 
  []
 
 [2] [3] [4]
 (C:\Users\danje\Repos\ws25_ma\Aufgabenstellung\build\Aufgabenstellung.aux)
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `Aufgabenstellung.out' has not changed.
 (rerunfilecheck)             Checksum: C50AAA8A4C6E8047B3A077298FE1B9CB;282.
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                Aufgabenstellung
+(biblatex)                and rerun LaTeX afterwards.
+
 Package logreq Info: Writing requests to 'Aufgabenstellung.run.xml'.
 \openout1 = `Aufgabenstellung.run.xml'.
 
