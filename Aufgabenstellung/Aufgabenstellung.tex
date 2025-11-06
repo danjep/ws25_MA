@@ -43,17 +43,22 @@ The classic example is the following: \\
 \end{figure}
 
 Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return. 
-These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is important to ensure that the model gives the guarantees it promises since programmers might rely on them. Recent verification efforts for models have found bugs that could have altered the behaviour of programs \cite{GruMey25}.
+These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
 Therefore it is an important field of research, especially for software used for critical infrastructure and projects. 
 
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
- One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} memory consistency models.
+ One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
+The verification comes down to five different tasks:
+\begin{itemize}
+\item check certain properties (like no-oota)
+\item check properties referring to semantics (like barrier monotonicity) 
+\item compare memory consistency models
+\item create litmus tests
+\item verify compiler transformations
+\end{itemize}
 
-\todo{Fragen die sich in diesem Forschungsfeld stellen (siehe Kater paper)}\\
-
-\todo{was bedeutet "weak" memory?} \\
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14}. Axiomatic models work by constraining relations on memory access.
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14}. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes.
 
 \begin{figure}[h]
 \begin{align*}
@@ -86,6 +91,7 @@ The decomposition used in \cite{GruMey25} might result in infinite paths when un
 The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
 The student is supposed to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
 
+\pagebreak
 
 \printbibliography
 
