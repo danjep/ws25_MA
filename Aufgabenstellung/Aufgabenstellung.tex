@@ -49,16 +49,9 @@ Therefore it is an important field of research, especially for software used for
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
  One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
-The verification comes down to five different tasks:
-\begin{itemize}
-\item check certain properties (like no-oota)
-\item check properties referring to semantics (like barrier monotonicity) 
-\item compare memory consistency models
-\item create litmus tests
-\item verify compiler transformations
-\end{itemize}
+ 
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14}. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes.
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} wich has since then become the standard for writing memory consistency models. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes. 
 
 \begin{figure}[h]
 \begin{align*}
@@ -72,7 +65,8 @@ In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory
 \label{cat}
 \end{figure}
 
-Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}.
+Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}. \\
+Besides axiomatic models, researchers also look at operational ones which are abstractions of actual machines with idealised components \cite{Alg+14}. \\
 
 While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model means checking if a given model guarantees certain properties for every program that can be executed under it. For this purpose, the memory model in question will be compared to a model that is defined by just that property. The first tool to tackle this issue was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests. This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections.
@@ -80,6 +74,7 @@ The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. In their yet to be published work, they presented a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a condition.
 By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop}$ and then a formula $\neg \phi_M \land \phi_{M_{prop}}$ it proves if the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
+
 
 Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
@@ -89,7 +84,7 @@ Is it possible to verify compiler transformations?
 \section{Task}
 The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current node.
 The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
-The student is supposed to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
+The goal of the thesis is to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
 
 \pagebreak
 
