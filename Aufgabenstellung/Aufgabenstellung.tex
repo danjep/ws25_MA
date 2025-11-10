@@ -28,9 +28,9 @@
 \section{Motivation}
 Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-The classic example is the following: \\
+The classic example can be seen in \cref{fig:example}. \\
 
-\begin{figure}[h]\label{example}
+\begin{figure}[h]
 \centering
 \begin{tabular}{c||c}
 \multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
@@ -40,11 +40,13 @@ The classic example is the following: \\
 \texttt{a=y;} & \texttt{b=x;} \\
 \end{tabular}
 \caption{Example of two threads using the same variables. Depending on how the threads are scheduled, the resulting values could feature any combination of $1$ and $0$ for the variables $a$ and $b$.}
+\label{fig:example}
 \end{figure}
 
-Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return. 
+Modern architectures might reorder the commands in these programs in any way for performance reasons and interleave the two threads as they see fit.
+Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return.
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
-Therefore it is an important field of research, especially for software used for critical infrastructure and projects. 
+Therefore it is an important field of research, especially for software used for critical infrastructure and large projects. 
 
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
@@ -79,11 +81,11 @@ The formula is then decomposed until there exists a satisfying model for the for
 Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
-
+This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
 \section{Task}
-The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current node.
-The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
+The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current node. Even though the proofs might not be infinite, they can still get very large. 
+The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. This is supposed to lead to smaller proofs. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
 The goal of the thesis is to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
 
 \pagebreak

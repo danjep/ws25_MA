@@ -116,6 +116,42 @@
       \endverb
       \keyw{Research}
     \endentry
+    \entry{BoeDem14}{book}{}
+      \name{author}{2}{}{%
+        {{hash=a7e5f01ae77f0f26947021a466d459b5}{%
+           family={Boehm},
+           familyi={B\bibinitperiod},
+           given={Hans-J.},
+           giveni={H\bibinithyphendelim J\bibinitperiod}}}%
+        {{hash=be3b5276b41de92e272976a830acec5e}{%
+           family={Demsky},
+           familyi={D\bibinitperiod},
+           given={Brian},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \strng{fullhash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \strng{bibnamehash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \strng{authorbibnamehash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \strng{authornamehash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \strng{authorfullhash}{4e0f7fa762453b824d88918e7a33a3ef}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{series}{MSPC14}
+      \field{title}{Outlawing ghosts: Avoiding out-of-thin-air results}
+      \field{year}{2014}
+      \verb{file}
+      \verb Outlawing ghosts 2014:Attachments/Outlawing ghosts 2014.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://dl.acm.org/doi/pdf/10.1145/2618128.2618134
+      \endverb
+      \verb{url}
+      \verb https://dl.acm.org/doi/pdf/10.1145/2618128.2618134
+      \endverb
+    \endentry
     \entry{Doh+22}{article}{}
       \name{author}{4}{}{%
         {{hash=944beeca7a6d0bc9accde1b7a28afcc6}{%
@@ -634,7 +670,6 @@
       \keyw{Research}
     \endentry
   \enddatalist
-  \missing{BoeDem14}
 \endrefsection
 \endinput
 
