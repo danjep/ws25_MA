@@ -46,12 +46,14 @@ The classic example of two threads can be seen in \cref{fig:example}. \\
 Modern architectures might reorder the commands in these programs in any way for performance reasons and interleave the two threads as they see fit.
 Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return.
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
-Therefore it is an important field of research, especially for software used for critical infrastructure and large projects. 
+Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
 
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
- One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
- 
+One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. 
+%In the realm of verification this would be on the program verification level. 
+Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
+
 
 In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes. 
 
@@ -72,11 +74,11 @@ Besides axiomatic models, researchers also look at operational ones which are ab
 
 While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. The first is to check the model against generic properties like having no out-of-thin-air values. The second task is to check properties that refer to operation's semantics like barrier monotonicity. Furthermore, it is one task to compare memory consistency models and another to create litmus tests that show whether a model is implemented by a language or architecture. The last task is to verify compiler transformations.
   
-For the first task, the memory model in question can be compared to a model that is defined by just that property. The first tool to tackle this one and the third task was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
-The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections.
+For the first task, the memory model in question can be compared to a model that is defined by just that property. The first tool to tackle this and the third task was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
+The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop} = \emptyset$ and then a formula $\neg \phi_M \land \phi_{M_{prop}}$ it proves if the given model is stronger than the condition that is to be tested.
+By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 
@@ -86,8 +88,8 @@ Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
 \section{Task}
-The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current node. Even though the proofs might not be infinite, they can still get very large. 
-The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. This is supposed to lead to smaller proofs. Additionally the new proof system is supposed to directly handle inclusion between memory models and does not need to resolve them to the event level.
+The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current one. Even though the proofs might not be infinite, they can still get very large. 
+The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. This is supposed to lead to smaller proofs. Additionally the new proof system is supposed to directly handle inclusion between memory models and should not need to resolve them to the event level.
 The goal of the thesis is to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
 
 \pagebreak
