@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt, english]{article}
+\documentclass[a4paper,12pt, english, xcolor=dvipsnames]{article}
 \usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
@@ -38,7 +38,7 @@
 \section{Introduction}\label{sec:intro}
 Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-The classic example of two threads can be seen in \cref{fig:example}. \\
+A classic example of two threads can be seen in \cref{fig:example}. \\
 
 \begin{figure}[h]
 \centering
@@ -58,9 +58,42 @@ Since this might lead to inconsistent results and therefore unpredictable behavi
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
 Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
 
-\section{Preliminaries}\label{sec:literatur}
+\pagebreak
 
+\section{Preliminaries}\label{sec:preliminaries}
+\subsection{Memory Consistency Models}\label{sec:MCM}
+Memory Consistency Models constitute what programmers and execution environments agree on when it comes to how concurrent programmes are allowed to be executed. They define consistency constraints on execution graphs and provide guarantees for how memory accesses are processed on shared memory.
+These consistency constraints can be expressed through relational algebra extended with irreflexivity and emptiness \todo{korrekt ausgedrückt?}. \\
+Memory models can roughly be divided into two classes, operational models and axiomatic ones.
+Operational models are abstractions of real machines with idealised components and are perceived as being more intuitive \todo{Quelle?}. 
+Axiomatic models constrain relations on memory operations to allow or disallow behaviour of programmes. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order}(po) or \textit{read-from} (rf).
+While the po relation is given by how the program is written, rf depends on the execution. In \cref{fig:examplegraph} one can see the possible graphs of the example from \cref{fig:example}.
 
+\begin{figure}
+\begin{tikzpicture}[node distance=2cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left of=Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+
+\node[blank, below right of=Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+
+\draw[arrow] (Init) --node[right] {po} (x<-1);
+\draw[arrow] (Init) --node[right] {po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {po} (Ry);
+\draw[arrow] (y<-1) --node[right] {po} (Rx);
+\draw[arrow] (Ry) --node[right] {po} (a<-y);
+\draw[arrow] (Rx) --node[right] {po} (b<-x);
+
+\draw[arrow, color=purple] (Init) edge[bend left] node[right] {\textcolor{purple}{rf}} (Ry);
+\end{tikzpicture}
+\label{fig:examplegraph}
+\end{figure}
+
+Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focussed on this type. \\
+Axiomatic models are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. 
 
 \section{The Proof System} \label{sec:problemstellung}
 
