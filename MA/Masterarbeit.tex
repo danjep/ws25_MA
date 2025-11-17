@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt, english, xcolor=dvipsnames]{article}
+\documentclass[a4paper,12pt, english]{article}
 \usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
@@ -44,7 +44,7 @@ A classic example of two threads can be seen in \cref{fig:example}. \\
 \centering
 \begin{tabular}{c||c}
 \multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
-%Thread 1: & Thread 2:\\[4mm]
+\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
 
 \texttt{x=1;} & \texttt{y=1;} \\
 \texttt{a=y;} & \texttt{b=x;} \\
@@ -54,46 +54,159 @@ A classic example of two threads can be seen in \cref{fig:example}. \\
 \end{figure}
 
 Modern architectures might reorder the commands in these programs in any way for performance reasons and interleave the two threads as they see fit.
-Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return.
+Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models (MCM). If the developer confines themselves to these rules, they get certain guarantees in return.
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
 Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
 
 \pagebreak
 
-\section{Preliminaries}\label{sec:preliminaries}
+
 \subsection{Memory Consistency Models}\label{sec:MCM}
 Memory Consistency Models constitute what programmers and execution environments agree on when it comes to how concurrent programmes are allowed to be executed. They define consistency constraints on execution graphs and provide guarantees for how memory accesses are processed on shared memory.
 These consistency constraints can be expressed through relational algebra extended with irreflexivity and emptiness \todo{korrekt ausgedrückt?}. \\
 Memory models can roughly be divided into two classes, operational models and axiomatic ones.
 Operational models are abstractions of real machines with idealised components and are perceived as being more intuitive \todo{Quelle?}. 
-Axiomatic models constrain relations on memory operations to allow or disallow behaviour of programmes. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order}(po) or \textit{read-from} (rf).
-While the po relation is given by how the program is written, rf depends on the execution. In \cref{fig:examplegraph} one can see the possible graphs of the example from \cref{fig:example}.
+Axiomatic models constrain relations on memory operations to allow or disallow behaviour of programmes. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order} (po) or \textit{read-from} (rf).
+While po describes the order of instructions within a single thread, rf depicts for each read which write provides the value that is extracted. \\
+Therefore the po relation is given by how the program is written and rf depends on the execution. In \cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \cref{fig:example}. \\
 
-\begin{figure}
-\begin{tikzpicture}[node distance=2cm and 3cm]
+\begin{figure}[h]
+\begin{minipage}[c]{0.33\textwidth}
+\centering
+Case 1 ($a=b=1$): \\
+\vspace*{0.5cm}
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
 \node[blank] (Init) {\texttt{W:x=0,y=0}};
-\node[blank, below left of=Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below left= 1cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
 \node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
 \node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
 
-\node[blank, below right of=Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below right= 1cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
 \node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
 \node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
 
-\draw[arrow] (Init) --node[right] {po} (x<-1);
-\draw[arrow] (Init) --node[right] {po} (y<-1);
+\draw[arrow] (Init) --node[above] {po} (x<-1);
+\draw[arrow] (Init) --node[above] {po} (y<-1);
 \draw[arrow] (x<-1) --node[right] {po} (Ry);
 \draw[arrow] (y<-1) --node[right] {po} (Rx);
 \draw[arrow] (Ry) --node[right] {po} (a<-y);
 \draw[arrow] (Rx) --node[right] {po} (b<-x);
 
-\draw[arrow, color=purple] (Init) edge[bend left] node[right] {\textcolor{purple}{rf}} (Ry);
+\draw[arrow, color=teal] (y<-1) edge node[above] {\textcolor{teal}{rf}} (Ry);
+\draw[arrow, color=teal] (x<-1) edge node[below] {\textcolor{teal}{rf}} (Rx);
 \end{tikzpicture}
+\end{minipage}\begin{minipage}[c]{0.33\textwidth}
+\centering
+Case 2 ($a=1, b=0$): \\
+\vspace*{0.5cm}
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 1cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+
+\node[blank, below right= 1cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+
+\draw[arrow] (Init) --node[above] {po} (x<-1);
+\draw[arrow] (Init) --node[above] {po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {po} (Ry);
+\draw[arrow] (y<-1) --node[right] {po} (Rx);
+\draw[arrow] (Ry) --node[right] {po} (a<-y);
+\draw[arrow] (Rx) --node[right] {po} (b<-x);
+
+\draw[arrow, color=teal] (y<-1) edge node[below] {\textcolor{teal}{rf}} (Ry);
+\draw[arrow, color=teal] (Init) edge[bend right] node[right] {\textcolor{teal}{rf}} (Rx);
+\end{tikzpicture}
+\end{minipage}\begin{minipage}[c]{0.33\textwidth}
+\centering 
+Case 3 ($a=0, b=1$): \\
+\vspace*{0.5cm}
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 1cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+
+\node[blank, below right= 1cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+
+\draw[arrow] (Init) --node[above] {po} (x<-1);
+\draw[arrow] (Init) --node[above] {po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {po} (Ry);
+\draw[arrow] (y<-1) --node[right] {po} (Rx);
+\draw[arrow] (Ry) --node[right] {po} (a<-y);
+\draw[arrow] (Rx) --node[right] {po} (b<-x);
+
+\draw[arrow, color=teal] (Init) edge[bend left] node[left] {\textcolor{teal}{rf}} (Ry);
+\draw[arrow, color=teal] (x<-1) edge node[below] {\textcolor{teal}{rf}} (Rx);
+\end{tikzpicture}
+\end{minipage}
+\caption{Applying the po and rf relations on the example in \cref{fig:example} there multiple possible executions. In case 1 both threads have written their values before they are read by the other one. In case 2 Thread 2 is executed first and therefore reads \texttt{x=0} before Thread 1 can write \texttt{x=1} while Thread 1 reads \texttt{y=1} which Thread 2 has written. In case 3 it is the other way around.}
 \label{fig:examplegraph}
 \end{figure}
 
-Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focussed on this type. \\
-Axiomatic models are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. 
+
+While \cref{fig:examplegraph} shows the possible executions when the threads' instructions are interleaved, \cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behaviour. \\
+Besides \textit{program order} and \textit{read-from} there are many relations that can be used to define important properties of memory consistency models. We will explain some of them in \cref{sec:cat}.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\centering Case 4 ($a=b=0$): \\
+\vspace*{0.5cm}
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 1cm and 0.2cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+
+\node[blank, below right= 1cm and 0.2cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+
+\draw[arrow] (Init) --node[above] {po} (x<-1);
+\draw[arrow] (Init) --node[above] {po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {po} (Ry);
+\draw[arrow] (y<-1) --node[right] {po} (Rx);
+\draw[arrow] (Ry) --node[right] {po} (a<-y);
+\draw[arrow] (Rx) --node[right] {po} (b<-x);
+
+\draw[arrow, color=teal] (Init) edge[bend left] node[left] {\textcolor{teal}{rf}} (Ry);
+\draw[arrow, color=teal] (Init) edge[bend right] node[right] {\textcolor{teal}{rf}} (Rx);
+\end{tikzpicture}
+\caption{Another possibility for an execution of the code in \cref{fig:example}. In this case, both threads don't read the writes of the other one and only see the initial values}
+\label{fig:storebuffering}
+\end{wrapfigure}
+
+Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focussed on this type. 
+Axiomatic models are defined in three stages: mapping each instruction onto a mathematical object and defining relations on the events, constructing a set of candidate executions like in \cref{fig:examplegraph,fig:storebuffering} and deciding which executions are valid according to the constraints on the relations. \\
+They are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \cref{sec:cat}.\\
+To validate that a program is executed according to a given mcm is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfils all constraints of the model. \\
+For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
+The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to \cite{GruMey25} it consists of five tasks that an automated verification tool should ideally cover:
+The first task is to check generic properties of mcms like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations \todo{verifiziere diese Beschreibung}). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
+Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
+For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{GruMey25} which both are not able to handle every possible mcm but only a fragment.
+
+
+
+
+\subsection{The CAT language} \label{sec:cat}
+
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes. 
+
+\begin{figure}[h]
+\begin{align*}
+\langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
+\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \\
+\langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
+\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid \emptyset \\
+\bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
+\end{align*}
+\caption{The CAT language when including the red coloured terms, when excluding them it is the fragment called rational CAT. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement \cite{Alg+14}.}   
+\label{fig:cat}
+\end{figure}
 
 \section{The Proof System} \label{sec:problemstellung}
 
@@ -107,29 +220,17 @@ One obvious issue is model checking programs for a given memory model \cite{Tun+
 Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
 
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes. 
 
-\begin{figure}[h]
-\begin{align*}
-\langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
-\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \\
-\langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
-\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid \emptyset \\
-\bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
-\end{align*}
-\caption{The CAT language when including the red coloured terms, when excluding them it is the fragment called rational CAT. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement \cite{Alg+14}.}   
-\label{cat}
-\end{figure}
 
-Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}. \\
+Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{fig:cat}. \\
 Besides axiomatic models, researchers also look at operational ones which are abstractions of actual machines with idealised components \cite{Alg+14}. \\
 
-While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. The first is to check the model against generic properties like having no out-of-thin-air values. The second task is to check properties that refer to operation's semantics like barrier monotonicity. Furthermore, it is one task to compare memory consistency models and another to create litmus tests that show whether a model is implemented by a language or architecture. The last task is to verify compiler transformations.
+While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue.
   
 For the first task, the memory model in question can be compared to a model that is defined by just that property. The first tool to tackle this and the third task was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
 By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
