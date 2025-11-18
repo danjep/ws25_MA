@@ -40,6 +40,16 @@
 }
 
 
+@misc{Alg+16,
+ abstract = {We provide the syntax and semantics of the cat language, a domain specific language to describe consistency properties of parallel/distributed programs. The language is implemented in the herd7 too (http://diy.inria.fr/doc/herd.html)l.},
+ author = {Alglave, Jade and Cousot, Patrick and Maranget, Luc},
+ date = {26.08.2016},
+ title = {Syntax and semantics of the weak consistency model specification language cat},
+ url = {https://arxiv.org/pdf/1608.07531},
+ file = {Alglave, Cousot et al. 26.08.2016 - Syntax and semantics:Attachments/Alglave, Cousot et al. 26.08.2016 - Syntax and semantics.pdf:application/pdf}
+}
+
+
 @article{And+25,
  abstract = {Optimization transformations performed by a compiler may violate memory consistency requirements for a multithreaded program. This leads to errors, when the program behavior will differ from expected. The memory consistency requirements for a particular programming language are called the memory model. An example of an error of this class may be an incorrect change in the order of execution of instructions, which does not affect the behavior of a single-threaded program, but leads to unpredictable results in the multithreaded case. Such errors are often difficult to detect, as they occur rarely and depend significantly on the hardware and the state of the computer system. Although there are formal methods for verifying the consistency of shared memory usage, their scalability for industrial software remains a major challenge. To verify multithreaded programs, the MCC tool was previously proposed, which used a simple type of static analysis. In this article, we present a modification of the MCC tool, which implements a model verification method to verify the correctness of memory access consistency. The proposed method combines the methods of generating test programs and the method of static program analysis. The OTK tool is used to generate test programs. For static analysis, a modified version of the MCC tool is used, which checks all possible execution options for the generated test program, regardless of the specifics of a particular hardware. The tool was tested on an ARK industrial virtual machine and successfully identified two real errors in compiler optimizations.},
  author = {Andrianov, P. S. and Zelenov, S. V. and Mutilin, V. S. and Petrenko, A. K.},
