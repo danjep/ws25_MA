@@ -38,13 +38,14 @@
 \section{Introduction}\label{sec:intro}
 Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-A classic example of two threads can be seen in \cref{fig:example}. \\
+A classic example of two threads can be seen in \cref{fig:example}. 
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{c||c}
-\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
-\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
+\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
+%\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
+ $T_1$ & $T_2$ \\[2mm]
 
 \texttt{x=1;} & \texttt{y=1;} \\
 \texttt{a=y;} & \texttt{b=x;} \\
@@ -226,10 +227,12 @@ One obvious issue is model checking programs for a given memory model \cite{Tun+
 Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
+Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete (Kozen Smith, 1996)\cite{KozSmi96,Nak17} \todo{Quelle verifizieren}.
+Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
+By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\overline{\semsof{M}} \cap \semsof{M_{prop}} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 
