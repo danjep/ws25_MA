@@ -28,12 +28,13 @@
 \section{Motivation}
 Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
 Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-The classic example of two threads can be seen in \cref{fig:example}. \\
+A classic example of two threads can be seen in \cref{fig:example}. \\
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{c||c}
 \multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
+$T_1$ & $T_2$ \\[4mm]
 %Thread 1: & Thread 2:\\[4mm]
 
 \texttt{x=1;} & \texttt{y=1;} \\
@@ -44,13 +45,13 @@ The classic example of two threads can be seen in \cref{fig:example}. \\
 \end{figure}
 
 Modern architectures might reorder the commands in these programs in any way for performance reasons and interleave the two threads as they see fit.
-Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return.
+Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models (MCM). If the developer confines themselves to these rules, they get certain guarantees in return.
 These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
 Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
 
 \section{Current Research}
 In the field of memory consistency models current research is aimed at a variety of issues.
-One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. 
+One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}, this is called \textit{consistency checking}.
 %In the realm of verification this would be on the program verification level. 
 Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
 
@@ -60,12 +61,12 @@ In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory
 \begin{figure}[h]
 \begin{align*}
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
-\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \\
+\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty} \bangle{rel} \\
 \langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
-\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid \emptyset \\
+\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid 0 \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
-\caption{The CAT language when including the red coloured terms, when excluding them it is the fragment called rational CAT. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement \cite{Alg+14}.}   
+\caption{The CAT language when including the red coloured terms, when excluding them it is the fragment called rational CAT. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement and $0$ denotes the empty relation \cite{Alg+14}.}   
 \label{cat}
 \end{figure}
 
