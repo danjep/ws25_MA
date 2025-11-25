@@ -5,7 +5,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\itshape \leftmark}
+\fancyhead[R]{\ttfamily \leftmark}
 \cfoot{\thepage}
 
 \input{includes/commenting}
@@ -36,9 +36,9 @@
 \setcounter{page}{1}
 
 \section{Introduction}\label{sec:intro}
-Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
-Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-A classic example of two threads can be seen in \cref{fig:example}. 
+Almost every computer that is in use today provides multiple simultaneously running processors. To reap the benefits that multiple processors provide, developers design their programs to use concurrently running threads. 
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread needs, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
+Multiple executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. This is called a \textit{data race}. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.\\
 
 \begin{figure}[h]
 \centering
@@ -50,19 +50,18 @@ A classic example of two threads can be seen in \cref{fig:example}.
 \texttt{x=1;} & \texttt{y=1;} \\
 \texttt{a=y;} & \texttt{b=x;} \\
 \end{tabular}
-\caption{Example of two threads using the same variables. Depending on how the threads are scheduled, the resulting values could feature any combination of $1$ and $0$ for the variables $a$ and $b$.}
+\caption{Example of a data race, where two threads use the same variables. The resulting values of $a$ and $b$ can be any combination of $1$ and $0$ depending on how the threads are executed.}
 \label{fig:example}
 \end{figure}
 
 Every program that a thread might execute consists of instructions which in turn consist of memory accesses. The instruction \texttt{a=y} for example consists of two operations, reading the value of \texttt{y} and writing the read value to \texttt{a}. These two operations are usually called events.
-Modern architectures might reorder these commands in programs in any way for performance reasons and interleave the threads as they see fit.
-Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models (MCM). If the developer confines themselves to these rules, they get certain guarantees in return.
-These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
-Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
+CPU architectures and compilers may reorder the events in such programs for performance reasons and interleave the two threads as they see fit. Since this permits different executions for the same program depending on the hardware and compiler, programming languages and CPU architectures provide \textit{memory consistency models} (MCM). If the developer confines them selves to the rules of a programming language (e.g. \textit{Data-Race-Freedom}(DRF)), they get certain guarantees in return for how the program will be compiled and executed. The MCM of the language illustrates which rules the compiler needs to respect to keep the semantics of the program. The memory consistency model of a CPU architecture describes how the hardware will behave if it runs a program. For the program to have  the intended semantics, the execution needs to be consistent with both models. Essentially, the MCMs constrain how threads are allowed to interact with each other when it comes to shared memory.
 
+As can be seen in the example, not having a memory consistency model can change the outcome of a program drastically. But having a MCM will not automatically get rid of all problems. 
+MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
+Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs.
+The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language \todo{weitere Themen einfügen}. 
 
-
-\pagebreak
 
 
 \subsection{Memory Consistency Models}\label{sec:MCM}
@@ -73,7 +72,7 @@ Operational models are abstractions of real machines with idealised components a
 Axiomatic models constrain relations on memory operations to allow or disallow behaviour of programmes. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order} (po) or \textit{read-from} (\rf).
 While po describes the order of instructions within a single thread, \rf{} depicts for each read which write provides the value that is extracted. \\
 Therefore the po relation is given by how the program is written and \rf{} depends on the execution.
-From this, one can deduce that there are multiple possible execution graphs. In \cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \cref{fig:example}. \\
+From this, one can deduce that there are multiple possible execution graphs. In \cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \cref{fig:example}. 
 
 \begin{figure}[h]
 \begin{minipage}[c]{0.33\textwidth}
@@ -97,8 +96,8 @@ Case 1 ($a=b=1$): \\
 \draw[arrow] (Ry) --node[right] {po} (a<-y);
 \draw[arrow] (Rx) --node[right] {po} (b<-x);
 
-\draw[arrow, color=teal] (y<-1) edge node[above] {\rf} (Ry);
-\draw[arrow, color=teal] (x<-1) edge node[below] {\rf} (Rx);
+\draw[arrow, color=rfgreen] (y<-1) edge node[above] {\rf} (Ry);
+\draw[arrow, color=rfgreen] (x<-1) edge node[below] {\rf} (Rx);
 \end{tikzpicture}
 \end{minipage}\begin{minipage}[c]{0.33\textwidth}
 \centering
@@ -121,8 +120,8 @@ Case 2 ($a=1, b=0$): \\
 \draw[arrow] (Ry) --node[right] {po} (a<-y);
 \draw[arrow] (Rx) --node[right] {po} (b<-x);
 
-\draw[arrow, color=teal] (y<-1) edge node[below] {\rf} (Ry);
-\draw[arrow, color=teal] (Init) edge[bend right] node[right] {\rf} (Rx);
+\draw[arrow, color=rfgreen] (y<-1) edge node[below] {\rf} (Ry);
+\draw[arrow, color=rfgreen] (Init) edge[bend right] node[right] {\rf} (Rx);
 \end{tikzpicture}
 \end{minipage}\begin{minipage}[c]{0.33\textwidth}
 \centering 
@@ -145,19 +144,21 @@ Case 3 ($a=0, b=1$): \\
 \draw[arrow] (Ry) --node[right] {po} (a<-y);
 \draw[arrow] (Rx) --node[right] {po} (b<-x);
 
-\draw[arrow, color=teal] (Init) edge[bend left] node[left] {\rf} (Ry);
-\draw[arrow, color=teal] (x<-1) edge node[below] {\rf} (Rx);
+\draw[arrow, color=rfgreen] (Init) edge[bend left] node[left] {\rf} (Ry);
+\draw[arrow, color=rfgreen] (x<-1) edge node[below] {\rf} (Rx);
 \end{tikzpicture}
 \end{minipage}
 \caption{Applying the po and \rf{} relations on the example in \cref{fig:example} there multiple possible executions. In case 1 both threads have written their values before they are read by the other one. In case 2 Thread 2 is executed first and therefore reads \texttt{x=0} before Thread 1 can write \texttt{x=1} while Thread 1 reads \texttt{y=1} which Thread 2 has written. In case 3 it is the other way around.}
 \label{fig:examplegraph}
 \end{figure}
 
+\pagebreak
 
 While \cref{fig:examplegraph} shows the possible executions when the threads' instructions are interleaved, \cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behaviour. \\
 Besides \textit{program order} and \textit{read-from} there are many relations that can be used to define important properties of memory consistency models. We will explain some of them in \cref{sec:cat}.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
+\vspace*{-0.5cm}
 \centering Case 4 ($a=b=0$): \\
 \vspace*{0.5cm}
 \begin{tikzpicture}[node distance=1.5cm and 3cm]
@@ -177,8 +178,8 @@ Besides \textit{program order} and \textit{read-from} there are many relations t
 \draw[arrow] (Ry) --node[right] {po} (a<-y);
 \draw[arrow] (Rx) --node[right] {po} (b<-x);
 
-\draw[arrow, color=teal] (Init) edge[bend left] node[left] {\rf} (Ry);
-\draw[arrow, color=teal] (Init) edge[bend right] node[right] {\rf} (Rx);
+\draw[arrow, color=rfgreen] (Init) edge[bend left] node[left] {\rf} (Ry);
+\draw[arrow, color=rfgreen] (Init) edge[bend right] node[right] {\rf} (Rx);
 \end{tikzpicture}
 \caption{Another possibility for an execution of the code in \cref{fig:example}. In this case, both threads don't read the writes of the other one and only see the initial values}
 \label{fig:storebuffering}
@@ -221,10 +222,10 @@ The language also includes some base sets of events. These include the set of al
 
 \section{Related Work}\label{sec:kontext}
 \todo{mehr ausführen was in den verschiedenen Bereichen gemacht wird} \\
-In the field of memory consistency models current research is aimed at a variety of issues.
-One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. 
+There are currently several established lines of research in the field of weak memory. One obvious issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools that were developed in the last decade already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
+Furthermore, there is research on refining stateless model checking \cite{Jon+25}.
 %In the realm of verification this would be on the program verification level. 
-Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
+Some research groups instead examine the models themselves and their attributes \cite{LahBok22} or other the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete (Kozen Smith, 1996)\cite{KozSmi96,Nak17} \todo{Quelle verifizieren}.

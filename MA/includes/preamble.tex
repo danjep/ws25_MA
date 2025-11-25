@@ -5,6 +5,7 @@
 %\usepackage{mathptmx} % Hier steckt Times drin
 %\usepackage{fontspec}
 %\setmainfont{Times New Roman}
+\usepackage{xcolor}
 
 
 % Mathesymbole und Ähnliches
@@ -20,8 +21,6 @@
 
 % Für Code
 \usepackage{listings}
-\usepackage{xcolor}
-\definecolor{citeblue}{rgb}{0,0.3,0.55}
 \lstset{frame=l,
   language=Java,
   basicstyle={\small\ttfamily},
@@ -44,9 +43,10 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,calc,shapes,positioning}
 \usepackage{wrapfig}
-\usepackage{caption}
+\usepackage[labelfont=bf]{caption}
 
 % quotation
+\definecolor{citeblue}{rgb}{0,0.3,0.55}
 \RequirePackage{csquotes}
 \usepackage[backend=biber, style=numeric]{biblatex}
 %\usepackage[citecolor=black, urlcolor=black, linkcolor=black]{hyperref}
@@ -66,8 +66,9 @@
 
 
 % Kürzel für Basisrelationen
+\definecolor{rfgreen}{rgb}{0.2,0.65,0.2}
 \newcommand{\co}{\text{\textcolor{orange}{co}}}
-\newcommand{\rf}{\text{\textcolor{teal}{rf}}}
+\newcommand{\rf}{\text{\textcolor{rfgreen}{rf}}}
 \newcommand{\hb}{\text{\textcolor{purple}{hb}}}
 \newcommand{\loc}{\text{\textcolor{violet}{loc}}}
 
