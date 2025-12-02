@@ -24,7 +24,7 @@
 \thispagestyle{empty}
 \hypersetup{linkcolor=black}
 \tableofcontents
-\thispagestyle{empty}
+\thispagestyle{empty} %yeet
 }
 
 \vfill
@@ -65,14 +65,13 @@ The succeeding pages are dedicated to explaining the concepts of MCMs and the CA
 
 
 \subsection{Memory Consistency Models}\label{sec:MCM}
-Memory Consistency Models constitute what programmers and execution environments agree on when it comes to how concurrent programmes are allowed to be executed. They define consistency constraints on execution graphs and provide guarantees for how memory accesses are processed on shared memory.
-These consistency constraints can be expressed through relational algebra extended with irreflexivity and emptiness \todo{korrekt ausgedrückt?}. \\
+Memory Consistency Models constitute what programmers and execution environments agree on when it comes to how concurrent programs are allowed to be executed. They define consistency constraints on execution graphs and provide guarantees for how memory accesses are processed on shared memory.
 Memory models can roughly be divided into two classes, operational models and axiomatic ones.
-Operational models are abstractions of real machines with idealised components and are perceived as being more intuitive \todo{Quelle?}. 
-Axiomatic models constrain relations on memory operations to allow or disallow behaviour of programmes. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order} (po) or \textit{read-from} (\rf).
-While po describes the order of instructions within a single thread, \rf{} depicts for each read which write provides the value that is extracted. \\
-Therefore the po relation is given by how the program is written and \rf{} depends on the execution.
-From this, one can deduce that there are multiple possible execution graphs. In \cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \cref{fig:example}. 
+Operational models are abstractions of real machines with idealized components and may be perceived as being more intuitive. 
+Axiomatic models constrain relations on memory operations to allow or disallow behavior of programs. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order} (\po) or \textit{read-from} (\rf).
+While \po{} describes the order of instructions within a single thread, \rf{} depicts for each read which write provides the value that is extracted. \\
+Therefore the \po{} relation is given by how the program is written and \rf{} depends on the execution.
+From this, one can deduce that there are multiple possible execution graphs. In \Cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \Cref{fig:example}. 
 
 \begin{figure}[h]
 \begin{minipage}[c]{0.33\textwidth}
@@ -89,12 +88,12 @@ Case 1 ($a=b=1$): \\
 \node[blank, below of=y<-1] (Rx) {\texttt{R:x=1}};
 \node[blank, below of=Rx] (b<-x) {\texttt{W:b=1}};
 
-\draw[arrow] (Init) --node[above] {po} (x<-1);
-\draw[arrow] (Init) --node[above] {po} (y<-1);
-\draw[arrow] (x<-1) --node[right] {po} (Ry);
-\draw[arrow] (y<-1) --node[right] {po} (Rx);
-\draw[arrow] (Ry) --node[right] {po} (a<-y);
-\draw[arrow] (Rx) --node[right] {po} (b<-x);
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
 
 \draw[arrow, color=rfgreen] (y<-1) edge node[above] {\rf} (Ry);
 \draw[arrow, color=rfgreen] (x<-1) edge node[below] {\rf} (Rx);
@@ -113,12 +112,12 @@ Case 2 ($a=1, b=0$): \\
 \node[blank, below of=y<-1] (Rx) {\texttt{R:x=0}};
 \node[blank, below of=Rx] (b<-x) {\texttt{W:b=0}};
 
-\draw[arrow] (Init) --node[above] {po} (x<-1);
-\draw[arrow] (Init) --node[above] {po} (y<-1);
-\draw[arrow] (x<-1) --node[right] {po} (Ry);
-\draw[arrow] (y<-1) --node[right] {po} (Rx);
-\draw[arrow] (Ry) --node[right] {po} (a<-y);
-\draw[arrow] (Rx) --node[right] {po} (b<-x);
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
 
 \draw[arrow, color=rfgreen] (y<-1) edge node[below] {\rf} (Ry);
 \draw[arrow, color=rfgreen] (Init) edge[bend right] node[right] {\rf} (Rx);
@@ -137,24 +136,24 @@ Case 3 ($a=0, b=1$): \\
 \node[blank, below of=y<-1] (Rx) {\texttt{R:x=1}};
 \node[blank, below of=Rx] (b<-x) {\texttt{W:b=1}};
 
-\draw[arrow] (Init) --node[above] {po} (x<-1);
-\draw[arrow] (Init) --node[above] {po} (y<-1);
-\draw[arrow] (x<-1) --node[right] {po} (Ry);
-\draw[arrow] (y<-1) --node[right] {po} (Rx);
-\draw[arrow] (Ry) --node[right] {po} (a<-y);
-\draw[arrow] (Rx) --node[right] {po} (b<-x);
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
 
 \draw[arrow, color=rfgreen] (Init) edge[bend left] node[left] {\rf} (Ry);
 \draw[arrow, color=rfgreen] (x<-1) edge node[below] {\rf} (Rx);
 \end{tikzpicture}
 \end{minipage}
-\caption{Applying the po and \rf{} relations on the example in \cref{fig:example} there multiple possible executions. In case 1 both threads have written their values before they are read by the other one. In case 2 Thread 2 is executed first and therefore reads \texttt{x=0} before Thread 1 can write \texttt{x=1} while Thread 1 reads \texttt{y=1} which Thread 2 has written. In case 3 it is the other way around.}
+\caption{Applying the po and \rf{} relations on the example in \Cref{fig:example} there are multiple possible executions. In case 1 both threads have written their values before they are read by the other one. In case 2 Thread 2 is executed first and therefore reads \texttt{x=0} before Thread 1 can write \texttt{x=1} while Thread 1 reads \texttt{y=1} which Thread 2 has written. In case 3 it is the other way around.}
 \label{fig:examplegraph}
 \end{figure}
 
 \pagebreak
 
-While \cref{fig:examplegraph} shows the possible executions when the threads' instructions are interleaved, \cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behaviour. \\
+While \Cref{fig:examplegraph} shows the possible executions when the threads' instructions are interleaved, \Cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behavior. \\
 Besides \textit{program order} and \textit{read-from} there are many relations that can be used to define important properties of memory consistency models. We will explain some of them in \cref{sec:cat}.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -171,12 +170,12 @@ Besides \textit{program order} and \textit{read-from} there are many relations t
 \node[blank, below of=y<-1] (Rx) {\texttt{R:x=0}};
 \node[blank, below of=Rx] (b<-x) {\texttt{W:b=0}};
 
-\draw[arrow] (Init) --node[above] {po} (x<-1);
-\draw[arrow] (Init) --node[above] {po} (y<-1);
-\draw[arrow] (x<-1) --node[right] {po} (Ry);
-\draw[arrow] (y<-1) --node[right] {po} (Rx);
-\draw[arrow] (Ry) --node[right] {po} (a<-y);
-\draw[arrow] (Rx) --node[right] {po} (b<-x);
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
 
 \draw[arrow, color=rfgreen] (Init) edge[bend left] node[left] {\rf} (Ry);
 \draw[arrow, color=rfgreen] (Init) edge[bend right] node[right] {\rf} (Rx);
@@ -185,38 +184,40 @@ Besides \textit{program order} and \textit{read-from} there are many relations t
 \label{fig:storebuffering}
 \end{wrapfigure}
 
-Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focussed on this type. 
-Axiomatic models are defined in three stages: mapping each instruction onto a mathematical object and defining relations on the events, constructing a set of candidate executions like in \cref{fig:examplegraph,fig:storebuffering} and deciding which executions are valid according to the constraints on the relations. \\
-They are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \cref{sec:cat}.\\
-To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfils all constraints of the model. \\
+Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focused on this type. 
+Axiomatic models are defined in three stages: mapping each instruction onto a mathematical object and defining relations on the events, constructing a set of candidate executions like in \Cref{fig:examplegraph,fig:storebuffering} and deciding which executions are valid according to the constraints on the relations. \\
+They are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \Cref{sec:cat}.\\
+To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfills all constraints of the model. \\
 For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
 The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to \cite{GruMey25} it consists of five tasks that an automated verification tool should ideally cover:
-The first task is to check generic properties of MCMs like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations \todo{verifiziere diese Beschreibung}). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
+The first task is to check generic properties of MCMs like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
 For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{GruMey25} which both are not able to handle every possible MCM but only a fragment.
 
-\todo{Beispiele für MCMs (SC, TSO etc.)}
+The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow \po .
+Later, models that are less restrictive like \textit{SC per Location} and \textit{Total Store Order} (TSO) were developed to allow for more optimization by the hardware. \todo{Quelle für die Modelle}
+
 
 
 
 \subsection{The CAT language} \label{sec:cat}
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations that can be used like po, \rf, the \textit{same location} relation \loc, which connects all events of one particular memory location and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations that can be used like \po, \rf, the \textit{same location} relation \loc, which connects all events of one particular memory location and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 
 \begin{figure}[h]
 \begin{align*}
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
 \langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty } \bangle{rel} \\
 \langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel} \\
-\bangle{base\_rel} &:= \text{po} \mid \text{\rf} \mid \text{rmw} \mid \text{\loc} \mid \text{ext} \mid \text{id} \mid 0 \\
+\bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \text{\loc} \mid \textsf{ext} \mid \textsf{id} \mid 0 \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
-\caption{The CAT language according to \cite{Alg+16}, where $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement.}   
+\caption{The CAT language according to \cite{Alg+16}, where $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement. Furthermore, $0$ denotes the empty relation and id the identity relation.}   
 \label{fig:cat}
 \end{figure}
 
-Besides the given base relations, on can define derived relations in the CAT language like the \textit{coherence order} (\co) which is a total order of writes on the same memory location or \textit{happens-before} (\hb) which relates each event to the ones that occurred before. The derivations can be written with the keyword \texttt{let} and using the operations in \cref{fig:cat} like this:
-\[\texttt{let } \text{fr} = \text{\rf}^{-1}\text{.\co} \qquad \texttt{let } \text{\co} = \text{\rf .fr} \qquad \texttt{let } \text{\hb}=\text{po}\cup \text{\co}\cup \text{\rf} \cup \text{fr}\]
+Besides the given base relations, on can define derived relations in the CAT language like the \textit{coherence order} (\co) which is a total order of writes on the same memory location or \textit{happens-before} (\hb) which relates each event to the ones that occurred before. The derivations can be written with the keyword \texttt{let} and using the operations in \Cref{fig:cat} like this:
+\[\texttt{let } \fr = \text{\rf}^{-1}\text{.\co} \qquad \texttt{let } \text{\co} = \text{\rf .\fr} \qquad \texttt{let } \text{\hb}=\textsf{po}\cup \text{\co}\cup \text{\rf} \cup \text{\fr}\]
 The language also includes some base sets of events. These include the set of all events E, all reads (R) and writes (W), initial writes IW and fences F.
 
 
@@ -225,14 +226,14 @@ The language also includes some base sets of events. These include the set of al
 There are currently several established lines of research in the field of weak memory. One obvious issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools that were developed in the last decade already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
 Furthermore, there is research on refining stateless model checking \cite{Jon+25}.
 %In the realm of verification this would be on the program verification level. 
-Some research groups instead examine the models themselves and their attributes \cite{LahBok22} or other the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
+Some research groups instead examine the models themselves and their attributes \cite{LahBok22} and others the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
-Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete (Kozen Smith, 1996)\cite{KozSmi96,Nak17} \todo{Quelle verifizieren}.
+Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete \cite{KozSmi97,Nak17}.
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
 By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\overline{\semsof{M}} \cap \semsof{M_{prop}} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
