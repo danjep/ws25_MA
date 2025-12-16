@@ -1,12 +1,14 @@
-\documentclass[a4paper,12pt, english]{article}
-\usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+\documentclass[a4paper,twoside,12pt, english]{article}
+\usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\ttfamily \leftmark}
+\fancyhead[EL]{\small \ttfamily \leftmark}
+\fancyhead[OR]{\small \ttfamily \leftmark}
 \cfoot{\thepage}
+\raggedbottom
 
 \input{includes/commenting}
 \input{includes/preamble}
@@ -19,17 +21,23 @@
 
 \includepdf{includes/Titelseite/build/title.pdf}
 
+%\pagebreak
+%\thispagestyle{empty}
+%\null
+%\vfill
+%\pagebreak
+
+%\section*{Abstract}
+%\pagebreak
 
 {
-\thispagestyle{empty}
+%\thispagestyle{empty}
 \hypersetup{linkcolor=black}
 \tableofcontents
-\thispagestyle{empty} %yeet
+%\thispagestyle{empty} %yeet
 }
 
 \vfill
-
-\section*{Abstract}
 
 
 \pagebreak
@@ -195,30 +203,36 @@ Since we want to verify the models and not a program, it is important to check p
 For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{GruMey25} which both are not able to handle every possible MCM but only a fragment.
 
 The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow \po .
-Later, models that are less restrictive like \textit{SC per Location} and \textit{Total Store Order} (TSO) were developed to allow for more optimization by the hardware. \todo{Quelle für die Modelle}
+Later, models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} were developed to allow for more optimization by the hardware.
 
 
 
 
 \subsection{The CAT language} \label{sec:cat}
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations that can be used like \po, \rf, the \textit{same location} relation \loc, which connects all events of one particular memory location and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext which includes all pairs of events that originate from different threads, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 
 \begin{figure}[h]
 \begin{align*}
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
 \langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty } \bangle{rel} \\
 \langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel} \\
-\bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \text{\loc} \mid \textsf{ext} \mid \textsf{id} \mid 0 \\
+\bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \text{\loc} \mid \textsf{ext} \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
 \caption{The CAT language according to \cite{Alg+16}, where $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement. Furthermore, $0$ denotes the empty relation and id the identity relation.}   
 \label{fig:cat}
 \end{figure}
 
-Besides the given base relations, on can define derived relations in the CAT language like the \textit{coherence order} (\co) which is a total order of writes on the same memory location or \textit{happens-before} (\hb) which relates each event to the ones that occurred before. The derivations can be written with the keyword \texttt{let} and using the operations in \Cref{fig:cat} like this:
+Besides the given base relations, one can define derived relations in the CAT language like the \textit{coherence order} (\co) which is a total order of writes on the same memory location or \textit{happens-before} (\hb) which relates each event to the ones that occurred before \cite{Lam78}. The derivations can be written with the keyword \texttt{let} and using the operations in \Cref{fig:cat} like this:
 \[\texttt{let } \fr = \text{\rf}^{-1}\text{.\co} \qquad \texttt{let } \text{\co} = \text{\rf .\fr} \qquad \texttt{let } \text{\hb}=\textsf{po}\cup \text{\co}\cup \text{\rf} \cup \text{\fr}\]
-The language also includes some base sets of events. These include the set of all events E, all reads (R) and writes (W), initial writes IW and fences F.
+The language also includes some base sets of events. These include the set of all events E, all reads (R) and writes (W), initial writes IW and fences F. \\
+The Memory Models from the last section can be formalized according to \cite{GruMey25,Kou+24} like this:
+\begin{align*}
+&\text{(SC) } \hfill &\texttt{acyclic }\hb \\
+&\text{(TSO) } \hfill &\texttt{irreflexive }(\po \setminus (W\times R) \cup (\rf \cap \textsf{ext}) \cup \co \cup \fr)^+ \\
+&\text{(SC per Location)} \hfill &\texttt{acyclic } (\po \cap \loc) \cup (\rf \cup \co \cup \fr)
+\end{align*}  
 
 
 \section{Related Work}\label{sec:kontext}
@@ -228,24 +242,35 @@ Furthermore, there is research on refining stateless model checking \cite{Jon+25
 %In the realm of verification this would be on the program verification level. 
 Some research groups instead examine the models themselves and their attributes \cite{LahBok22} and others the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
 
-The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
+The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene Algebra with Tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete \cite{KozSmi97,Nak17}.
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
 By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\overline{\semsof{M}} \cap \semsof{M_{prop}} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
-The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
-
+The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. 
 
 Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
-\section{The Proof System} \label{sec:problemstellung}
+\section{The Proof System} \label{sec:proofsys}
+Basic Rules: 
+\begin{itemize}
+\item $r \subseteq r^+$
+\item $r \subseteq r^*$
+\item $r \subseteq r \cup s \mid s \cup r$
+\item $r \cap s \subseteq r \mid s$
+\item $r \subseteq r.s^* \mid s^*.r$
+\item $id \subseteq r^*$
+\item $r^+ \subseteq r^*$
+\item $irreflexive(r^+) = acyclic(r)$
+\item $empty(r) = irreflexive (r.r^{-1}) \mid irreflexive (r \cup r^{-1}) \mid acyclic(r \cup r^{-1})$
+\end{itemize}
 
-
+\pagebreak
 \section{Conclusion}\label{sec:fazit}
 
 
