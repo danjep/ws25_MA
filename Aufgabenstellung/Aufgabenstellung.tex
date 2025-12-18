@@ -27,7 +27,7 @@
 
 \section{Motivation}
 Almost every computer that is in use today provides multiple simultaneously running processors. To reap the benefits that multiple processors provide, developers design their programs to use concurrently running threads.
-Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread needs, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. This is called a \textit{data race}. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation. \\
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. \\
 
 \begin{figure}[h]
 \centering
