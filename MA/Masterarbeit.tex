@@ -44,9 +44,9 @@
 \setcounter{page}{1}
 
 \section{Introduction}\label{sec:intro}
-Almost every computer that is in use today provides multiple simultaneously running processors. To reap the benefits that multiple processors provide, developers design their programs to use concurrently running threads. 
-Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread needs, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
-Multiple executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. This is called a \textit{data race}. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.\\
+Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads. 
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
+Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation i called a \textit{data race}. This is what makes the different executions possible.\\
 
 \begin{figure}[h]
 \centering
@@ -63,9 +63,13 @@ Multiple executions are possible: If thread $T_1$ is executed completely before 
 \end{figure}
 
 Every program that a thread might execute consists of instructions which in turn consist of memory accesses. The instruction \texttt{a=y} for example consists of two operations, reading the value of \texttt{y} and writing the read value to \texttt{a}. These two operations are usually called events.
-CPU architectures and compilers may reorder the events in such programs for performance reasons and interleave the two threads as they see fit. Since this permits different executions for the same program depending on the hardware and compiler, programming languages and CPU architectures provide \textit{memory consistency models} (MCM). If the developer confines them selves to the rules of a programming language (e.g. \textit{Data-Race-Freedom}(DRF)), they get certain guarantees in return for how the program will be compiled and executed. The MCM of the language illustrates which rules the compiler needs to respect to keep the semantics of the program. The memory consistency model of a CPU architecture describes how the hardware will behave if it runs a program. For the program to have  the intended semantics, the execution needs to be consistent with both models. Essentially, the MCMs constrain how threads are allowed to interact with each other when it comes to shared memory.
+CPU architectures and compilers may reorder the events in such programs for performance reasons and interleave the two threads as they see fit. 
+Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCM) in order to give them some orientation about how their code will be handled by the compiler and hardware.
+Since the language MCM determines the semantics of a program, developers need to confine themselves to the rules of the language (e.g. \textit{Data-Race-Freedom} (DRF)). In return they get certain guarantees for how the program will be compiled and executed. 
+The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to be respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM. 
+Essentially, the MCMs  determine which update to the shared memory is seen by which thread at what time.
 
-As can be seen in the example, not having a memory consistency model can change the outcome of a program drastically. But having a MCM will not automatically get rid of all problems. 
+As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behaviour. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
 Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs.
 The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language \todo{weitere Themen einfügen}. 
@@ -248,10 +252,10 @@ Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the L
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\overline{\semsof{M}} \cap \semsof{M_{prop}} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
+By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and then a formula $ \psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. 
 
-Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
+Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
