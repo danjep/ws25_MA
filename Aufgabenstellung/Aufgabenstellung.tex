@@ -27,7 +27,7 @@
 
 \section{Motivation}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads.
-Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. \\
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. \\
 
 \begin{figure}[h]
 \centering
@@ -45,8 +45,8 @@ $T_1$ & $T_2$ \\[2mm]
 
 CPU architectures and compilers may reorder the commands in such programs for performance reasons and interleave the two threads as they see fit.
 Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCM) in order to give developers some orientation about how their code will be handled by the compiler and hardware.
-If the developer confines themselves to the rules of a programming language (e.g. \textit{Data-Race-Freedom} (DRF)), they get certain guarantees in return for how the program will be compiled and executed since the language MCM determines the semantics of the code.
-The memory consistency model of a CPU architecture describes how the hardware will behave if it runs instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM.
+Since the language MCM determines the semantics of a program, developers need to confine themselves to the rules of the language (e.g. \textit{Data-Race-Freedom} (DRF)). In return they get certain guarantees for how the program will be compiled and executed. 
+The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM.
 Essentially, the MCMs determine which update to the shared memory is seen by which thread at what time. As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a memory consistency model may not guarantee the intended behavior. MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined.
 Consequently there is research on how MCMs can be verified and how the verification can be done effectively. In \Cref{sec:CR} we will look at current lines of research affecting memory consistency models and especially the verification.
 \Cref{sec:task} will describe the purpose of the master's thesis and how it contributes to the research of the last years. 
@@ -67,14 +67,14 @@ Axiomatic refers to how the model can be formulated. Besides axiomatic ones, the
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
 \langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty}~ \bangle{rel} \\
 \langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{purple}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
-\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid 0 \\
+\bangle{base\_rel} &:= \textsf{po} \mid \textsf{rf} \mid \textsf{rmw} \mid \textsf{loc} \mid \textsf{ext} \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
-\caption{The CAT language when including the \textcolor{purple}{purple} coloured terms, when excluding them it is the fragment called rational CAT \cite{GruMey25}. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement and $0$ denotes the empty relation \cite{Alg+14}.}   
+\caption{The CAT language when including the \textcolor{purple}{purple} coloured terms, when excluding them it is the fragment called rational CAT \cite{GruMey25}. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement and $\textsf{0}$ denotes the empty relation \cite{Alg+14}.}   
 \label{cat}
 \end{figure}
 
-Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Axiomatic memory consistency models are defined on these and some more base relations, in the CAT language as can be seen in \Cref{cat}. \pagebreak
+Some very basic examples for these relations are the \textit{program order} (\textsf{po}) which represents the sequence of events of a single thread and \textit{read-from} (\textsf{rf}), displaying for every read which write determined the value it sees. Axiomatic memory consistency models are defined on these and some more base relations in the CAT language as can be seen in \Cref{cat}. \pagebreak
 
 While the tool that Alglave et al. developed allows to test programs under a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. 
 The first is to check the model against generic properties like having no \textit{out-of-thin-air values}. 
@@ -84,7 +84,7 @@ The first tool to tackle the verification of MCMs was KATER \cite{Kok+23} which 
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but has not been implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{cat}) was RAT which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $M \subseteq M_{prop}$ into $M \cap \overline{M_{prop}} = 0$ and then a formula $\psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested. Strength and weakness are used in the context of MCMs to articulate which model permitts a larger set of executions. If $M \subseteq M_{prop}$ then $M$ is stronger than $M_{prop}$.
+By transforming the question of $M \subseteq M_{prop}$ into $M \cap \overline{M_{prop}} = \emptyset$ and then a formula $\psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested. Strength and weakness are used in the context of MCMs to articulate which model permitts a larger set of executions. If $M \subseteq M_{prop}$ then $M$ is stronger than $M_{prop}$.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 
