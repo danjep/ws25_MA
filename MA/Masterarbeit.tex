@@ -260,7 +260,59 @@ Can the popular models written in CAT be transformed into ones that are written 
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
+
+\section{Preliminaries}
+\subsection{Executions}
+Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run.
+Then an execution $X$ is the following tuple:
+\[X := (E_X,\po_X \subseteq E_X \times E_X, \rf_X \subseteq W_X \times R_X, IW_X)\]  
+We let $\mathbb{E} = \mathbb{P}(X)$ denote the set of all possible executions. \\
+Furthermore, for any constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
+
+\subsection{Semantics}
+The semantics of a MCM $M$ are defined as the set of executions that the model allows.
+\[\semsof{M} := \{X \in \E \mid X \text{ fulfills } M\}\]
+
+\noindent The semantics of a constraint work in the same way:
+\[\semsof{\bangle{constraint}} := \{X \in \E \mid X \text{ fulfills the constraint}\}\]
+
+\subsection{The constraints}
+In order to use them there has to be a clear definition of the constraints and how they filter the executions.
+They can be defined like this:
+\[\semsof{\texttt{empty}~ \bangle{rel}} := \{X \in \E \mid \nexists (e_1,e_2) \in \bangle{rel}_X\}\]
+\[\semsof{\texttt{irreflexive}~ \bangle{rel}} := \{X \in \E \mid \forall r \in E_X: \nexists (r,r) \in \bangle{rel}_X \}\]
+\[\semsof{\texttt{acyclic}~ \bangle{rel}} := \semsof{\texttt{irreflexive}~ \bangle{rel}^+}\]
+
+
 \section{The Proof System} \label{sec:proofsys}
+In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations.
+
+\subsection{Basic Rules}
+One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
+This means that for any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$.
+We can prove this for each of the constraints. 
+Let the constraint be \texttt{empty}:
+%$R_1 \subseteq R_2 $ is given. Since this means that any element of $R_1$ would also be in $R_2$, it follows that an empty $R_2$ implies an empty $R_1$. If it would not be empty, then $R_2$ wouldn't be.
+%Therefore $\semsof{\texttt{empty}~ R_2}$ must be a subset of $\semsof{\texttt{empty}~ R_1}$.
+\begin{eqnarray*}
+R_1 \subseteq R_2 
+& \impl &\text{For } X \in \E : \nexists (e_1,e_2) \in {R_2}_X \impl \nexists (e_1,e_2) \in {R_1}_X \\
+& \impl &(X \in \semsof{\texttt{empty}~ R_2} \impl X \in \semsof{\texttt{empty}~ R_1}) \\
+& \impl & \semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}
+\end{eqnarray*}
+{\raggedleft \qed}\\
+%Let $X$ be an execution with $X \in \semsof{\texttt{empty}~ R_2}$ and $X \notin \semsof{\texttt{empty}~ R_1}$ and therefore $\semsof{\texttt{empty}~ R_2} \nsubseteq\semsof{\texttt{empty}~ R_1}$. Since $R_1 \subseteq R_2$, it means that ${R_1}_X \subseteq {R_2}_X$ and if $R_2$ is empty then $R_1$ has to be as well. Therefore $X$ cannot exist and $\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}$.
+For the constraint \texttt{irreflexive}:
+\begin{eqnarray*}
+R_1 \subseteq R_2 
+& \impl &\text{For } X \in \E : \forall r \in E_X: \nexists(r,r) \in {R_2}_X \impl \forall r \in E_X: \nexists (r,r) \in {R_1}_X \\
+& \impl &(X \in \semsof{\texttt{irreflexive}~ R_2} \impl X \in \semsof{\texttt{irreflexive}~ R_1}) \\
+& \impl & \semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}
+\end{eqnarray*}
+{\raggedleft \qed}\\
+
+
+
 Basic Rules: 
 \begin{itemize}
 \item $r \subseteq r^+$
