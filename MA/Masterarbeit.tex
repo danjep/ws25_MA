@@ -270,18 +270,14 @@ We let $\mathbb{E} = \mathbb{P}(X)$ denote the set of all possible executions. \
 Furthermore, for any constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
 
 \subsection{Semantics}
-The semantics of a MCM $M$ are defined as the set of executions that the model allows.
-\[\semsof{M} := \{X \in \E \mid X \text{ fulfills } M\}\]
-
-\noindent The semantics of a constraint work in the same way:
-\[\semsof{\bangle{constraint}} := \{X \in \E \mid X \text{ fulfills the constraint}\}\]
-
-\subsection{The constraints}
-In order to use them there has to be a clear definition of the constraints and how they filter the executions.
-They can be defined like this:
-\[\semsof{\texttt{empty}~ \bangle{rel}} := \{X \in \E \mid \nexists (e_1,e_2) \in \bangle{rel}_X\}\]
-\[\semsof{\texttt{irreflexive}~ \bangle{rel}} := \{X \in \E \mid \forall r \in E_X: \nexists (r,r) \in \bangle{rel}_X \}\]
-\[\semsof{\texttt{acyclic}~ \bangle{rel}} := \semsof{\texttt{irreflexive}~ \bangle{rel}^+}\]
+The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows.
+\begin{align*}
+\semsof{M} & := \semsof{\bangle{cat}} \\
+\semsof{\bangle{cat}_1~ \bangle{cat}_2} & := \semsof{\bangle{cat}_1} \cap \semsof{\bangle{cat}_2} \\
+\semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \bangle{rel}_X\} \\
+\semsof{\texttt{irreflexive}~ \bangle{rel}} &:= \{X \in \E \mid \forall r \in E_X: \nexists (r,r) \in \bangle{rel}_X \} \\
+\semsof{\texttt{acyclic}~ \bangle{rel}} &:= \semsof{\texttt{irreflexive}~ \bangle{rel}^+}
+\end{align*}
 
 
 \section{The Proof System} \label{sec:proofsys}
@@ -289,39 +285,62 @@ In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general m
 
 \subsection{Basic Rules}
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
-This means that for any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$.
+This means the following:
+\begin{lemma}
+For any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$ when the constraint is the same for each relation.
+\end{lemma}
+\begin{proof}
 We can prove this for each of the constraints. 
 Let the constraint be \texttt{empty}:
 %$R_1 \subseteq R_2 $ is given. Since this means that any element of $R_1$ would also be in $R_2$, it follows that an empty $R_2$ implies an empty $R_1$. If it would not be empty, then $R_2$ wouldn't be.
 %Therefore $\semsof{\texttt{empty}~ R_2}$ must be a subset of $\semsof{\texttt{empty}~ R_1}$.
 \begin{eqnarray*}
 R_1 \subseteq R_2 
-& \impl &\text{For } X \in \E : \nexists (e_1,e_2) \in {R_2}_X \impl \nexists (e_1,e_2) \in {R_1}_X \\
+& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {R_2}_X \impl \nexists (e_1,e_2) \in {R_1}_X) \\
 & \impl &(X \in \semsof{\texttt{empty}~ R_2} \impl X \in \semsof{\texttt{empty}~ R_1}) \\
 & \impl & \semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}
 \end{eqnarray*}
-{\raggedleft \qed}\\
 %Let $X$ be an execution with $X \in \semsof{\texttt{empty}~ R_2}$ and $X \notin \semsof{\texttt{empty}~ R_1}$ and therefore $\semsof{\texttt{empty}~ R_2} \nsubseteq\semsof{\texttt{empty}~ R_1}$. Since $R_1 \subseteq R_2$, it means that ${R_1}_X \subseteq {R_2}_X$ and if $R_2$ is empty then $R_1$ has to be as well. Therefore $X$ cannot exist and $\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}$.
 For the constraint \texttt{irreflexive}:
 \begin{eqnarray*}
 R_1 \subseteq R_2 
-& \impl &\text{For } X \in \E : \forall r \in E_X: \nexists(r,r) \in {R_2}_X \impl \forall r \in E_X: \nexists (r,r) \in {R_1}_X \\
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X) \\
 & \impl &(X \in \semsof{\texttt{irreflexive}~ R_2} \impl X \in \semsof{\texttt{irreflexive}~ R_1}) \\
 & \impl & \semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}
 \end{eqnarray*}
-{\raggedleft \qed}\\
+
+For the \texttt{acyclicity} constraint:
+\begin{eqnarray*}
+R_1 \subseteq R_2 
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X^+) \\
+& \impl &(X \in \semsof{\texttt{acyclic}~ R_2} \impl X \in \semsof{\texttt{acyclic}~ R_1}) \\
+& \impl & \semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}
+\end{eqnarray*}
+\end{proof}
+This lemma generates the following three rules:
+\begin{mathpar} 
+\inferrule*[left=(empty)] {\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}}{R_1 \subseteq R_2} \and 
+\inferrule*[left=(acyclic)] {\semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}}{R_1 \subseteq R_2} \and
+\inferrule*[left={(irreflexive)}] {\semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}}{R_1 \subseteq R_2}
+\end{mathpar}
 
 
 
 Basic Rules: 
+
+\begin{mathpar}
+\inferrule*[left=($R^+$)] {R \subseteq R^+}{true} \and 
+\inferrule*[left=($R^*$)] {R \subseteq R^*}{true} \and 
+\inferrule*[left=($\cup L$)] {R \subseteq R \cup S}{true} \and 
+\inferrule*[left=($\cup R$)] {R \subseteq S \cup R}{true} \and 
+\inferrule*[left=($R.S^*$)] {R \subseteq R.S^*}{true} \and 
+\inferrule*[left=($S^*.R$)] {R \subseteq S^*.R}{true} \and 
+\inferrule*[left=($\cap L$)] {R \cap S \subseteq R}{true} \and 
+\inferrule*[left=($\cap R$)] {S \cap R \subseteq R}{true} \and   
+\inferrule*[left=($id$)] {\id \subseteq R^*}{true} \and  
+\inferrule*[left=($R^+R^*$)] {R^+ \subseteq R^*}{true}
+\end{mathpar}
 \begin{itemize}
-\item $r \subseteq r^+$
-\item $r \subseteq r^*$
-\item $r \subseteq r \cup s \mid s \cup r$
-\item $r \cap s \subseteq r \mid s$
-\item $r \subseteq r.s^* \mid s^*.r$
-\item $id \subseteq r^*$
-\item $r^+ \subseteq r^*$
 \item $irreflexive(r^+) = acyclic(r)$
 \item $empty(r) = irreflexive (r.r^{-1}) \mid irreflexive (r \cup r^{-1}) \mid acyclic(r \cup r^{-1})$
 \end{itemize}
