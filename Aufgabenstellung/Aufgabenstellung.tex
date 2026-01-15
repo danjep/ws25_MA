@@ -5,7 +5,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-%\fancyhead[R]{\itshape \leftmark}
+\fancyhead[R]{\ttfamily \leftmark}
 \cfoot{\thepage}
 
 \input{includes/commenting}
@@ -26,71 +26,78 @@
 
 
 \section{Motivation}
-Modern computers come with a set of processors that can run simultaneously. To utilize this for their advantage, developers started to design their programs to use multiple concurrently running threads.
-Since these threads might still operate on the same memory it is possible to encounter problems like data-races when executing these programs. Data races occur when two or more threads access the same memory space and at least one of them uses a write operation.
-The classic example of two threads can be seen in \cref{fig:example}. \\
+Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads.
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. \\
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{c||c}
-\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[4mm]
+\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
+$T_1$ & $T_2$ \\[2mm]
 %Thread 1: & Thread 2:\\[4mm]
 
 \texttt{x=1;} & \texttt{y=1;} \\
 \texttt{a=y;} & \texttt{b=x;} \\
 \end{tabular}
-\caption{Example of two threads using the same variables. Depending on how the threads are scheduled, the resulting values could feature any combination of $1$ and $0$ for the variables $a$ and $b$.}
+\caption{Example of a data race, where two threads use the same variables. The resulting values of $a$ and $b$ can be any combination of $1$ and $0$ depending on how the threads are executed.}
 \label{fig:example}
 \end{figure}
 
-Modern architectures might reorder the commands in these programs in any way for performance reasons and interleave the two threads as they see fit.
-Since this might lead to inconsistent results and therefore unpredictable behaviour, programming languages and cpu architectures provide memory consistency models. If the developer confines themselves to these rules, they get certain guarantees in return.
-These memory consistency models describe how threads are allowed to interact with each other when it comes to shared memory. As can be seen in the example, not having a memory consistency model can have serious consequences for the execution of programs. But having a memory consistency model will not automatically get rid of all problems. It is not guaranteed for example that a given model will not produce out-of-thin-air values (oota) \cite{BoeDem14}.
-Therefore it is an important issue to verify the functionality of these models which will be the topic of the master's thesis.  
+CPU architectures and compilers may reorder the commands in such programs for performance reasons and interleave the two threads as they see fit.
+Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCM) in order to give developers some orientation about how their code will be handled by the compiler and hardware.
+Since the language MCM determines the semantics of a program, developers need to confine themselves to the rules of the language (e.g. \textit{Data-Race-Freedom} (DRF)). In return they get certain guarantees for how the program will be compiled and executed. 
+The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM.
+Essentially, the MCMs determine which update to the shared memory is seen by which thread at what time. As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a memory consistency model may not guarantee the intended behavior. MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined.
+Consequently there is research on how MCMs can be verified and how the verification can be done effectively. In \Cref{sec:CR} we will look at current lines of research affecting memory consistency models and especially the verification.
+\Cref{sec:task} will describe the purpose of the master's thesis and how it contributes to the research of the last years. 
 
-\section{Current Research}
-In the field of memory consistency models current research is aimed at a variety of issues.
-One obvious issue is model checking programs for a given memory model \cite{Tun+23,KokVaf21}. 
-%In the realm of verification this would be on the program verification level. 
-Others might focus on the models themselves and their attributes \cite{LahBok22} or other kinds of models like operational ones \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models.
+\section{Current Research} \label{sec:CR}
+There are currently several established lines of research in the field of weak memory.
+One obvious issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools that were developed in the last decade already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
+Some research groups instead examine the models themselves and their attributes \cite{LahBok22} or the already mentioned operational models \cite{Ior+23,Doh+22}. 
+Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.\\
 
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. Axiomatic models work by constraining relations on so called events. The events are the memory accesses in a program like reads and writes. 
+In 2014 Alglave et al. proposed an axiomatic framework for modelling memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for formulating memory consistency models. 
+%Here, weakness is defined as accepting a larger number of possible executions of a program than stronger models. 
+Axiomatic refers to how the model can be formulated. Besides axiomatic ones, there are operational models which are abstractions of actual machines with idealised components \cite{Alg+14}. Axiomatic models on the other side work by constraining executions. Executions are defined as relations on so-called events, which are the memory accesses in a program like reads and writes. The relations describe for example the order of the events or dependencies. The constraints are then axioms on these relations. 
 
 \begin{figure}[h]
 \begin{align*}
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
-\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \\
-\langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
-\bangle{base\_rel} &:= \text{po} \mid \text{rf} \mid \text{rmw} \mid \text{loc} \mid \text{ext} \mid \text{id} \mid \emptyset \\
+\langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty}~ \bangle{rel} \\
+\langle rel \rangle &:= \langle base\_rel \rangle \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{purple}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
+\bangle{base\_rel} &:= \textsf{po} \mid \textsf{rf} \mid \textsf{rmw} \mid \textsf{loc} \mid \textsf{ext} \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
-\caption{The CAT language when including the red coloured terms, when excluding them it is the fragment called rational CAT. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement \cite{Alg+14}.}   
+\caption{The CAT language when including the \textcolor{purple}{purple} coloured terms, when excluding them it is the fragment called rational CAT \cite{GruMey25}. $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement and $\textsf{0}$ denotes the empty relation \cite{Alg+14}.}   
 \label{cat}
 \end{figure}
 
-Some very basic examples for these relations are the \textit{program order} (po) which represents the sequence of events of a single thread and \textit{read-from} (rf), displaying for every read which write determined the value it sees. Upon these and some more base relations, memory consistency models can be expressed with CAT as can be seen in \cref{cat}. \\
-Besides axiomatic models, researchers also look at operational ones which are abstractions of actual machines with idealised components \cite{Alg+14}. \\
+Some very basic examples for these relations are the \textit{program order} (\textsf{po}) which represents the sequence of events of a single thread and \textit{read-from} (\textsf{rf}), displaying for every read which write determined the value it sees. Axiomatic memory consistency models are defined on these and some more base relations in the CAT language as can be seen in \Cref{cat}. \pagebreak
 
-While the tool that Alglave et al. developed allows to test certain programs in a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. The first is to check the model against generic properties like having no out-of-thin-air values. The second task is to check properties that refer to operation's semantics like barrier monotonicity. Furthermore, it is one task to compare memory consistency models and another to create litmus tests that show whether a model is implemented by a language or architecture. The last task is to verify compiler transformations.
+While the tool that Alglave et al. developed allows to test programs under a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. 
+The first is to check the model against generic properties like having no \textit{out-of-thin-air values}. 
+The second task is to check properties that refer to operation's semantics like barrier monotonicity. Furthermore, it is one task to compare memory consistency models and another to create litmus tests that show whether a model is implemented by a language or architecture. The last task is to verify compiler transformations.
   
-For the first task, the memory model in question can be compared to a model that is defined by just that property. The first tool to tackle this and the third task was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
-The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
+The first tool to tackle the verification of MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene algebra with tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
+The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but has not been implemented.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \cref{cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $M \subseteq M_{prop}$ into $\overline{M} \cap M_{prop} = \emptyset$ and then a formula $\neg \psi_M \land \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{cat}) was RAT which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
+By transforming the question of $M \subseteq M_{prop}$ into $M \cap \overline{M_{prop}} = \emptyset$ and then a formula $\psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested. Strength and weakness are used in the context of MCMs to articulate which model permitts a larger set of executions. If $M \subseteq M_{prop}$ then $M$ is stronger than $M_{prop}$.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 
-Today there are many open questions in this field of research. Is it possible to automatically verify the whole of the CAT language or at least more than the rational CAT fragment?
+Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
-\section{Task}
+\section{Task} \label{sec:task}
 The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current one. Even though the proofs might not be infinite, they can still get very large. 
-The task for this master's thesis is to replace this cyclic proof system with one that uses invariants and is neither cyclic nor infinite. This is supposed to lead to smaller proofs. Additionally the new proof system is supposed to directly handle inclusion between memory models and should not need to resolve them to the event level.
-The goal of the thesis is to create a proof system that works reasonably well and ideally proof it's completeness and soundness. 
+The task for this master's thesis is to replace this cyclic proof system with one that directly handles inclusions between relations and does not resolve them to event-level. Additionally the new proof system is supposed to be neither cyclic nor infinite, while the underlying objective is to create smaller proofs.
+The aim of the thesis is to create a proof system that works reasonably well and ideally prove it's completeness and soundness and extend it to include more than rational CAT.
+While being able to automatically verify MCMs would be optimal, even if completeness or decidability cannot be shown, semi-automatic proofs are still of interest.
 
 \pagebreak
 
