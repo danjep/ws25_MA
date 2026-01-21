@@ -1,5 +1,5 @@
-\documentclass[a4paper,12pt, english]{article}
-\usepackage[a4paper, left=2.5cm, right=2cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+\documentclass[a4paper,12pt,twoside, english]{article}
+\usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
@@ -7,6 +7,7 @@
 \fancyhf{}
 \fancyhead[R]{\ttfamily \leftmark}
 \cfoot{\thepage}
+\raggedbottom
 
 \input{includes/commenting}
 \input{includes/preamble}
@@ -17,7 +18,7 @@
 
 %\includepdf{includes/Titelseite/build/title.pdf}
 
-\title{Task for the Master's Thesis}
+\title{Task for the Master's Thesis: \\ An Inclusion-based Proof System for Memory Consistency Models}
 \author{Danje Petersen}
 
 \maketitle
@@ -27,7 +28,7 @@
 
 \section{Motivation}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads.
-Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. \\
+Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. 
 
 \begin{figure}[h]
 \centering
@@ -74,7 +75,7 @@ Axiomatic refers to how the model can be formulated. Besides axiomatic ones, the
 \label{cat}
 \end{figure}
 
-Some very basic examples for these relations are the \textit{program order} (\textsf{po}) which represents the sequence of events of a single thread and \textit{read-from} (\textsf{rf}), displaying for every read which write determined the value it sees. Axiomatic memory consistency models are defined on these and some more base relations in the CAT language as can be seen in \Cref{cat}. \pagebreak
+Some very basic examples for these relations are the \textit{program order} (\textsf{po}) which represents the sequence of events of a single thread and \textit{read-from} (\textsf{rf}), displaying for every read which write determined the value it sees. Axiomatic memory consistency models are defined on these and some more base relations in the CAT language as can be seen in \Cref{cat}. 
 
 While the tool that Alglave et al. developed allows to test programs under a given memory model, verifying these models is a different issue. Verification of the memory consistency model can be divided into five tasks. 
 The first is to check the model against generic properties like having no \textit{out-of-thin-air values}. 
@@ -84,7 +85,7 @@ The first tool to tackle the verification of MCMs was KATER \cite{Kok+23} which 
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but has not been implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{cat}) was RAT which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $M \subseteq M_{prop}$ into $M \cap \overline{M_{prop}} = \emptyset$ and then a formula $\psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested. Strength and weakness are used in the context of MCMs to articulate which model permitts a larger set of executions. If $M \subseteq M_{prop}$ then $M$ is stronger than $M_{prop}$.
+By transforming the question of $\semsof{M} \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \semsof{\overline{M_{prop}}} = \emptyset$ and then a formula $\psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested. Strength and weakness are used in the context of MCMs to articulate which model permitts a larger set of executions. If $\semsof{M} \subseteq \semsof{M_{prop}}$ then $M$ is stronger than $M_{prop}$.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. \\
 
 

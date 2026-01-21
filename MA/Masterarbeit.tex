@@ -309,7 +309,10 @@ The most basic rules are those which are always true for any relations. We list 
 \item Unification $\cup$
 \begin{mathpar}
 \inferrule*{true}{R \cup R \subseteq R} \and
+\inferrule*{true}{R \subseteq R \cup R} \and
 \inferrule*{true}{R \subseteq R \cup S} \and 
+\inferrule*{true}{R \cup S \subseteq S} \and
+\inferrule*{true}{S \cup R \subseteq R \cup S} \and
 \inferrule*{R \subseteq S}{R \subseteq S \cup R'} \and
 \inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and
 \inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and
@@ -319,25 +322,57 @@ The most basic rules are those which are always true for any relations. We list 
 \item Intersection $\cap$
 \begin{mathpar}
 \inferrule*{true}{R \subseteq R \cap R} \and
+\inferrule*{true}{R \cap R \subseteq R} \and
 \inferrule*{true}{R \cap S \subseteq R} \and 
+\inferrule*{S \subseteq \0}{R \subseteq R \cap S} \and
+\inferrule*{true}{S \cap R \subseteq R \cap S} \and
 \inferrule*{R \subseteq S}{R \cap R' \subseteq S} \and
+\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and
 \inferrule*{R \subseteq S}{R \cap R' \subseteq S \cap R'} \and
-\inferrule*{R \subseteq S \\ R \subseteq S'}{R \subseteq S \cap S'} \and
 \inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}
 \end{mathpar}
 
 \item Concatenation $.$
 \begin{mathpar}
-\inferrule*{true}{R \subseteq S^*.R} \and 
+\inferrule*{\id \subseteq R}{R \subseteq R.R} \and 
+\inferrule*{\id \subseteq R}{R.R \subseteq R} \and
+\inferrule*{\id \subseteq S}{R \subseteq S.R} \and
+\inferrule*{\id \subseteq S}{R \subseteq R.S} \and 
+\inferrule*{\id \subseteq R}{S.R \subseteq S} \and
+\inferrule*{\id \subseteq R}{R.S \subseteq S} \and
+\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and
+\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and
+\inferrule*{R \subseteq S \\ R' \subseteq \id}{R \subseteq S.R'} \and
+\inferrule*{R \subseteq S \\ R' \subseteq \id}{R \subseteq R'.S} \and
 \inferrule*{R \subseteq S}{R'.R \subseteq R'.S} \and
 \inferrule*{R \subseteq S}{R.R' \subseteq S.R'} \and
 \inferrule*{R \subseteq S \\ R' \subseteq S'}{R.R' \subseteq S.S'}
 %\inferrule*{R.R \subseteq R}{R^+ \subseteq R} 
 \end{mathpar}
 
-\item Transitive Closure $^+$
+\item Difference $\setminus$
 \begin{mathpar}
+\inferrule*{true}{R \setminus R \subseteq R} \and
+\inferrule*{true}{R\setminus R \subseteq \0} \and
+\inferrule*{R \subseteq \0}{R \subseteq R \setminus R} \and
+\inferrule*{true}{S \setminus R \subseteq S} \and
+\inferrule*{R \subseteq \0}{R \setminus S \subseteq S} \and
+\inferrule*{S \subseteq \0}{R \subseteq R \setminus S} \and
+\inferrule*{R \subseteq \0}{R \subseteq S \setminus R} \and
+\inferrule*{R \subseteq S}{R \setminus S \subseteq S \setminus R} \and
+\inferrule*{R \subseteq S}{R \setminus R' \subseteq S} \and
+\inferrule*{R \subseteq R' \\ R \cap S \subseteq \0}{R \subseteq R' \setminus S} \and
+\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'} \and
+\inferrule*{S \subseteq R}{R' \setminus R \subseteq R' \setminus S} \and
+\inferrule*{R \subseteq S \setminus S'}{R \setminus R' \subseteq S \setminus S'}
+\end{mathpar}
+
+
+\item Transitive Closure $^+$ \todo{gibts für die erste Regel was schlaueres?}
+\begin{mathpar}
+\inferrule*{R \subseteq \id}{R^+ \subseteq R} \and
 \inferrule*{true}{R \subseteq R^+} \and
+\inferrule*{}{R^+ \subseteq S} \and
 \inferrule*{R \subseteq S}{R \subseteq S^+} \and
 \inferrule*{R \subseteq S}{R^+ \subseteq S^+}
 \end{mathpar}
@@ -345,42 +380,45 @@ The most basic rules are those which are always true for any relations. We list 
 \item Reflexive Closure $?$
 \begin{mathpar}
 \inferrule*{true}{\id \subseteq R?} \and
+\inferrule*{}{R? \subseteq R} \and
 \inferrule*{true}{R \subseteq R?} \and
+\inferrule*{}{R? \subseteq S} \and
 \inferrule*{R \subseteq S}{R \subseteq S?} \and
 \inferrule*{R \subseteq S}{R? \subseteq S?}
 \end{mathpar}
 
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
+\inferrule*{}{R^* \subseteq R} \and
 \inferrule*{true}{R \subseteq R^*} \and 
 \inferrule*{true}{\id \subseteq R^*} \and  
 \inferrule*{true}{R^+ \subseteq R^*} \and
 \inferrule*{true}{R? \subseteq R^*} \and
+\inferrule*{}{R^* \subseteq S} \and
 \inferrule*{R \subseteq S}{R \subseteq S^*} \and
 \inferrule*{R \subseteq S}{R^* \subseteq S^*}
 \end{mathpar}
 
-\item Difference $\setminus$
-\begin{mathpar}
-\inferrule*{true}{R\setminus S \subseteq R} \and
-\inferrule*{true}{R\setminus R \subseteq 0} \and
-\inferrule*{R \subseteq S}{R \setminus R' \subseteq S} \and
-\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'}
-\end{mathpar}
 
 \item Inverse $^{-1}$
 \begin{mathpar}
 \inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
+\inferrule*{}{R^{-1} \subseteq R} \and
+\inferrule*{}{R \subseteq R^{-1}} \and
+\inferrule*{}{R^{-1} \subseteq S} \and
+\inferrule*{}{R \subseteq S^{-1}} \and
 \inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
 \end{mathpar}
 
 \item Complement $\sim$
 \begin{mathpar}
 \inferrule*{true}{R~ \cap \sim R \subseteq 0} \and
-\inferrule*{R \subseteq S}{\sim S \subseteq \sim R} \and
 \inferrule*{R \subseteq S}{R~ \cap \sim S \subseteq 0} \and
 \inferrule*{false}{\sim R \subseteq R} \and
-\inferrule*{false}{R \subseteq \sim R}
+\inferrule*{false}{R \subseteq \sim R} \and
+\inferrule*{}{\sim R \subseteq S} \and
+\inferrule*{}{R \subseteq \sim S} \and
+\inferrule*{R \subseteq S}{\sim S \subseteq \sim R}
 \end{mathpar}
 \end{itemize}
 
