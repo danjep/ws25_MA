@@ -18,6 +18,7 @@
 %\usepackage{microtype}
 \usepackage{stmaryrd}
 \newcommand{\blitz}{\textcolor{red}{\lightning}}
+\usepackage{float}
 
 
 % Für Code
@@ -86,7 +87,7 @@
 %\definecolor{darkgray}{RGB}{70,90,70}
 \definecolor{examblue}{rgb}{0,0.2,0.55}
 \newenvironment{defi}[1]{%
-\begin{tcolorbox}[colback=darkgray!5!white, colframe=darkgray!75!black, title={{\sffamily} \textbf{#1}}]
+\begin{tcolorbox}[blanker, before skip=5pt, after skip = 5pt, colback=darkgray!5!white, colframe=darkgray!75!black, title={{\sffamily} \textbf{#1}}]
 }{
 \end{tcolorbox}}
 
@@ -120,7 +121,7 @@ innertopmargin=\topskip,
 }
 \mdfsetup{skipabove=\topskip , skipbelow=\topskip}
 \mdfdefinestyle{defistyle}{linecolor=darkgray, linewidth=2pt, roundcorner=15pt, frametitlebackgroundcolor=gray!40, frametitlefont=\bfseries, theoremtitlefont=\bfseries, innertopmargin=5pt}
-\mdtheorem[style=defistyle]{definition}{Definition}[section]
+\mdtheorem[style=defistyle, nobreak=true]{definition}{Definition}[section]
 
 
 

@@ -46,7 +46,7 @@
 \section{Introduction}\label{sec:intro}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads. 
 Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
-Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation i called a \textit{data race}. This is what makes the different executions possible.\\
+Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible.\\
 
 \begin{figure}[h]
 \centering
@@ -69,7 +69,7 @@ Since the language MCM determines the semantics of a program, developers need to
 The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to be respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM. 
 Essentially, the MCMs  determine which update to the shared memory is seen by which thread at what time.
 
-As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behaviour. 
+As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behavior. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
 Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs.
 The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language \todo{weitere Themen einfügen}. 
@@ -216,7 +216,7 @@ Later, models that are less restrictive like \textit{SC per Location} (also know
 
 In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext which includes all pairs of events that originate from different threads, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{align*}
 \langle cat\rangle &:= \langle constraint\rangle \mid \langle cat \rangle~ \langle cat\rangle \\
 \langle constraint \rangle &:= \texttt{acyclic } \langle rel \rangle \mid \texttt{irreflexive } \langle rel \rangle \mid \texttt{empty } \bangle{rel} \\
@@ -279,16 +279,16 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \begin{align*}
 \semsof{M} & := \semsof{\bangle{cat}} \\
 \semsof{\bangle{cat}_1~ \bangle{cat}_2} & := \semsof{\bangle{cat}_1} \cap \semsof{\bangle{cat}_2} \\
-\semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \bangle{rel}_X\} \\
-\semsof{\texttt{irreflexive}~ \bangle{rel}} &:= \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \bangle{rel}_X \} \\
+\semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \semsof{\bangle{rel}_X}\} \\
+\semsof{\texttt{irreflexive}~ \bangle{rel}} &:= \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \semsof{\bangle{rel}_X} \} \\
 \semsof{\texttt{acyclic}~ \bangle{rel}} &:= \semsof{\texttt{irreflexive}~ \bangle{rel}^+} \\
-\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \bangle{rel}_1 \text{ and } (e',e_2) \in \bangle{rel}_2\} \\
+\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \semsof{\bangle{rel}_1} \text{ and } (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
 \semsof{\bangle{rel}_1 \cup \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \cup \semsof{\bangle{rel}_2} \\
 \semsof{\bangle{rel}_1 \cap \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \cap \semsof{\bangle{rel}_2} \\
 \semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \setminus \semsof{\bangle{rel}_2} \\
-\semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \bangle{rel}\} \\
-\semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \bangle{rel}\} \\
-\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: (e,e_1), \dots ,(e_n,e') \in \bangle{rel}\} \\
+\semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \semsof{\bangle{rel}}\} \\
+\semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \semsof{\bangle{rel}}\} \\
+\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: (e,e_1), \dots ,(e_n,e') \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}?} &:= \semsof{\bangle{rel}} \cup \id \\
 \semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}?} \cup \semsof{\bangle{rel}^+} \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
@@ -296,6 +296,10 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \end{align*}
 \end{definition}
 
+\subsection{Notations}
+\begin{itemize}
+\item $R^n$ for $R.R.R. \dots$ ($n$ times)
+\end{itemize}
 
 \section{The Proof System} \label{sec:proofsys}
 In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
@@ -304,129 +308,190 @@ It is possible to have a branch start at a $false$ statement, which automaticall
 
 
 \subsection{Basic Rules}
-The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. 
+The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like unification there is only one version of each rule since they have the same effect. \\
+
 \begin{itemize}
+\item No operator:
+\begin{mathpar}
+\inferrule*[left=(reflexivity)]{true}{R \subseteq R} \and
+\inferrule*[left=(transitivity)]{R \subseteq S \\ S \subseteq T}{R \subseteq T} \and
+\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
+\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y}
+\end{mathpar}
 \item Unification $\cup$
 \begin{mathpar}
-\inferrule*{true}{R \cup R \subseteq R} \and
-\inferrule*{true}{R \subseteq R \cup R} \and
 \inferrule*{true}{R \subseteq R \cup S} \and 
-\inferrule*{true}{R \cup S \subseteq S} \and
-\inferrule*{true}{S \cup R \subseteq R \cup S} \and
-\inferrule*{R \subseteq S}{R \subseteq S \cup R'} \and
-\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and
-\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and
-\inferrule*{R \subseteq S \\ R' \subseteq S'}{R \cup R' \subseteq S \cup S'}
+\inferrule*{R \subseteq S}{R \cup S \subseteq S} \and
+\inferrule*{true}{S \cup R = R \cup S} \and
+\inferrule*{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
+\inferrule*{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
+\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
+%\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
+%\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R \cup R' \subseteq S \cup S'}} durch 1,2,weak und nochmal weak
 \end{mathpar}
 
 \item Intersection $\cap$
 \begin{mathpar}
-\inferrule*{true}{R \subseteq R \cap R} \and
-\inferrule*{true}{R \cap R \subseteq R} \and
 \inferrule*{true}{R \cap S \subseteq R} \and 
-\inferrule*{S \subseteq \0}{R \subseteq R \cap S} \and
-\inferrule*{true}{S \cap R \subseteq R \cap S} \and
-\inferrule*{R \subseteq S}{R \cap R' \subseteq S} \and
-\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and
-\inferrule*{R \subseteq S}{R \cap R' \subseteq S \cap R'} \and
-\inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}
+\inferrule*{R \subseteq S}{R \subseteq R \cap S} \and
+\inferrule*{true}{S \cap R = R \cap S} \and
+\inferrule*{R \subseteq S \cap S' \\ S' \subseteq T}{R \subseteq S \cap T} \and
+\inferrule*{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
+\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
+%\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
+%\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and durch 2 und con1
+%\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S \cap R'}} \and durch 1,con1,2,con1,1 und transitivität
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}} von der Regel vorher die Sachen plus einmal con1
 \end{mathpar}
 
-\item Concatenation $.$
+\item Concatenation $.$ (alles nicht invertible)
 \begin{mathpar}
-\inferrule*{\id \subseteq R}{R \subseteq R.R} \and 
-\inferrule*{\id \subseteq R}{R.R \subseteq R} \and
+\textcolor{red}{
+\inferrule*{R \subseteq \id}{R = R.R} \and 
+%\inferrule*{R \subseteq \id}{R.R \subseteq R} \and Redundant
 \inferrule*{\id \subseteq S}{R \subseteq S.R} \and
 \inferrule*{\id \subseteq S}{R \subseteq R.S} \and 
-\inferrule*{\id \subseteq R}{S.R \subseteq S} \and
-\inferrule*{\id \subseteq R}{R.S \subseteq S} \and
-\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and
-\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and
-\inferrule*{R \subseteq S \\ R' \subseteq \id}{R \subseteq S.R'} \and
-\inferrule*{R \subseteq S \\ R' \subseteq \id}{R \subseteq R'.S} \and
-\inferrule*{R \subseteq S}{R'.R \subseteq R'.S} \and
-\inferrule*{R \subseteq S}{R.R' \subseteq S.R'} \and
-\inferrule*{R \subseteq S \\ R' \subseteq S'}{R.R' \subseteq S.S'}
+\inferrule*{R \subseteq \id}{S.R \subseteq S} \and
+\inferrule*{R \subseteq \id}{R.S \subseteq S}} \and
+\inferrule*{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
+\inferrule*{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
+\inferrule*{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
+\inferrule*{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and per (4) und (con2)
+%\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and wie oben nur mit (5)
+%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq S.R'} \and (3) und (con2)
+%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq R'.S}} \and (2) und (con2)
+%\textcolor{red}{\inferrule*{R \subseteq S}{R'.R \subseteq R'.S} \and per (ref) und (con1)
+%\inferrule*{R \subseteq S}{R.R' \subseteq S.R'} \and analog
+%\inferrule*{R \subseteq S \\ R' \subseteq S'}{R.R' \subseteq S.S'}} per (ref) und zweimal (con1)
 %\inferrule*{R.R \subseteq R}{R^+ \subseteq R} 
 \end{mathpar}
 
-\item Difference $\setminus$
-\begin{mathpar}
-\inferrule*{true}{R \setminus R \subseteq R} \and
-\inferrule*{true}{R\setminus R \subseteq \0} \and
-\inferrule*{R \subseteq \0}{R \subseteq R \setminus R} \and
-\inferrule*{true}{S \setminus R \subseteq S} \and
-\inferrule*{R \subseteq \0}{R \setminus S \subseteq S} \and
-\inferrule*{S \subseteq \0}{R \subseteq R \setminus S} \and
-\inferrule*{R \subseteq \0}{R \subseteq S \setminus R} \and
-\inferrule*{R \subseteq S}{R \setminus S \subseteq S \setminus R} \and
-\inferrule*{R \subseteq S}{R \setminus R' \subseteq S} \and
-\inferrule*{R \subseteq R' \\ R \cap S \subseteq \0}{R \subseteq R' \setminus S} \and
-\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'} \and
-\inferrule*{S \subseteq R}{R' \setminus R \subseteq R' \setminus S} \and
-\inferrule*{R \subseteq S \setminus S'}{R \setminus R' \subseteq S \setminus S'}
-\end{mathpar}
+%\item Difference $\setminus$ Ist wahrscheinlich nicht möglich, deshalb weglassen
+%\begin{mathpar}
+%\inferrule*{true}{R \setminus R \subseteq S} \and
+%\inferrule*{R \subseteq \0}{R \subseteq R \setminus R} \and
+%\inferrule*{true}{S \setminus R \subseteq S} \and
+%\inferrule*{R \subseteq S}{R \setminus S \subseteq S} \and
+%\textcolor{red}{\inferrule*{S \subseteq \0 \text{ oder R ist leere Rel}}{R \subseteq R \setminus S}} \and
+%\inferrule*{R \subseteq \0}{R \subseteq S \setminus R} \and
+%\inferrule*{R \subseteq S}{R \setminus S \subseteq S \setminus R} \and
+%\textcolor{red}{\inferrule*{R \subseteq S}{R \setminus R' \subseteq S}} \and
+%\inferrule*{R \subseteq R' \\ R \cap S \subseteq \0}{R \subseteq R' \setminus S} \and
+%\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'} \and
+%\inferrule*{S \subseteq R}{R' \setminus R \subseteq R' \setminus S} \and
+%\textcolor{red}{\inferrule*{R \subseteq S \setminus S'}{R \setminus R' \subseteq S \setminus S'}}
+%\end{mathpar}
 
 
-\item Transitive Closure $^+$ \todo{gibts für die erste Regel was schlaueres?}
+\item Transitive Closure $^+$
 \begin{mathpar}
-\inferrule*{R \subseteq \id}{R^+ \subseteq R} \and
-\inferrule*{true}{R \subseteq R^+} \and
-\inferrule*{}{R^+ \subseteq S} \and
-\inferrule*{R \subseteq S}{R \subseteq S^+} \and
-\inferrule*{R \subseteq S}{R^+ \subseteq S^+}
+%\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
+\textcolor{red}{
+\inferrule*{R \subseteq S}{R \subseteq S^+}} \and
+\inferrule*{R \subseteq S^+}{R^n \subseteq S^+ , n \in \N} \and
+\inferrule*{R \subseteq S^+ \\ S \subseteq T}{R \subseteq T^+} \and
+\inferrule*{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S}
 \end{mathpar}
 
 \item Reflexive Closure $?$
 \begin{mathpar}
 \inferrule*{true}{\id \subseteq R?} \and
-\inferrule*{}{R? \subseteq R} \and
-\inferrule*{true}{R \subseteq R?} \and
-\inferrule*{}{R? \subseteq S} \and
+\inferrule*{\id \subseteq R}{R? \subseteq R} \and
 \inferrule*{R \subseteq S}{R \subseteq S?} \and
-\inferrule*{R \subseteq S}{R? \subseteq S?}
+%\inferrule*{R \subseteq S \\ \id \subseteq S}{R? \subseteq S} \and durch (2) und (con)
+%\inferrule*{R \subseteq S}{R? \subseteq S?} \and durch (ref) und (con)
+\inferrule*{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
+\inferrule*{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} 
 \end{mathpar}
 
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
-\inferrule*{}{R^* \subseteq R} \and
-\inferrule*{true}{R \subseteq R^*} \and 
+\inferrule*{R \subseteq S}{R \subseteq S^*} \and
 \inferrule*{true}{\id \subseteq R^*} \and  
 \inferrule*{true}{R^+ \subseteq R^*} \and
 \inferrule*{true}{R? \subseteq R^*} \and
-\inferrule*{}{R^* \subseteq S} \and
-\inferrule*{R \subseteq S}{R \subseteq S^*} \and
-\inferrule*{R \subseteq S}{R^* \subseteq S^*}
+\inferrule*{\id \subseteq S \\ R^+ \subseteq S}{R^* \subseteq S} \and
+%\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
+\inferrule*{R \subseteq S^* \\ S \subseteq T}{R \subseteq T^*} \and
+\inferrule*{R^* \subseteq S \\ T \subseteq R}{T^* \subseteq S}
 \end{mathpar}
 
 
-\item Inverse $^{-1}$
-\begin{mathpar}
-\inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
-\inferrule*{}{R^{-1} \subseteq R} \and
-\inferrule*{}{R \subseteq R^{-1}} \and
-\inferrule*{}{R^{-1} \subseteq S} \and
-\inferrule*{}{R \subseteq S^{-1}} \and
-\inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
-\end{mathpar}
+%\item Inverse $^{-1}$ Braucht nicht, weil man ^-1 immer reinziehen kann
+%\begin{mathpar}
+%\inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
+%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R^{-1} \subseteq R} \and
+%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R \subseteq R^{-1}} \and
+%\inferrule*{}{R^{-1} \subseteq S} \and
+%\inferrule*{}{R \subseteq S^{-1}} \and
+%\inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
+%\end{mathpar}
 
 \item Complement $\sim$
 \begin{mathpar}
-\inferrule*{true}{R~ \cap \sim R \subseteq 0} \and
+\inferrule*{true}{\sim \sim R = R} \and
 \inferrule*{R \subseteq S}{R~ \cap \sim S \subseteq 0} \and
-\inferrule*{false}{\sim R \subseteq R} \and
-\inferrule*{false}{R \subseteq \sim R} \and
-\inferrule*{}{\sim R \subseteq S} \and
-\inferrule*{}{R \subseteq \sim S} \and
-\inferrule*{R \subseteq S}{\sim S \subseteq \sim R}
+%\inferrule*{false}{\sim R \subseteq R} \and
+%\inferrule*{false}{R \subseteq \sim R} \and
+%\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
+\inferrule*{R \cap S \subseteq \0}{R \subseteq \sim S} \and
+\inferrule*{R \subseteq S}{\sim S \subseteq \sim R} \and
+\inferrule*{\sim R \subseteq S \\ R \subseteq T}{\sim T \subseteq S} \and
+\inferrule*{R \subseteq \sim S \\ T \subseteq S}{R \subseteq \sim T} \and
+\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
+\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
 \end{mathpar}
 \end{itemize}
+
+\subsection{Inductive Rules}
+For proving an inclusion of the form $R^+ \subseteq S$ it needs to be shown that $\forall n \in \N: R^n \subseteq S$. Since we cannot deduce from $R^n \subseteq S$ that $R^{n+1} \subseteq S$, standard induction won't work here. There needs to be a procedure to determine or approximate the least fixed point of $R^n$.
+
+\subsection{Relation-specific Rules}
+Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
+\begin{itemize}
+\item program-order \po
+\begin{mathpar}
+\inferrule*{true}{\po \subseteq E \times E} \and
+\inferrule*{true}{\textsf{ppo} \subseteq \po}
+\end{mathpar}
+
+\item read-from \rf
+\begin{mathpar}
+\inferrule*{true}{\rf \subseteq W \times R} \and
+\inferrule*{true}{\fr = \rf^{-1} . \co} \and
+\inferrule*{true}{\co = \rf .\fr} \and
+\inferrule*{true}{\textsf{com} = \co \cup \rf \cup \fr}
+\end{mathpar}
+
+\item identity \id
+\begin{mathpar}
+\inferrule*{true}{\id \subseteq E \times E}
+\end{mathpar}
+
+\item same location \loc
+\begin{mathpar}
+\inferrule*{true}{\loc \subseteq E \times E}
+\end{mathpar}
+
+\item different threads \ext
+\begin{mathpar}
+\inferrule*{true}{\ext \subseteq E \times E}
+\end{mathpar}
+
+\item read-modify-write \rmw
+\begin{mathpar}
+\inferrule*{true}{\rmw \subseteq E \times E}
+\end{mathpar}
+\end{itemize}
+
 
 \subsection{Eliminating the Constraint}
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}
-For any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$ when the constraint is the same for each relation.
+For any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$ if the constraint is the same for each relation.
 \end{lemma}
 \begin{proof}
 We can prove this for each of the constraints. 
@@ -448,7 +513,7 @@ R_1 \subseteq R_2
 & \impl & \semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}
 \end{eqnarray*}
 
-For the \texttt{acyclicity} constraint:
+\noindent For the \texttt{acyclicity} constraint:
 \begin{eqnarray*}
 R_1 \subseteq R_2 
 & \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X^+) \\
@@ -498,7 +563,7 @@ For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt
 
 
 \pagebreak
-\section{Conclusion}\label{sec:fazit}
+\section{Conclusion}\label{sec:conclusion}
 
 
 \pagebreak
