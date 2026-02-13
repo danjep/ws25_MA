@@ -18,8 +18,9 @@
 
 %\includepdf{includes/Titelseite/build/title.pdf}
 
-\title{Task for the Master's Thesis: \\ An Inclusion-based Proof System for Memory Consistency Models}
+\title{Task for the Master's Thesis: \\ \textbf{An Inclusion-based Proof System for Memory Consistency Models}}
 \author{Danje Petersen}
+\date{\small January 19, 2026}
 
 \maketitle
 %\noindent \begin{Huge}\textbf{Aufgabenstellung zur Masterarbeit}\end{Huge} \\
@@ -98,7 +99,16 @@ This master's thesis will be about the issue of whether the proof system in \cit
 The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current one. Even though the proofs might not be infinite, they can still get very large. 
 The task for this master's thesis is to replace this cyclic proof system with one that directly handles inclusions between relations and does not resolve them to event-level. Additionally the new proof system is supposed to be neither cyclic nor infinite, while the underlying objective is to create smaller proofs.
 The aim of the thesis is to create a proof system that works reasonably well and ideally prove it's completeness and soundness and extend it to include more than rational CAT.
-While being able to automatically verify MCMs would be optimal, even if completeness or decidability cannot be shown, semi-automatic proofs are still of interest.
+While being able to automatically verify MCMs would be optimal, even if completeness or decidability cannot be shown, semi-automatic proofs are still of interest. \\
+
+\vfill
+
+%\noindent Mit meiner Unterschrift bestätige ich, die Aufgabenstellung der Masterarbeit so wie sie in diesem Dokument steht zu akzeptieren und die Masterarbeit danach zu verfassen. 
+%\noindent With my signature, i confirm that i know the task for this master's thesis and accept to write the thesis according to this document.\\
+%\vspace*{3cm} \\
+
+\noindent Braunschweig, January 19, 2026 \hfill\rule{5cm}{.4pt}\par
+\noindent \hfill Danje Petersen
 
 \pagebreak
 

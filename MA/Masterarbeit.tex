@@ -263,7 +263,7 @@ This master's thesis will be about the issue of whether the proof system in \cit
 
 \section{Preliminaries}
 \subsection{Executions}
-Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run.
+Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
 \begin{definition}[Execution]
 An execution $X$ is the following tuple:
 \[X := (E_X,\po_X \subseteq E_X \times E_X, \rf_X \subseteq W_X \times R_X, IW_X)\]  
@@ -273,9 +273,9 @@ Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X
 
 
 \subsection{Semantics} \label{sec:semantics}
-The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows.
+The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows. 
 \begin{definition}[Semantics] \label{def:sem}
-Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq E \times E$ be relations.
+Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq E \times E$ be relations. The semantics are defined as follows:
 \begin{align*}
 \semsof{M} & := \semsof{\bangle{cat}} \\
 \semsof{\bangle{cat}_1~ \bangle{cat}_2} & := \semsof{\bangle{cat}_1} \cap \semsof{\bangle{cat}_2} \\
@@ -304,7 +304,7 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \section{The Proof System} \label{sec:proofsys}
 In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
 Since there may be multiple branches of reasoning it is important to clarify that every branch needs to start at $true$ in order to verify the inclusion.
-It is possible to have a branch start at a $false$ statement, which automatically disproves the inclusion. 
+Additionally to the rules that model logical implications between relational terms, we need common transformations like commutativity of the unification, we need the definitions of derived relations that use only the base relations and we need rules to eliminate the constraints. 
 
 
 \subsection{Basic Rules}
@@ -315,17 +315,18 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 \inferrule*[left=(reflexivity)]{true}{R \subseteq R} \and
 \inferrule*[left=(transitivity)]{R \subseteq S \\ S \subseteq T}{R \subseteq T} \and
-\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
-\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y}
+%\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
+%\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y} Für jeden Operator hinzugefügt
 \end{mathpar}
 \item Unification $\cup$
 \begin{mathpar}
-\inferrule*{true}{R \subseteq R \cup S} \and 
-\inferrule*{R \subseteq S}{R \cup S \subseteq S} \and
-\inferrule*{true}{S \cup R = R \cup S} \and
-\inferrule*{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
-\inferrule*{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
-\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
+\inferrule*[left=($\cup_{2R}$)]{true}{R \subseteq R \cup S} \and 
+\inferrule*[left=($\cup_{2L}$)]{R \subseteq S}{R \cup S \subseteq S} \and
+\inferrule*[left=($\cup_{3R}$)]{R \subset S}{R \subseteq S \cup T} \and
+%\inferrule*{true}{S \cup R = R \cup S} \and
+\inferrule*[left=($\cup_{weak}$)]{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
+\inferrule*[left=($\cup_{strength}$)]{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
+%\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
 %\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
 %\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
 %\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R \cup R' \subseteq S \cup S'}} durch 1,2,weak und nochmal weak
@@ -333,31 +334,32 @@ The most basic rules are those which are always true for any relations. We list 
 
 \item Intersection $\cap$
 \begin{mathpar}
-\inferrule*{true}{R \cap S \subseteq R} \and 
-\inferrule*{R \subseteq S}{R \subseteq R \cap S} \and
-\inferrule*{true}{S \cap R = R \cap S} \and
-\inferrule*{R \subseteq S \cap S' \\ S' \subseteq T}{R \subseteq S \cap T} \and
-\inferrule*{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
-\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
+\inferrule*[left=($\cap_{2L}$)]{true}{R \cap S \subseteq R} \and 
+\inferrule*[left=($\cap_{2R}$)]{R \subseteq S}{R \subseteq R \cap S} \and
+%\inferrule*{true}{S \cap R = R \cap S} \and
+\inferrule*[left=($\cap_{weak}$)]{R \subseteq S \cap S' \\ S' \subseteq T}{R \subseteq S \cap T} \and
+\inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
+%\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
 %\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
 %\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and durch 2 und con1
-%\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S \cap R'}} \and durch 1,con1,2,con1,1 und transitivität
+%\textcolor{red}{\inferrule*[left=($\cap_{3LR}$)]{R \subseteq S}{R \cap R' \subseteq S \cap R'}} \and durch 1,con1,2,con1,1 und transitivität
 %\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}} von der Regel vorher die Sachen plus einmal con1
 \end{mathpar}
 
-\item Concatenation $.$ (alles nicht invertible)
+\item Concatenation $.$ 
 \begin{mathpar}
 \textcolor{red}{
-\inferrule*{R \subseteq \id}{R = R.R} \and 
+\inferrule*[left=($._{1}$)]{R \subseteq \id}{R = R.R} \and 
 %\inferrule*{R \subseteq \id}{R.R \subseteq R} \and Redundant
-\inferrule*{\id \subseteq S}{R \subseteq S.R} \and
-\inferrule*{\id \subseteq S}{R \subseteq R.S} \and 
-\inferrule*{R \subseteq \id}{S.R \subseteq S} \and
-\inferrule*{R \subseteq \id}{R.S \subseteq S}} \and
-\inferrule*{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
-\inferrule*{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
-\inferrule*{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
-\inferrule*{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
+\inferrule*[left=($._{2Rl}$)]{\id \subseteq S}{R \subseteq S.R} \and
+\inferrule*[left=($._{2Rr}$)]{\id \subseteq S}{R \subseteq R.S}} \and 
+\textcolor{red}{\inferrule*[left=($._{2Lr}$)]{R \subseteq \id}{S.R \subseteq S} \and
+\inferrule*[left=($._{2Ll}$)]{R \subseteq \id}{R.S \subseteq S}} \and
+\inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
+\inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
+\inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
+\inferrule*[left=($._{strengthL}$)]{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
+%\inferrule*{true}{R.(S\cup S') = R.S \cup R.S'}
 %\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and per (4) und (con2)
 %\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and wie oben nur mit (5)
 %\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq S.R'} \and (3) und (con2)
@@ -388,34 +390,39 @@ The most basic rules are those which are always true for any relations. We list 
 \item Transitive Closure $^+$
 \begin{mathpar}
 %\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
+%\inferrule*{true}{R.R^* = R^+} \and
 \textcolor{red}{
-\inferrule*{R \subseteq S}{R \subseteq S^+}} \and
-\inferrule*{R \subseteq S^+}{R^n \subseteq S^+ , n \in \N} \and
-\inferrule*{R \subseteq S^+ \\ S \subseteq T}{R \subseteq T^+} \and
-\inferrule*{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S}
+\inferrule*[left=($+_{R}$)]{R \subseteq S}{R \subseteq S^+}} \and
+\inferrule*[left=($+_{LR}$)]{R \subseteq S^+}{R^+ \subseteq S^+} \and
+\inferrule*[left=($+_{weak}$)]{R \subseteq S^+ \\ S \subseteq T}{R \subseteq T^+} \and
+\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
+\inferrule*[left=($+_L$)]{R \subseteq S \\ R.S \subseteq S}{R^+ \subseteq S}
 \end{mathpar}
 
 \item Reflexive Closure $?$
 \begin{mathpar}
-\inferrule*{true}{\id \subseteq R?} \and
-\inferrule*{\id \subseteq R}{R? \subseteq R} \and
-\inferrule*{R \subseteq S}{R \subseteq S?} \and
+\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
+\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
+\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
 %\inferrule*{R \subseteq S \\ \id \subseteq S}{R? \subseteq S} \and durch (2) und (con)
 %\inferrule*{R \subseteq S}{R? \subseteq S?} \and durch (ref) und (con)
-\inferrule*{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
-\inferrule*{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} 
+\inferrule*[left=($?_{strength}$)]{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
+\inferrule*[left=($?_{weak}$)]{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} \and
+%\inferrule*{true}{R? \cup S? = (R \cup S) ?} \and
+%\inferrule*{true}{R? \cap S? = (R \cap S)?} \and
+%\inferrule*{true}{R?.S? = R? \cup S? \cup (R.S) ?}
 \end{mathpar}
 
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
-\inferrule*{R \subseteq S}{R \subseteq S^*} \and
-\inferrule*{true}{\id \subseteq R^*} \and  
-\inferrule*{true}{R^+ \subseteq R^*} \and
-\inferrule*{true}{R? \subseteq R^*} \and
-\inferrule*{\id \subseteq S \\ R^+ \subseteq S}{R^* \subseteq S} \and
+\inferrule*[left=($*_{2R}$)]{R \subseteq S}{R \subseteq S^*} \and
+\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq R^*} \and  
+\inferrule*[left=($+*$)]{true}{R^+ \subseteq R^*} \and
+\inferrule*[left=($?*$)]{true}{R? \subseteq R^*} \and
+\inferrule*[left=($*_{2L}$)]{\id \subseteq S \\ R^+ \subseteq S}{R^* \subseteq S} \and
 %\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
-\inferrule*{R \subseteq S^* \\ S \subseteq T}{R \subseteq T^*} \and
-\inferrule*{R^* \subseteq S \\ T \subseteq R}{T^* \subseteq S}
+\inferrule*[left=($*_{weak}$)]{R \subseteq S^* \\ S \subseteq T}{R \subseteq T^*} \and
+\inferrule*[left=($*_{strength}$)]{R^* \subseteq S \\ T \subseteq R}{T^* \subseteq S} \and
 \end{mathpar}
 
 
@@ -431,30 +438,52 @@ The most basic rules are those which are always true for any relations. We list 
 
 \item Complement $\sim$
 \begin{mathpar}
-\inferrule*{true}{\sim \sim R = R} \and
-\inferrule*{R \subseteq S}{R~ \cap \sim S \subseteq 0} \and
+%\inferrule*{true}{\sim \sim R = R} \and
+\inferrule*[left=($\sim_{\cap 2R}$)]{R \subseteq S}{R~ \cap \sim S \subseteq 0} \and
 %\inferrule*{false}{\sim R \subseteq R} \and
 %\inferrule*{false}{R \subseteq \sim R} \and
 %\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
-\inferrule*{R \cap S \subseteq \0}{R \subseteq \sim S} \and
-\inferrule*{R \subseteq S}{\sim S \subseteq \sim R} \and
-\inferrule*{\sim R \subseteq S \\ R \subseteq T}{\sim T \subseteq S} \and
-\inferrule*{R \subseteq \sim S \\ T \subseteq S}{R \subseteq \sim T} \and
-\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
-\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
+\inferrule*[left=($\sim_{2R}$)]{R \cap S \subseteq \0}{R \subseteq \sim S} \and
+\inferrule*[left=($\sim_{2LR}$)]{R \subseteq S}{\sim S \subseteq \sim R} \and
+\inferrule*[left=($\sim_{strength}$)]{\sim R \subseteq S \\ R \subseteq T}{\sim T \subseteq S} \and
+\inferrule*[left=($\sim_{weak}$)]{R \subseteq \sim S \\ T \subseteq S}{R \subseteq \sim T} \and
+%\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
+%\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
 \end{mathpar}
 \end{itemize}
 
-\subsection{Inductive Rules}
-For proving an inclusion of the form $R^+ \subseteq S$ it needs to be shown that $\forall n \in \N: R^n \subseteq S$. Since we cannot deduce from $R^n \subseteq S$ that $R^{n+1} \subseteq S$, standard induction won't work here. There needs to be a procedure to determine or approximate the least fixed point of $R^n$.
+We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations.
+\begin{lemma}\label{lem:inversion}
+Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix.
+\end{lemma}
+
+\subsection{Classic transformations}
+\begin{itemize}
+\item $R \cup S = S \cup R$, 
+\item $R \cup (S \cup S') = R \cup S \cup S'$, 
+\item $R \cap S = S \cap R$, 
+\item $R \cap (S \cap S') = R \cap S \cap S'$, 
+\item $R \cup (S \cap S') = (R \cup S) \cap (R \cup S')$,
+\item $R \cap (S \cup S') = (R \cap S) \cup (R \cap S')$,
+\item $R.(S \cup S') = R.S \cup R.S'$,
+\item $R.(S \cap S') = R.S \cap R.S'$,
+\item $R? \cup S? = (R \cup S)?$,
+\item $R? \cap S? = (R \cap S)?$,
+\item $R?.S? = R? \cup S? \cup (R.S)?$,
+\item $\sim \sim R = R$,
+\item $\sim R \cup \sim S = \sim (R\cap S)$,
+\item $\sim (R \cup S) = \sim R \cap \sim S$,
+\item $R^+ = R.R^*$,
+\item $R^*= \id \cup R^+$
+\end{itemize}
 
 \subsection{Relation-specific Rules}
 Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
 \begin{itemize}
 \item program-order \po
 \begin{mathpar}
-\inferrule*{true}{\po \subseteq E \times E} \and
-\inferrule*{true}{\textsf{ppo} \subseteq \po}
+\inferrule*{true}{[E]~ \po~ [E]} \and
+\inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po}
 \end{mathpar}
 
 \item read-from \rf
@@ -467,22 +496,22 @@ Memory Consistency Models are defined on a group of relations. For each of them 
 
 \item identity \id
 \begin{mathpar}
-\inferrule*{true}{\id \subseteq E \times E}
+\inferrule*{true}{[E]~\id~ [E]}
 \end{mathpar}
 
 \item same location \loc
 \begin{mathpar}
-\inferrule*{true}{\loc \subseteq E \times E}
+\inferrule*{true}{[E]~\loc~ [E]}
 \end{mathpar}
 
 \item different threads \ext
 \begin{mathpar}
-\inferrule*{true}{\ext \subseteq E \times E}
+\inferrule*{true}{[E]~\ext~ [E]}
 \end{mathpar}
 
 \item read-modify-write \rmw
 \begin{mathpar}
-\inferrule*{true}{\rmw \subseteq E \times E}
+\inferrule*{true}{[E]~\rmw~ [E]}
 \end{mathpar}
 \end{itemize}
 
@@ -573,7 +602,60 @@ For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt
 \pagebreak
 
 \begin{appendix}
-\addcontentsline{toc}{part}{Anhang}
+\addcontentsline{toc}{part}{Appendix}
+\section{Proof of \Cref{lem:inversion}}
+\begin{lemma}
+Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$.
+\end{lemma}
+\begin{proof}
+When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation.
+\begin{align*}
+\semsof{(R \cup S)^{-1}} &=& \{(e,e') \mid (e',e) \in R \cup S\} \\
+&=& \{(e,e') \mid (e',e) \in R\} \cup \{(e,e') \mid (e',e) \in R\} \\
+&=& \semsof{R^{-1}} \cup \semsof{S^{-1}} \\
+&=& \semsof{R^{-1} \cup S^{-1}}
+\end{align*}
+\begin{align*}
+\semsof{(R \cap S)^{-1}} &=& \{(e,e') \mid (e',e) \in R\cap S\} \\
+&=& \{(e,e') \mid (e',e) \in R\} \cap \{(e,e')\mid (e',e) \in S\} \\
+&=& \semsof{R^{-1}} \cap \semsof{S^{-1}} \\
+&=& \semsof{R^{-1} \cap S^{-1}}
+\end{align*}
+\begin{align*}
+\semsof{(R.S)^{-1}} &=& \{(e,e'') \mid (e'',e) \in (R.S)\} \\
+&=& \{(e,e'') \mid \exists e': (e'',e') \in R, (e',e) \in S \} \\
+&=& \{(e,e'') \mid \exists e': (e',e'') \in R^{-1}, (e,e') \in S^{-1}\} \\
+&=& \semsof{R^{-1}.S^{-1}}
+\end{align*}
+\begin{align*}
+\semsof{(\sim R)^{-1}} &=& \{(e,e') \mid (e',e) \in~ \sim R\} \\
+&=& \{(e,e') \mid (e',e) \notin R\} \\
+&=& \{(e,e') \notin R^{-1}\} \\
+&=& \semsof{\sim (R^{-1})}
+\end{align*}
+\begin{align*}
+\semsof{(R^+)^{-1}} &=& \{(e,e') \mid (e',e) \in R^+\} \\
+&=& \{(e,e') \mid \exists n \in \N: (e',e_1),\dots ,(e_n,e) \in R\} \\
+&=& \{(e,e') \mid \exists n \in \N: (e,e_n),\dots ,(e_1,e') \in R^{-1}\} \\
+&=& \semsof{(R^{-1})^+}
+\end{align*}
+\begin{align*}
+\semsof{(R?)^{-1}} &=& \{(e,e') \mid (e',e) \in R?\} \\
+&=& \{(e,e') \mid (e',e) \in R \cup \id \} \\
+&=& \{(e,e') \in R^{-1} \cup \id^{-1}\} \\
+&=& \{(e,e') \in R^{-1} \cup \id\} \\
+&=& \{(e,e') \in (R^{-1})?\} \\
+&=& \semsof{(R^{-1})?}
+\end{align*}
+\begin{align*}
+\semsof{(R^*)^{-1}} &=& \{(e,e') \mid (e',e) \in \id \cup R^+\} \\
+&=& \{(e,e') \mid (e',e) \in \id\} \cup \{(e,e') \mid (e',e) \in R^+\} \\
+&=& \{(e,e') \in \id^{-1}\} \cup \{(e,e') \in (R^+)^{-1}\} \\
+&=& \{(e,e') \in \id \cup (R^{-1})^+ \} \\
+&=& \{(e,e') \in (R^{-1})^*\} \\
+&=& \semsof{(R^{-1})^*}
+\end{align*}
+\end{proof}
 
 
 
