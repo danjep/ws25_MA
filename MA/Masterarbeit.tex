@@ -322,7 +322,7 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 \inferrule*[left=($\cup_{2R}$)]{true}{R \subseteq R \cup S} \and 
 \inferrule*[left=($\cup_{2L}$)]{R \subseteq S}{R \cup S \subseteq S} \and
-\inferrule*[left=($\cup_{3R}$)]{R \subset S}{R \subseteq S \cup T} \and
+\inferrule*[left=($\cup_{3R}$)]{R \subseteq S}{R \subseteq S \cup T} \and
 %\inferrule*{true}{S \cup R = R \cup S} \and
 \inferrule*[left=($\cup_{weak}$)]{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
 \inferrule*[left=($\cup_{strength}$)]{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
@@ -458,62 +458,81 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 \subsection{Classic transformations}
-\begin{itemize}
-\item $R \cup S = S \cup R$, 
-\item $R \cup (S \cup S') = R \cup S \cup S'$, 
-\item $R \cap S = S \cap R$, 
-\item $R \cap (S \cap S') = R \cap S \cap S'$, 
-\item $R \cup (S \cap S') = (R \cup S) \cap (R \cup S')$,
-\item $R \cap (S \cup S') = (R \cap S) \cup (R \cap S')$,
-\item $R.(S \cup S') = R.S \cup R.S'$,
-\item $R.(S \cap S') = R.S \cap R.S'$,
-\item $R? \cup S? = (R \cup S)?$,
-\item $R? \cap S? = (R \cap S)?$,
-\item $R?.S? = R? \cup S? \cup (R.S)?$,
-\item $\sim \sim R = R$,
-\item $\sim R \cup \sim S = \sim (R\cap S)$,
-\item $\sim (R \cup S) = \sim R \cap \sim S$,
-\item $R^+ = R.R^*$,
-\item $R^*= \id \cup R^+$
-\end{itemize}
+For common set theoretic operators like $\cup$ and $\cap$ there exist commonly known rules like distributivity and commutativity. To incorporate the capabilities of those rules, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
+\begin{mathpar}
+\inferrule*[Left=($\cup_{comm}$)]{\Gamma[R\cup S]}{\Gamma[S \cup R]} \and
+\inferrule*[left=($\cup_{dist}$)]{\Gamma[R \cup S \cup S']}{\Gamma[R \cup (S \cup S')]} \and
+\inferrule*[left=($\cap_{comm}$)]{\Gamma[R \cap S]}{\Gamma[S \cap R]} \and
+\inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[R \cup (S \cap S')]}{\Gamma[(R \cup S) \cap (R \cup S')]} \and
+\inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[R \cap (S \cup S')]}{\Gamma[(R \cap S) \cup (R \cap S')]} \and
+\inferrule*[left=($\cap_{dist})$)]{\Gamma[R \cap S \cap S']}{\Gamma[R \cap (S \cap S')]} \and
+\inferrule*[left=($._{\cup dist}$)]{\Gamma[R.S \cup R.S']}{\Gamma[R.(S \cup S')]} \and
+\inferrule*[left=($._{\cap dist}$)]{\Gamma[R.S \cap R.S']}{\Gamma[R.(S \cap S')]} \and
+\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
+\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
+\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
+\inferrule*[left=($\sim$)]{\Gamma[R]}{\Gamma[\sim \sim R]} \and
+\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sim R \cup \sim S]}{\sim (R \cap S)} \and
+\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sim R \cap \sim S]}{\Gamma[\sim (R \cup S)]} \and
+\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
+\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{R^*} 
+\end{mathpar}
+
+All of these rules are invertible and can be applied in reverse.
+
+\subsubsection{Example}
+\begin{mathpar}
+\inferrule*[left=($*_{2L}$)]{
+\inferrule*[left=($*$)]{
+		\inferrule*[left=($\cup_{2R}$)]{true}{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}{\id \subseteq (aa)^* \cup a(aa)^*}
+		\\
+		\textcolor{teal}{a^+\subseteq (aa)^* \cup a(aa)^*}}
+		{a^* \subseteq (aa)^* \cup a(aa)^*}
+\end{mathpar}
+
+\begin{mathpar} \small
+	\inferrule*[right=($+_L$)]{
+		\inferrule*[left=($\cup_{3R}$)]{
+			\inferrule*[left=($._{2Rr}$)]{
+				\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq (aa)^*}}
+			{a \subseteq a.(aa)^*}}
+		{a \subseteq (aa)^* \cup a(aa)^*} 
+		\\
+		\inferrule*[right=($._{\cup dist}$)]{
+			\inferrule*[right=\textcolor{red}{($\cup_{3RL}$)}]{
+				\inferrule*[right=($+$)]{
+					\inferrule*[right=($+*$)]{true}{(aa)^+ \subseteq (aa)^*}}
+				{aa(aa)^* \subseteq (aa)^*}}
+			{a(aa)^* \cup aa(aa)^* \subseteq (aa)^* \cup a(aa)^*}}
+		{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}}
+	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
+\end{mathpar}
 
 \subsection{Relation-specific Rules}
 Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
-\begin{itemize}
-\item program-order \po
+
 \begin{mathpar}
-\inferrule*{true}{[E]~ \po~ [E]} \and
-\inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po}
+\inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
+\inferrule*[left=(\rf)]{true}{\rf \subseteq \loc} \and
+\inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
+\inferrule*[left=(\loc)]{true}{\loc^{-1} \subseteq \loc} \and
+\inferrule*[left=(\ext)]{true}{\ext^{-1} \subseteq \ext}
 \end{mathpar}
 
-\item read-from \rf
+The base relations \id, \loc~ and \ext~ are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too.
+%Ein paar Definitionen:
 \begin{mathpar}
-\inferrule*{true}{\rf \subseteq W \times R} \and
-\inferrule*{true}{\fr = \rf^{-1} . \co} \and
-\inferrule*{true}{\co = \rf .\fr} \and
-\inferrule*{true}{\textsf{com} = \co \cup \rf \cup \fr}
+%\inferrule*{true}{[E]~ \po~ [E]} \and
+%\inferrule*{true}{\rf \subseteq W \times R} \and
+%\inferrule*{true}{\fr = \rf^{-1} . \co} \and
+%\inferrule*{true}{\co = \rf .\fr} \and
+%\inferrule*{true}{\textsf{com} = \co \cup \rf \cup \fr} \and
+%\inferrule*{true}{[E]~\id~ [E]} \and
+%\inferrule*{true}{[E]~\loc~ [E]} \and
+%\inferrule*{true}{[E]~\ext~ [E]} \and
+%\inferrule*{true}{[E]~\rmw~ [E]}
 \end{mathpar}
 
-\item identity \id
-\begin{mathpar}
-\inferrule*{true}{[E]~\id~ [E]}
-\end{mathpar}
-
-\item same location \loc
-\begin{mathpar}
-\inferrule*{true}{[E]~\loc~ [E]}
-\end{mathpar}
-
-\item different threads \ext
-\begin{mathpar}
-\inferrule*{true}{[E]~\ext~ [E]}
-\end{mathpar}
-
-\item read-modify-write \rmw
-\begin{mathpar}
-\inferrule*{true}{[E]~\rmw~ [E]}
-\end{mathpar}
-\end{itemize}
 
 
 \subsection{Eliminating the Constraint}
@@ -559,14 +578,14 @@ This lemma generates the following three rules:
 
 Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
 
-\begin{lemma}
+\begin{lemma}\label{lem:irracy}
 For a relation $R$, it holds that $\semsof{\texttt{irreflexive}~ R^+} = \semsof{\texttt{acyclic}~ R}$.
 \end{lemma}
 \begin{proof}
 This is given via the \Cref{def:sem} of $\semsof{\texttt{acyclic}~ \bangle{rel}}$.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lem:emptyirr}
 For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt{irreflexive}~ R.R^-1}$.
 \end{lemma}
 \begin{proof} This can equally be proven using \Cref{def:sem}.
@@ -578,7 +597,7 @@ For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt
 \end{eqnarray*}
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lem:emptyacy}
 For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt{acyclic}~ R \cup R^{-1}}$.
 \end{lemma}
 \begin{proof}
@@ -590,6 +609,13 @@ For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt
 \end{eqnarray*}
 \end{proof}
 
+From the \cref{lem:irracy,lem:emptyirr,lem:emptyacy} stem the following three rules:
+\begin{mathpar}
+\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ R^+}}{\semsof{\texttt{acyclic}~ R}} \and
+\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ R.R^{-1}}}{\semsof{\texttt{empty}~ R}} \and
+\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ R\cup R^{-1}}}{\semsof{\texttt{empty}~ R}}
+\end{mathpar}
+These will be needed to eliminate the constraint from the term.
 
 \pagebreak
 \section{Conclusion}\label{sec:conclusion}
@@ -603,10 +629,9 @@ For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt
 
 \begin{appendix}
 \addcontentsline{toc}{part}{Appendix}
-\section{Proof of \Cref{lem:inversion}}
-\begin{lemma}
-Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$.
-\end{lemma}
+\section{Proof of the Inversion lemma}
+\Cref{lem:inversion}:
+Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. \\
 \begin{proof}
 When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation.
 \begin{align*}
