@@ -457,28 +457,6 @@ We can ignore the \textit{inversion} operator since according to \Cref{lem:inver
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix.
 \end{lemma}
 
-\subsubsection{Proof of the rules}
-\begin{itemize}
-\item $(REFLEXIVITY)$: Since $R=R$, obviously $R \subseteq R$ always holds.
-\item $(TRANSITIVITY)$: \begin{eqnarray*}
-R \subseteq S \land S \subseteq T &\Leftrightarrow & (e,e') \in R \impl (e,e') \in S \land (e,e') \in S \impl (e,e') \in T \\
-&\Leftrightarrow &(e,e') \in R \impl (e,e') \in S \impl (e,e') \in T \\
-&\Rightarrow & (e,e') \in R \impl (e,e') \in T \\
-&\Leftrightarrow & R \subseteq T
-\end{eqnarray*}
-\item ($\cup_{2R}$): \begin{eqnarray*}
-R &=& \{(r,r') \in R\} \\
-&\subseteq & \{(r,r') \in R \lor (r,r') \in S\} \\
-&=& \{(r,r') \in R \cup S\} \\
-&=& R \cup S
-\end{eqnarray*}
-\item ($\cup_{2L}$): \begin{eqnarray*}
-R \subseteq S \impl 
-\end{eqnarray*}
-\item ($\cup_{3R}$):
-\item ($\cup_{weak}$):
-\item ($\cup_{strength}$):
-\end{itemize}
 
 \subsubsection{Herleitung von ($\cup_{3RL}$)}
 \begin{mathpar}
@@ -501,8 +479,11 @@ For common set theoretic operators like $\cup$ and $\cap$ there exist commonly k
 \inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[R \cup (S \cap S')]}{\Gamma[(R \cup S) \cap (R \cup S')]} \and
 \inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[R \cap (S \cup S')]}{\Gamma[(R \cap S) \cup (R \cap S')]} \and
 \inferrule*[left=($\cap_{dist})$)]{\Gamma[R \cap S \cap S']}{\Gamma[R \cap (S \cap S')]} \and
-\inferrule*[left=($._{\cup dist}$)]{\Gamma[R.S \cup R.S']}{\Gamma[R.(S \cup S')]} \and
-\inferrule*[left=($._{\cap dist}$)]{\Gamma[R.S \cap R.S']}{\Gamma[R.(S \cap S')]} \and
+\inferrule*[left=($._{\cup distR}$)]{\Gamma[R.S \cup R.S']}{\Gamma[R.(S \cup S')]} \and
+\inferrule*[left=($._{\cup distL}$)]{\Gamma[S.R \cup S'.R]}{\Gamma[(S \cup S').R]} \and
+\inferrule*[left=($._{\cap distR}$)]{\Gamma[R.S \cap R.S']}{\Gamma[R.(S \cap S')]} \and
+\inferrule*[left=($._{\cap distL}$)]{\Gamma[S.R \cap S'.R]}{\Gamma[(S \cap S').R]} \and
+\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
 \inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
 \inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
 \inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
@@ -550,28 +531,18 @@ Memory Consistency Models are defined on a group of relations. For each of them 
 \inferrule*[left=(\0)]{true}{\0 \subseteq R} \and
 \inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
 \inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
-\inferrule*[left=(\text{rf})]{true}{\rf \subseteq \loc} \and
+\inferrule*[left=(rf)]{true}{\rf .\rf \subseteq \0} \and
+\inferrule*[left=($\text{rf}_{symm}$)]{true}{\rf .\rf^{-1} \subseteq \id} \and
+\inferrule*[left=(\text{rfloc})]{true}{\rf \subseteq \loc} \and
 \inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
-\inferrule*[left=($\text{id}_{trans}$)]{true}{\id .\id \subseteq \id} \and
+\inferrule*[left=($\text{id}_{trans}$)]{true}{R.\id \subseteq \id} \and
 \inferrule*[left=($\text{co}_{trans}$)]{true}{\co .\co \subseteq \co} \and
 \inferrule*[left=(\loc)]{true}{\loc^{-1} \subseteq \loc} \and
 \inferrule*[left=($\loc_{trans}$)]{true}{\loc .\loc \subseteq \loc} \and
 \inferrule*[left=(\ext)]{true}{\ext^{-1} \subseteq \ext}
 \end{mathpar}
 
-The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too.
-%Ein paar Definitionen:
-\begin{mathpar}
-%\inferrule*{true}{[E]~ \po~ [E]} \and
-%\inferrule*{true}{\rf \subseteq W \times R} \and
-%\inferrule*{true}{\fr = \rf^{-1} . \co} \and
-%\inferrule*{true}{\co = \rf .\fr} \and
-%\inferrule*{true}{\textsf{com} = \co \cup \rf \cup \fr} \and
-%\inferrule*{true}{[E]~\id~ [E]} \and
-%\inferrule*{true}{[E]~\loc~ [E]} \and
-%\inferrule*{true}{[E]~\ext~ [E]} \and
-%\inferrule*{true}{[E]~\rmw~ [E]}
-\end{mathpar}
+The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$.
 
 
 
@@ -584,16 +555,14 @@ For any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq 
 \begin{proof}
 We can prove this for each of the constraints. 
 Let the constraint be \texttt{empty}:
-%$R_1 \subseteq R_2 $ is given. Since this means that any element of $R_1$ would also be in $R_2$, it follows that an empty $R_2$ implies an empty $R_1$. If it would not be empty, then $R_2$ wouldn't be.
-%Therefore $\semsof{\texttt{empty}~ R_2}$ must be a subset of $\semsof{\texttt{empty}~ R_1}$.
 \begin{eqnarray*}
 R_1 \subseteq R_2 
 & \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {R_2}_X \impl \nexists (e_1,e_2) \in {R_1}_X) \\
 & \impl &(X \in \semsof{\texttt{empty}~ R_2} \impl X \in \semsof{\texttt{empty}~ R_1}) \\
 & \impl & \semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}
 \end{eqnarray*}
-%Let $X$ be an execution with $X \in \semsof{\texttt{empty}~ R_2}$ and $X \notin \semsof{\texttt{empty}~ R_1}$ and therefore $\semsof{\texttt{empty}~ R_2} \nsubseteq\semsof{\texttt{empty}~ R_1}$. Since $R_1 \subseteq R_2$, it means that ${R_1}_X \subseteq {R_2}_X$ and if $R_2$ is empty then $R_1$ has to be as well. Therefore $X$ cannot exist and $\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}$.
-For the constraint \texttt{irreflexive}:
+
+\noindent For the constraint \texttt{irreflexive}:
 \begin{eqnarray*}
 R_1 \subseteq R_2 
 & \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X) \\
@@ -609,7 +578,7 @@ R_1 \subseteq R_2
 & \impl & \semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}
 \end{eqnarray*}
 \end{proof}
-This lemma generates the following three rules:
+\noindent This lemma generates the following three rules:
 \begin{mathpar} 
 \inferrule*[left=(empty)] {R_1 \subseteq R_2}{\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}} \and 
 \inferrule*[left=(acyclic)] {R_1 \subseteq R_2}{\semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}} \and
@@ -721,6 +690,29 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 &=& \semsof{(R^{-1})^*}
 \end{align*}
 \end{proof}
+
+\section{Proof of the rules}
+\begin{itemize}
+\item $(REFLEXIVITY)$: Since $R=R$, obviously $R \subseteq R$ always holds.
+\item $(TRANSITIVITY)$: \begin{eqnarray*}
+R \subseteq S \land S \subseteq T &\Leftrightarrow & (e,e') \in R \impl (e,e') \in S \land (e,e') \in S \impl (e,e') \in T \\
+&\Leftrightarrow &(e,e') \in R \impl (e,e') \in S \impl (e,e') \in T \\
+&\Rightarrow & (e,e') \in R \impl (e,e') \in T \\
+&\Leftrightarrow & R \subseteq T
+\end{eqnarray*}
+\item ($\cup_{2R}$): \begin{eqnarray*}
+R &=& \{(r,r') \in R\} \\
+&\subseteq & \{(r,r') \in R \lor (r,r') \in S\} \\
+&=& \{(r,r') \in R \cup S\} \\
+&=& R \cup S
+\end{eqnarray*}
+\item ($\cup_{2L}$): \begin{eqnarray*}
+R \subseteq S \impl 
+\end{eqnarray*}
+\item ($\cup_{3R}$):
+\item ($\cup_{weak}$):
+\item ($\cup_{strength}$):
+\end{itemize}
 
 
 
