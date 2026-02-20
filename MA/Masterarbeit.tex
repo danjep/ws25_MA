@@ -1,4 +1,4 @@
-\documentclass[a4paper,twoside,12pt, english]{article}
+ \documentclass[a4paper,twoside,12pt, english]{article}
 \usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
@@ -299,6 +299,7 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \subsection{Notations}
 \begin{itemize}
 \item $R^n$ for $R.R.R. \dots$ ($n$ times)
+\item $[W]$ and $[R]$ for $W \times W \cap \id$ and $R \times R \cap \id$
 \end{itemize}
 
 \section{The Proof System} \label{sec:proofsys}
@@ -322,7 +323,7 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 \inferrule*[left=($\cup_{2R}$)]{true}{R \subseteq R \cup S} \and 
 \inferrule*[left=($\cup_{2L}$)]{R \subseteq S}{R \cup S \subseteq S} \and
-\inferrule*[left=($\cup_{3R}$)]{R \subseteq S}{R \subseteq S \cup T} \and
+\textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{R \subseteq S}{R \subseteq S \cup T}} \and
 %\inferrule*{true}{S \cup R = R \cup S} \and
 \inferrule*[left=($\cup_{weak}$)]{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
 \inferrule*[left=($\cup_{strength}$)]{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
@@ -458,7 +459,7 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 
-\subsubsection{Herleitung von ($\cup_{3RL}$)}
+\subsubsection{Herleitung von ($\cup_{3RL}$) und ($\cup_{3L}$)}
 \begin{mathpar}
 \inferrule*[left=($\cup_{3RL}$)]{R \subseteq S}{R \cup R' \subseteq S \cup R'} =
 \inferrule*[left=($\cup_{strength}$)]{
@@ -468,6 +469,13 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 	\\
 	\inferrule*[right=($\cup_{2R}$)]{true}{R' \subseteq S \cup R'}
 }{R \cup R' \subseteq S \cup R'}
+\end{mathpar}
+\begin{mathpar}
+\inferrule*[left=($\cup_{3L}$)]{ }{ } = \inferrule*[right=($\cup_{strength}$)]{
+	\inferrule*[right=($\cup_{2L}$)]{R \subseteq T}{R \cup T \subseteq T}
+	\\
+	S \subseteq T}
+{R \cup S \subseteq T}
 \end{mathpar}
 
 \subsection{Classic transformations}
@@ -495,7 +503,7 @@ For common set theoretic operators like $\cup$ and $\cap$ there exist commonly k
 \end{mathpar}
 
 All of these rules are invertible and can be applied in reverse.
-
+\pagebreak
 \subsubsection{Example}
 \begin{mathpar}
 \inferrule*[left=($*_{2L}$)]{
@@ -529,13 +537,15 @@ Memory Consistency Models are defined on a group of relations. For each of them 
 
 \begin{mathpar}
 \inferrule*[left=(\0)]{true}{\0 \subseteq R} \and
+\inferrule*[left=(W)]{true}{[W] \subseteq \id} \and
+\inferrule*[left=(R)]{true}{[R] \subseteq \id} \and
 \inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
 \inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
 \inferrule*[left=(rf)]{true}{\rf .\rf \subseteq \0} \and
 \inferrule*[left=($\text{rf}_{symm}$)]{true}{\rf .\rf^{-1} \subseteq \id} \and
 \inferrule*[left=(\text{rfloc})]{true}{\rf \subseteq \loc} \and
 \inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
-\inferrule*[left=($\text{id}_{trans}$)]{true}{R.\id \subseteq \id} \and
+\inferrule*[left=($\text{id}_{trans}$)]{true}{R.\id \subseteq R} \and
 \inferrule*[left=($\text{co}_{trans}$)]{true}{\co .\co \subseteq \co} \and
 \inferrule*[left=(\loc)]{true}{\loc^{-1} \subseteq \loc} \and
 \inferrule*[left=($\loc_{trans}$)]{true}{\loc .\loc \subseteq \loc} \and
