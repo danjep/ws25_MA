@@ -214,7 +214,9 @@ Later, models that are less restrictive like \textit{SC per Location} (also know
 
 \subsection{The CAT language} \label{sec:cat}
 
-In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext{} which includes all pairs of events that originate from different threads, the \textit{coherence order} \co{} which is a total order of writes on the same memory location, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
+In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. 
+The CAT language uses base sets which are the events of an execution. There are the set of all events $E$, the initial writes $IW$, all reads $R$, writes $W$ and fences $F$, the branch events $B$ and the memory events $M$ which are the reads and writes \cite{Alg+16}.
+CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext{} which includes all pairs of events that originate from different threads, the \textit{coherence order} \co{} which is a total order of writes on the same memory location, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 
 \begin{figure}[H]
 \begin{align*}
@@ -262,12 +264,26 @@ This master's thesis will be about the issue of whether the proof system in \cit
 
 
 \section{Preliminaries}
+
+\subsection{Notation}
+\begin{itemize}
+\item $R^n$ for $R.R.R. \dots$ ($n$ times)
+\end{itemize}
+\subsubsection{Write and Read Restrictions}
+Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $W \times W \cap \id$ and $R \times R \cap \id$. These relations can be used to restrict other relations to write and read operations.
+An example is $[W].\po .[R]$ which restricts \po to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
+This notation is furthermore justified by the semantics of the CAT language, since the expression
+\[[W].\rf .[R] := \{(w,r) \mid (w,w) \in [W] \land (w,r) \in \rf \land (r,r) \in [R]\}\]
+allows only for entries that consist of a write and a read event. 
+
+
 \subsection{Executions}
-Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
+Executions consist of a set of all events that occur $E_X$, the set of initial writes $IW_X$ and the base relations relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
 \begin{definition}[Execution]
 An execution $X$ is the following tuple:
-\[X := (E_X,\po_X \subseteq E_X \times E_X, \rf_X \subseteq W_X \times R_X, IW_X)\]  
-We let $\mathbb{E} = \mathbb{P}(X)$ denote the set of all possible executions. \\
+\[X := (E_X, IW_X, \po_X , \rf_X, \rmw_X, \co_x, \loc_X, \ext_X , \id_X)\]  
+where $\po_X, \rf_X, \rmw_X, \co_X, \loc_X, \ext_X, \id_X \subseteq E_X \times E_X$.
+$\mathbb{E} = \mathbb{P}(X)$ denotes the set of all possible executions. \\
 Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
 \end{definition}
 
@@ -282,25 +298,20 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \semsof{\bangle{rel}_X}\} \\
 \semsof{\texttt{irreflexive}~ \bangle{rel}} &:= \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \semsof{\bangle{rel}_X} \} \\
 \semsof{\texttt{acyclic}~ \bangle{rel}} &:= \semsof{\texttt{irreflexive}~ \bangle{rel}^+} \\
-\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \semsof{\bangle{rel}_1} \text{ and } (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
-\semsof{\bangle{rel}_1 \cup \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \cup \semsof{\bangle{rel}_2} \\
-\semsof{\bangle{rel}_1 \cap \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \cap \semsof{\bangle{rel}_2} \\
-\semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \semsof{\bangle{rel}_1} \setminus \semsof{\bangle{rel}_2} \\
+\semsof{\bangle{rel}_1 \subseteq \bangle{rel}_2} &:= \forall (e,e'):((e,e') \in \bangle{rel}_1 \impl (e,e') \in \bangle{rel}_2) \\
+\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \semsof{\bangle{rel}_1} \land (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
+\semsof{\bangle{rel}_1 \cup \bangle{rel}_2} &:= \{(e,e') \in \semsof{\bangle{rel}_1} \lor (e,e') \in \semsof{\bangle{rel}_2} \} \\
+\semsof{\bangle{rel}_1 \cap \bangle{rel}_2} &:= \{ (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \in \semsof{\bangle{rel}_2}\} \\
+\semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \{ (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \notin \semsof{\bangle{rel}_2}\} \\
 \semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: (e,e_1), \dots ,(e_n,e') \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}?} &:= \semsof{\bangle{rel}} \cup \id \\
 \semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}?} \cup \semsof{\bangle{rel}^+} \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
-\semsof{\bangle{base\_rel}} &:= \bangle{base\_rel}
+\semsof{\bangle{base\_rel}} &:= \{ (e,e') \in \bangle{base\_rel} \}
 \end{align*}
 \end{definition}
-
-\subsection{Notations}
-\begin{itemize}
-\item $R^n$ for $R.R.R. \dots$ ($n$ times)
-\item $[W]$ and $[R]$ for $W \times W \cap \id$ and $R \times R \cap \id$
-\end{itemize}
 
 \section{The Proof System} \label{sec:proofsys}
 In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
@@ -315,7 +326,7 @@ The most basic rules are those which are always true for any relations. We list 
 \item No operator:
 \begin{mathpar}
 \inferrule*[left=(reflexivity)]{true}{R \subseteq R} \and
-\inferrule*[left=(transitivity)]{R \subseteq S \\ S \subseteq T}{R \subseteq T} \and
+\textcolor{red}{\inferrule*[left=(transitivity)]{R \subseteq S \\ S \subseteq T}{R \subseteq T}} \and
 %\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
 %\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y} Für jeden Operator hinzugefügt
 \end{mathpar}
@@ -535,13 +546,15 @@ All of these rules are invertible and can be applied in reverse.
 \subsection{Relation-specific Rules}
 Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
 
+\noindent Let $R$ be a relation.
 \begin{mathpar}
 \inferrule*[left=(\0)]{true}{\0 \subseteq R} \and
 \inferrule*[left=(W)]{true}{[W] \subseteq \id} \and
 \inferrule*[left=(R)]{true}{[R] \subseteq \id} \and
 \inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
 \inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
-\inferrule*[left=(rf)]{true}{\rf .\rf \subseteq \0} \and
+\inferrule*[left=(rf)]{true}{\rf \subseteq [W].[R]} \and
+\inferrule*[left=(rf+)]{true}{\rf .\rf \subseteq \0} \and
 \inferrule*[left=($\text{rf}_{symm}$)]{true}{\rf .\rf^{-1} \subseteq \id} \and
 \inferrule*[left=(\text{rfloc})]{true}{\rf \subseteq \loc} \and
 \inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
@@ -636,6 +649,9 @@ From the \cref{lem:irracy,lem:emptyirr,lem:emptyacy} stem the following three ru
 \end{mathpar}
 These will be needed to eliminate the constraint from the term.
 
+\subsection{Incorporating the Assumptions}
+In many CAT definitions the author uses assumptions about the defined relations that are not part of the initial assumptions given with the base relations. These assumptions can be incorporated into the proof system by transforming them into rules.
+
 \pagebreak
 \section{Conclusion}\label{sec:conclusion}
 
@@ -701,28 +717,9 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 \end{align*}
 \end{proof}
 
-\section{Proof of the rules}
-\begin{itemize}
-\item $(REFLEXIVITY)$: Since $R=R$, obviously $R \subseteq R$ always holds.
-\item $(TRANSITIVITY)$: \begin{eqnarray*}
-R \subseteq S \land S \subseteq T &\Leftrightarrow & (e,e') \in R \impl (e,e') \in S \land (e,e') \in S \impl (e,e') \in T \\
-&\Leftrightarrow &(e,e') \in R \impl (e,e') \in S \impl (e,e') \in T \\
-&\Rightarrow & (e,e') \in R \impl (e,e') \in T \\
-&\Leftrightarrow & R \subseteq T
-\end{eqnarray*}
-\item ($\cup_{2R}$): \begin{eqnarray*}
-R &=& \{(r,r') \in R\} \\
-&\subseteq & \{(r,r') \in R \lor (r,r') \in S\} \\
-&=& \{(r,r') \in R \cup S\} \\
-&=& R \cup S
-\end{eqnarray*}
-\item ($\cup_{2L}$): \begin{eqnarray*}
-R \subseteq S \impl 
-\end{eqnarray*}
-\item ($\cup_{3R}$):
-\item ($\cup_{weak}$):
-\item ($\cup_{strength}$):
-\end{itemize}
+\todo{Für eine Beweisart entscheiden, entsprechend anpasssen und alle Beweise fertig machen}
+\include{includes/Rulesproofs.tex}
+
 
 
 
