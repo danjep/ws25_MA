@@ -1,0 +1,170 @@
+\section{Proof of the rules}
+
+\begin{itemize}
+\item $(REFLEXIVITY)$: $true \impl R \subseteq R$ \\ 
+Since $R=R$, obviously $R \subseteq R$ always holds.
+\item $(TRANSITIVITY)$: $R \subseteq S \land S \subseteq T \impl R \subseteq T$
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \quad \mid R \subseteq S \\
+&\subseteq & \{(e,e') \in S\} \quad \mid S \subseteq T\\
+&\subseteq & \{(e,e') \in T\}\\
+&\subseteq & T
+\end{eqnarray*}
+
+\item ($\cup_{2R}$): $true \impl R \subseteq R \cup S$
+\begin{eqnarray*}
+R &=& \{(r,r') \in R\} \\
+&\subseteq & \{(r,r') \in R \lor (r,r') \in S\} \\
+&=& R \cup S
+\end{eqnarray*}
+
+\item ($\cup_{2L}$): $R \subseteq S \impl R \cup S \subseteq S$
+\begin{eqnarray*}
+R \cup S &=& \{(e,e') \in R \lor (e,e') \in S\} \quad \mid R \subseteq S \\
+&\subseteq & \{(e,e') \in S \lor (e,e') \in S\} \\
+&=& \{(e,e') \in S\} \\
+&=& S 
+\end{eqnarray*}
+
+
+\item ($\cup_{3R}$): $R \subseteq S \impl R \subseteq S \cup T$
+\begin{eqnarray*}
+&R \\
+\{\text{Definition Semantics}\} &=& \{(e,e') \in R\} \\
+\{R \subseteq S\} & \subseteq & \{(e,e') \in S\} \\
+& \subseteq & \{(e,e') \in S \lor (e,e') \in T\} \\
+\{\text{Definition Semantics}\} &=& S\cup T
+\end{eqnarray*}
+\item ($\cup_{weak}$): $R \subseteq S \cup S' \land S' \subseteq T \impl R \subseteq S \cup T$
+\begin{eqnarray*}
+%\semsof{R \subseteq S \cup S'} \land \semsof{S' \subseteq T} &\Leftrightarrow &  ((e,e') \in R \impl (e,e') \in \semsof{S \cup S'}) \land ((e,e') \in S' \impl (e,e') \in T) \\
+%&\impl & (((e,e') \in R \impl ((e,e')\in S \lor (e,e') \in S')) \land ((e,e') \in S' \impl (e,e') \in T)) \\
+%&\impl & ((e,e') \in R \impl ((e,e') \in S \lor (e,e')\in T)) \\
+%&\impl & ((e,e') \in R \impl (e,e') \in \semsof{S \cup T})\\
+%&\impl & \semsof{R \subseteq S \cup T}
+R &=& \{(e,e') \in R\} \qquad \mid R \subseteq S \cup S' \\
+&\subseteq & \{(e,e') \in S \cup S'\} \\
+&= & \{(e,e') \in S \lor (e,e') \in S'\} \qquad \mid S' \subseteq T \\
+&\subseteq & \{(e,e') \in S \lor (e,e') \in T\} \\
+&=& S \cup T  
+\end{eqnarray*}
+\item ($\cup_{strength}$): $R \cup R' \subseteq S \land T \subseteq R' \impl R \cup T \subseteq S$
+\begin{eqnarray*}
+R \cup T &=& \{(e,e') \in R \lor (e,e') \in T\} \qquad \mid T \subseteq R' \\
+&\subseteq & \{(e,e') \in R \lor (e,e') \in R'\} \\
+&=& \{(e,e') \in R \cup R'\} \qquad \mid R \cup R' \subseteq S \\
+&\subseteq & \{(e,e') \in S\} \\
+&=& S
+\end{eqnarray*}
+\item ($\cap_{2L}$): $true \impl R \cup S \subseteq R$
+\begin{eqnarray*}
+R \cup S &=& \{(e,e') \in R \land (e,e') \in S\} \\
+& \subseteq & \{(e,e') \in R\} \\
+&=& R
+\end{eqnarray*}
+\item ($\cap_{2R}$): $R \subseteq S \impl R \subseteq R \cap S$
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \qquad \mid \psi \Leftrightarrow \psi \land \psi \\
+&=& \{(e,e') \in R \land (e,e') \in R\} \qquad \mid R \subseteq S \\
+& \subseteq &  \{(e,e') \in R \land (e,e') \in S\} \\
+&=& R \cap S
+\end{eqnarray*}
+\item ($\cap_{weak}$): $R \subseteq S \cap S' \land S' \subseteq T \impl R \subseteq S \cap T$
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \reason{R \subseteq S \cap S'} \\
+&\subseteq & \{(e,e') \in S \cap S'\} \\
+&=& \{(e,e') \in S \land (e,e') \in S'\} \reason{S' \subseteq T} \\
+&\subseteq & \{(e,e') \in S \land (e,e') \in T\}  \\
+&=& S \cap T
+\end{eqnarray*}
+\item ($\cap_{strength}$): $R \cap R' \subseteq S \land T \subseteq R' \impl R \cap T \subseteq S$
+\begin{eqnarray*}
+R \cap T &=& \{(e,e') \in R \land (e,e') \in T\} \reason{T \subseteq R'} \\
+&\subseteq & \{(e,e') \in R \land (e,e') \in R'\} \reason{R \cap R' \subseteq S} \\
+&\subseteq & \{(e,e') \in S\} \\
+&=& S
+\end{eqnarray*}
+\item ($._1$): $R \subseteq \id \impl R = R.R$
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \reason{R \subseteq \id} \\
+&=& \{(e,e) \in R\} \\
+&=& \{(e,e).(e,e) \in R.R\} \\
+&=& \{(e,e) \in R.R\} \\
+&=& R.R
+\end{eqnarray*}
+\item ($._{2Rl}$): $\id \subseteq S \impl R \subseteq S.R$ 
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \\
+&=& \{(e,e).(e,e') \in R \} \\
+&=& \{(e,e).(e,e') \in \id .R\} \\
+&=& \{(e,e) \in \id \land (e,e') \in R\} \reason{\id \subseteq S}\\
+&\subseteq & \{(e,e) \in S \land (e,e') \in R\} \\
+&=& \{(e,e).(e,e') \in S.R\} \\
+&=& \{(e,e') \in S.R\} \\
+&=& S.R
+\end{eqnarray*}
+\item ($._{2Rr}$): $\id \subseteq S \impl R \subseteq R.S$ 
+\begin{eqnarray*}
+R &=& \{(e,e') \in R\} \\
+&=& \{(e,e').(e',e') \in R \} \\
+&=& \{(e,e').(e',e') \in R.\id \} \\
+&=& \{(e',e') \in \id \land (e,e') \in R\}  \reason{\id \subseteq S}\\
+&\subseteq & \{(e',e') \in S \land (e,e') \in R\} \\
+&=& \{(e,e').(e',e') \in R.S\} \\
+&=& \{(e,e') \in R.S\} \\
+&=& R.S
+\end{eqnarray*}
+
+\item ($._{2Ll}$): $R \subseteq \id \impl S.R \subseteq S$
+\begin{eqnarray*}
+S.R &=& \{(e_1,e_2).(e_2,e_3) \in S.R\} \\
+&=& \{(e_1,e_2) \in S \land (e_2,e_3) \in R\} \reason{R \subseteq \id} \\
+&\subseteq & \{(e_1,e_2) \in S \land (e_2,e_3) \in \id \} \reason{(e_2,e_3)\in \id \impl e_2 = e_3}\\
+&=& \{(e_1,e_3) \in S \land (e_3,e_3) \in \id \} \\
+&=& \{(e_1,e_3) \in S\} \\
+&=& S 
+\end{eqnarray*}
+\item ($._{2Lr}$): $R \subseteq \id \impl R.S \subseteq S$
+\begin{eqnarray*}
+R.S &=& \{(e_1,e_2).(e_2,e_3) \in R.S\} \\
+&=& \{(e_1,e_2) \in R \land (e_2,e_3) \in S\} \reason{R \subseteq \id} \\
+&\subseteq & \{(e_2,e_3) \in S \land (e_1,e_2) \in \id \} \reason{(e_1,e_2)\in \id \impl e_1 = e_2}\\
+&=& \{(e_1,e_3) \in S \land (e_1,e_1) \in \id \} \\
+&=& \{(e_1,e_3) \in S\} \\
+&=& S 
+\end{eqnarray*}
+\item ($._{weakR}$): $R \subseteq S.S' \land S' \subseteq T \impl R \subseteq S.T$
+\begin{eqnarray*}
+R &=& \{(e_1,e_3) \in R\} \reason{R \subseteq S.S'} \\
+&\subseteq & \{(e_1,e_3) \in S.S'\} \\
+&=& \{(e_1,e_2) \in S \land (e_2,e_3) \in S'\} \reason{S' \subseteq T} \\
+&\subseteq & \{(e_1,e_2) \in S \land (e_2,e_3) \in T\} \\
+&=& \{(e_1,e_3) \in S.T\} \\
+&=& S.T
+\end{eqnarray*}
+\item ($._{weakL}$): $R \subseteq S'.S \land S' \subseteq T \impl R \subseteq T.S$
+\begin{eqnarray*}
+R &=& \{(e_1,e_3) \in R\} \reason{R \subseteq S'.S} \\
+&\subseteq & \{(e_1,e_3) \in S'.S\} \\
+&=& \{(e_1,e_2) \in S' \land (e_2,e_3) \in S\} \reason{S' \subseteq T} \\
+&\subseteq & \{(e_1,e_2) \in T \land (e_2,e_3) \in S\} \\
+&=& \{(e_1,e_3) \in T.S\} \\
+&=& T.S
+\end{eqnarray*}
+\item ($._{strengthR}$): $R.R' \subseteq S \land T \subseteq R' \impl R.T \subseteq S$
+\begin{eqnarray*}
+R.T &=& \{(e_1,e_3) \in R.T\} \\
+&=& \{(e_1,e_2) \in R \land (e_2,e_3) \in T\} \reason{T \subseteq R'} \\
+&\subseteq & \{(e_1,e_2) \in R \land (e_2,e_3) \in R'\} \\
+&=& \{(e_1,e_3) \in R.R' \} \reason{R.R' \subseteq S} \\
+&\subseteq & \{(e_1,e_3) \in S\} \\
+&=& S 
+\end{eqnarray*}
+\item ($._{strengthL}$): $R'.R \subseteq S \land T \subseteq R' \impl T.R \subseteq S$
+\begin{eqnarray*}
+(e_1,e_3) \in T.R &\impl & \exists e_2: (e_1,e_2) \in T \land (e_2,e_3) \in R \reason{T \subseteq R'} \\
+&\impl & \exists e_2: (e_1,e_2) \in R' \land (e_2,e_3) \in R \\
+&\impl & (e_1,e_3) \in R'.R \reason{R'.R \subseteq S} \\
+&\impl & (e_1,e_3) \in S
+\end{eqnarray*}
+\end{itemize}
