@@ -71,8 +71,8 @@ Essentially, the MCMs  determine which update to the shared memory is seen by wh
 
 As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behavior. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
-Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs.
-The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language \todo{weitere Themen einfügen}. 
+Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language. \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis
+ \todo{weitere Themen einfügen}. 
 
 
 
@@ -263,7 +263,7 @@ Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
 
 
-\section{Preliminaries}
+\section{Preliminaries} \label{sec:preliminaries}
 
 \subsection{Notation}
 \begin{itemize}
@@ -271,16 +271,16 @@ This master's thesis will be about the issue of whether the proof system in \cit
 \end{itemize}
 \subsubsection{Write and Read Restrictions}
 Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $W \times W \cap \id$ and $R \times R \cap \id$. These relations can be used to restrict other relations to write and read operations.
-An example is $[W].\po .[R]$ which restricts \po to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
+An example is $[W].\po .[R]$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
 This notation is furthermore justified by the semantics of the CAT language, since the expression
 \[[W].\rf .[R] := \{(w,r) \mid (w,w) \in [W] \land (w,r) \in \rf \land (r,r) \in [R]\}\]
 allows only for entries that consist of a write and a read event. 
-
+In \Cref{sec:relationspecific} we use this notation to represent the known restrictions on the base relations in the rules and in \Cref{sec:assumptions} to integrate assumptions that are defined in the CAT file.
 
 \subsection{Executions}
 Executions consist of a set of all events that occur $E_X$, the set of initial writes $IW_X$ and the base relations relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
 \begin{definition}[Execution]
-An execution $X$ is the following tuple:
+An execution $X$ is the following tuple: \todo{brauchen wir die tiefgestellten X?}
 \[X := (E_X, IW_X, \po_X , \rf_X, \rmw_X, \co_x, \loc_X, \ext_X , \id_X)\]  
 where $\po_X, \rf_X, \rmw_X, \co_X, \loc_X, \ext_X, \id_X \subseteq E_X \times E_X$.
 $\mathbb{E} = \mathbb{P}(X)$ denotes the set of all possible executions. \\
@@ -289,7 +289,7 @@ Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X
 
 
 \subsection{Semantics} \label{sec:semantics}
-The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows. 
+The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows. The semantics of relations is simply the set of elements in the relation.
 \begin{definition}[Semantics] \label{def:sem}
 Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq E \times E$ be relations. The semantics are defined as follows:
 \begin{align*}
@@ -312,6 +312,7 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \semsof{\bangle{base\_rel}} &:= \{ (e,e') \in \bangle{base\_rel} \}
 \end{align*}
 \end{definition}
+For better readability, the \semsof{\cdot} symbols can be omitted when dealing with relations, since the semantics are equal to the intuitive definition of relations.
 
 \section{The Proof System} \label{sec:proofsys}
 In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
@@ -320,7 +321,7 @@ Additionally to the rules that model logical implications between relational ter
 
 
 \subsection{Basic Rules}
-The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like unification there is only one version of each rule since they have the same effect. \\
+The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like unification there is only one version of each rule since there is no different effect when interchanging the relations. Furthermore, in \Cref{sec:transformations} we state rules for commutativity and others. \\
 
 \begin{itemize}
 \item No operator:
@@ -470,7 +471,7 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 
-\subsubsection{Herleitung von ($\cup_{3RL}$) und ($\cup_{3L}$)}
+\subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
 \begin{mathpar}
 \inferrule*[left=($\cup_{3RL}$)]{R \subseteq S}{R \cup R' \subseteq S \cup R'} =
 \inferrule*[left=($\cup_{strength}$)]{
@@ -489,7 +490,7 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 {R \cup S \subseteq T}
 \end{mathpar}
 
-\subsection{Classic transformations}
+\subsection{Classic transformations}\label{sec:transformations}
 For common set theoretic operators like $\cup$ and $\cap$ there exist commonly known rules like distributivity and commutativity. To incorporate the capabilities of those rules, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
 \begin{mathpar}
 \inferrule*[Left=($\cup_{comm}$)]{\Gamma[R\cup S]}{\Gamma[S \cup R]} \and
@@ -543,7 +544,7 @@ All of these rules are invertible and can be applied in reverse.
 	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
 \end{mathpar}
 
-\subsection{Relation-specific Rules}
+\subsection{Relation-specific Rules}\label{sec:relationspecific}
 Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
 
 \noindent Let $R$ be a relation.
@@ -553,12 +554,13 @@ Memory Consistency Models are defined on a group of relations. For each of them 
 \inferrule*[left=(R)]{true}{[R] \subseteq \id} \and
 \inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
 \inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
-\inferrule*[left=(rf)]{true}{\rf \subseteq [W].[R]} \and
+\inferrule*[left=(rf)]{true}{\rf = [W].\rf .[R]} \and
 \inferrule*[left=(rf+)]{true}{\rf .\rf \subseteq \0} \and
 \inferrule*[left=($\text{rf}_{symm}$)]{true}{\rf .\rf^{-1} \subseteq \id} \and
 \inferrule*[left=(\text{rfloc})]{true}{\rf \subseteq \loc} \and
 \inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
 \inferrule*[left=($\text{id}_{trans}$)]{true}{R.\id \subseteq R} \and
+\inferrule*[left=(co)]{true}{\co = [W].\co .[W]} \and
 \inferrule*[left=($\text{co}_{trans}$)]{true}{\co .\co \subseteq \co} \and
 \inferrule*[left=(\loc)]{true}{\loc^{-1} \subseteq \loc} \and
 \inferrule*[left=($\loc_{trans}$)]{true}{\loc .\loc \subseteq \loc} \and
@@ -569,7 +571,7 @@ The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every 
 
 
 
-\subsection{Eliminating the Constraint}
+\subsection{Eliminating the Constraints}
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}
@@ -649,8 +651,12 @@ From the \cref{lem:irracy,lem:emptyirr,lem:emptyacy} stem the following three ru
 \end{mathpar}
 These will be needed to eliminate the constraint from the term.
 
-\subsection{Incorporating the Assumptions}
-In many CAT definitions the author uses assumptions about the defined relations that are not part of the initial assumptions given with the base relations. These assumptions can be incorporated into the proof system by transforming them into rules.
+\subsection{Incorporating the Assumptions and Definitions}\label{sec:assumptions}
+In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
+\[ \texttt{assume R \& S = \0} \text{ or } \texttt{let R = (S | T)+}\]
+for an assumption of an empty intersection between $R$ and $S$ and a definition of $R$ as the transitive closure of $S \cup T$. \\
+These definitions and assumptions can be incorporated into the proof system by transforming them into rules.
+\todo{}
 
 \pagebreak
 \section{Conclusion}\label{sec:conclusion}
