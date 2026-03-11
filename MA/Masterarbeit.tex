@@ -1,4 +1,4 @@
- \documentclass[a4paper,twoside,12pt, english]{article}
+\documentclass[a4paper,twoside,12pt, english]{article}
 \usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
@@ -516,33 +516,8 @@ For common set theoretic operators like $\cup$ and $\cap$ there exist commonly k
 
 All of these rules are invertible and can be applied in reverse.
 \pagebreak
-\subsubsection{Example}
-\begin{mathpar}
-\inferrule*[left=($*_{2L}$)]{
-\inferrule*[left=($*$)]{
-		\inferrule*[left=($\cup_{2R}$)]{true}{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}{\id \subseteq (aa)^* \cup a(aa)^*}
-		\\
-		\textcolor{teal}{a^+\subseteq (aa)^* \cup a(aa)^*}}
-		{a^* \subseteq (aa)^* \cup a(aa)^*}
-\end{mathpar}
 
-\begin{mathpar} \small
-	\inferrule*[right=($+_L$)]{
-		\inferrule*[left=($\cup_{3R}$)]{
-			\inferrule*[left=($._{2Rr}$)]{
-				\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq (aa)^*}}
-			{a \subseteq a.(aa)^*}}
-		{a \subseteq (aa)^* \cup a(aa)^*} 
-		\\
-		\inferrule*[right=($._{\cup dist}$)]{
-			\inferrule*[right=\textcolor{red}{($\cup_{3RL}$)}]{
-				\inferrule*[right=($+$)]{
-					\inferrule*[right=($+*$)]{true}{(aa)^+ \subseteq (aa)^*}}
-				{aa(aa)^* \subseteq (aa)^*}}
-			{a(aa)^* \cup aa(aa)^* \subseteq (aa)^* \cup a(aa)^*}}
-		{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}}
-	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
-\end{mathpar}
+
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
 Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
@@ -550,8 +525,11 @@ Memory Consistency Models are defined on a group of relations. For each of them 
 \noindent Let $R$ be a relation.
 \begin{mathpar}
 \inferrule*[left=(\0)]{true}{\0 \subseteq R} \and
+\inferrule*[left=(.\0)]{true}{R.\0.S \subseteq T} \and
 \inferrule*[left=(W)]{true}{[W] \subseteq \id} \and
 \inferrule*[left=(R)]{true}{[R] \subseteq \id} \and
+\inferrule*[left=(WR)]{true}{[W].[R] \subseteq \0} \and
+\inferrule*[left=(RW)]{true}{[R].[W] \subseteq \0} \and
 \inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
 \inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
 \inferrule*[left=(rf)]{true}{\rf = [W].\rf .[R]} \and
@@ -655,7 +633,20 @@ These will be needed to eliminate the constraint from the term.
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
 \[ \texttt{assume R \& S = \0} \text{ or } \texttt{let R = (S | T)+}\]
 for an assumption of an empty intersection between $R$ and $S$ and a definition of $R$ as the transitive closure of $S \cup T$. \\
-These definitions and assumptions can be incorporated into the proof system by transforming them into rules.
+These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing.
+\todo{}
+
+
+\subsection{Handling Recursion}
+With the keywords \texttt{let rec} CAT lets it's users define relations recursively. In order to handle this recursion we need to construct appropriate rules.
+Usually, recursive definitions can be replaced through transitive closures, i.e. $R = R.S$ can be $R=S^+$.
+
+\begin{mathpar}
+\inferrule*[left=($rec_{L.L}$)]{S^+ \subseteq T}{R = R.S \subseteq T} \and
+\inferrule*[left=($rec_{L.R}$)]{S^+ \subseteq T}{R = S.R \subseteq T} \and
+\inferrule*[left=($rec_{R.L}$)]{T \subseteq S^+}{T \subseteq R.S = R} \and
+\inferrule*[left=($rec_{R.L}$)]{T \subseteq S^+}{T \subseteq S.R = R} 
+\end{mathpar}
 \todo{}
 
 \pagebreak
@@ -664,7 +655,7 @@ These definitions and assumptions can be incorporated into the proof system by t
 
 \pagebreak
 \pagenumbering{Roman}
-\addcontentsline{toc}{section}{Literatur}
+\addcontentsline{toc}{section}{References}
 \printbibliography
 \pagebreak
 
@@ -723,12 +714,181 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 \end{align*}
 \end{proof}
 
-\todo{Für eine Beweisart entscheiden, entsprechend anpasssen und alle Beweise fertig machen}
+
 \include{includes/Rulesproofs.tex}
+\todo{Für eine Beweisart entscheiden, entsprechend anpasssen und alle Beweise fertig machen}
+\section{Examples}
+
+\subsection{Example 1}
+\begin{mathpar}
+\inferrule*[left=($*_{2L}$)]{
+\inferrule*[left=($*$)]{
+		\inferrule*[left=($\cup_{2R}$)]{true}{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}{\id \subseteq (aa)^* \cup a(aa)^*}
+		\\
+		\textcolor{teal}{a^+\subseteq (aa)^* \cup a(aa)^*}}
+		{a^* \subseteq (aa)^* \cup a(aa)^*}
+\end{mathpar}
+
+\begin{mathpar} \small
+	\inferrule*[right=($+_L$)]{
+		\inferrule*[left=($\cup_{3R}$)]{
+			\inferrule*[left=($._{2Rr}$)]{
+				\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq (aa)^*}}
+			{a \subseteq a.(aa)^*}}
+		{a \subseteq (aa)^* \cup a(aa)^*} 
+		\\
+		\inferrule*[right=($._{\cup dist}$)]{
+			\inferrule*[right=\textcolor{red}{($\cup_{3RL}$)}]{
+				\inferrule*[right=($+$)]{
+					\inferrule*[right=($+*$)]{true}{(aa)^+ \subseteq (aa)^*}}
+				{aa(aa)^* \subseteq (aa)^*}}
+			{a(aa)^* \cup aa(aa)^* \subseteq (aa)^* \cup a(aa)^*}}
+		{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}}
+	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
+\end{mathpar}
+\pagebreak
+
+\subsection{Example 2: $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$}
+\begin{mathpar} \footnotesize
+\inferrule*[left=($+_L$)]{
+		\inferrule*[left=($?$)]{
+			\inferrule*[left=($._{\cup dist}$)]{
+				\inferrule*[left=($\id_{trans}$)]{
+					\inferrule*[left=($\cup_{2R}$)]{true
+					}{\rf \cup \co \cup \fr \subseteq \rf \cup \co \cup \fr \cup \dots}
+				}{\rf \cup \co \cup \fr \subseteq \rf \cup \co.\id \cup \fr.\id \cup \dots}
+			}{\rf \cup \co \cup \fr \subseteq \rf \cup (\co \cup \fr).(\rf \cup \id)}
+		}{\rf \cup \co \cup \fr \subseteq \rf \cup (\co \cup \fr).\rf ?}
+	\\
+	\inferrule*[right=($\cup_{.dist}$)]{\text{continued below}
+	}{(\rf \cup \co \cup \fr).\Gamma \subseteq \Gamma}
+}{(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ? = \Gamma}
+\end{mathpar}
+
+\begin{mathpar}
+\inferrule*[left=($\cup_{.distL}$)\, ($\cup_{.distR}$)]{\rf.\rf \cup \rf.(\co \cup \fr).\rf ? \cup \co.\rf \cup \co.(\co \cup \fr).\rf ? \cup \fr.\rf \cup \fr.(\co \cup \fr).\rf ? \subseteq \Gamma}{(\rf \cup \co \cup \fr).\Gamma \subseteq \Gamma}
+\end{mathpar}
+Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each of the terms:
+\begin{itemize}
+\item \rf.\rf :
+\begin{mathpar}
+\inferrule*[left=($\cup_{strength}$)]{
+	\inferrule*[Left=(0)]{true}{\0 \subseteq \Gamma}
+	\\
+	\inferrule*[Right=(RF+)]{true}{\rf.\rf \subseteq \0}
+}{\rf.\rf \subseteq \Gamma}
+\end{mathpar}
+
+\item $\rf.(\co \cup \fr).\rf ?$:
+\begin{mathpar}
+\mprset{center}
+\inferrule*[width=0.4\textwidth , left=($._{\cup distR}$)]{
+	\inferrule*[Left=($._{\cup distL}$)]{
+		\inferrule*[Left=(?)]{
+			\inferrule*[Left=($._{\cup distR}$)]{
+				\inferrule*[Left=($\id_{trans}$)]{
+					\inferrule*[Left=(WR)]{
+						\inferrule*[Left=(Def \fr)]{
+							\inferrule*[Left=($RF_{symm}$)]{ 
+								\inferrule*[Left=($\id_{trans}$)($._{\cup distL}$)]{
+									\inferrule*[Left=(?)($._{\cup distR}$)]{
+										\inferrule*[Left=($\id_{trans}$)($\cup_{comm}$)]{
+											\inferrule*[Left=($\cup_{2R}$)]{
+												true
+											}{\co.\rf \cup \co \subseteq \co.\rf \cup \co \cup \rf \cup \fr.\rf ?}
+										}{\co.\rf \cup \co \subseteq \rf \cup \co.\rf \cup \co.\id \cup \fr.\rf ?}
+									}{\co.\rf \cup \co \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}	
+								}{\id.\co.\rf \cup \id.\co \subseteq \rf \cup (\co \cup \fr).\rf ?}
+							}{\rf.\rf^{-1}.\co.\rf \cup \rf . \rf^{-1}.\co \subseteq \rf \cup (\co \cup \fr).\rf ?}
+						}{\0 \cup \0 \cup \rf.\fr.\rf \cup \rf.\fr \subseteq \rf \cup (\co \cup \fr).\rf ?}
+					}{\rf.\co.\rf \cup \rf.\co \cup \rf.\fr.\rf \cup \rf.\fr \subseteq \rf \cup (\co \cup \fr).\rf ?}		
+				}{\rf.\co.\rf \cup \rf.\co.\id \cup \rf.\fr.\rf \cup \rf.\fr.\id \subseteq \rf \cup (\co \cup \fr).\rf ?}
+			}{\rf.\co.(\rf \cup \id) \cup \rf.\fr.(\rf \cup \id) \subseteq \rf \cup (\co \cup \fr).\rf ?}
+		}{\rf.\co.\rf ? \cup \rf.\fr.\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+	}{(\rf.\co \cup \rf.\fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+}{\rf.(\co \cup \fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+\end{mathpar}
+
+\item \co.\rf
+\begin{mathpar}
+\inferrule*[left=($._{\cup distL}$)]{
+	\inferrule*[Left=(?)]{
+		\inferrule*[Left=($._{\cup distR}$)]{
+			\inferrule*[Left=($\cup_{comm}$)]{
+				\inferrule*[Left=($\cup_{2R}$)]{ true
+				}{\co.\rf \subseteq \co.\rf \cup \rf \cup \co.\id \cup \fr.\rf ?}
+			}{\co.\rf \subseteq \rf  \cup \co.\rf \cup \co.\id \cup \fr.\rf ?}
+		}{\co.\rf \subseteq \rf \cup \co.(\rf \cup \id) \cup \fr.\rf ?}	
+	}{\co.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+}{\co.\rf \subseteq \rf \cup (\co \cup \fr).\rf ?}
+\end{mathpar}
+
+\item $\co.(\co \cup \fr).\rf ?$:
+\begin{mathpar} \footnotesize
+\inferrule*[left=($._{\cup distR}$)]{
+	\inferrule*[Left=($._{\cup distL}$)]{
+		\inferrule*[Left=($._{strengthL}$)]{
+			\inferrule*[Left=($\cup_{3RL}$)]{
+				\inferrule*[Left=\footnotesize(Def \fr)(CO)(FR)]{
+					\inferrule*[Left=($\cup_{strength}$)]{
+						\inferrule*[Left=(\0)]{ true
+						}{\0 \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+						\\
+						\inferrule*[Right=($WR$)]{
+							\inferrule*[Right=($.\0$)]{ true
+							}{[W].\co.\0.\rf^{-1}.[W].\co.\fr \subseteq \0}
+						}{[W].\co.[W].[R].\rf^{-1}.[W].\co.\fr \subseteq \0}
+					}{[W].\co.[W].[R].\rf^{-1}.[W].\co.\fr \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+				}{\co.\fr.\fr \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+			}{\co.\rf ? \cup \co.\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+			\\
+			\inferrule*[Right=($CO_{trans}$)]{true
+			}{\co.\co \subseteq \co}
+		}{\co.\co.\rf ? \cup \co.\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+	}{\co.(\co.\rf ? \cup \fr.\rf ?) \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+}{\co.(\co \cup \fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+\end{mathpar}
+
+\item \fr.\rf
+\begin{mathpar}
+\inferrule*[left=($._{\cup distL}$)]{
+	\inferrule*[Left=(?)]{
+		\inferrule*[Left=($._{\cup distR}$)]{
+			\inferrule*[Left=($\cup_{comm}$)]{
+				\inferrule*[Left=($\cup_{2R}$)]{ true
+				}{\fr.\rf \subseteq \fr.\rf \cup \rf \cup \co.\rf ? \cup \fr.\id}
+			}{\fr.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.\rf \cup \fr.\id}
+		}{\fr.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.(\rf \cup \id)}
+	}{\fr.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+}{\fr.\rf \subseteq \rf \cup (\co \cup \fr).\rf ?}
+\end{mathpar}
+
+\item $\fr.(\co \cup \fr).\rf ?$:
+\begin{mathpar}
+\inferrule*[left=($._{\cup distR}$)]{
+	\inferrule*[left=(Def \fr)]{
+		\inferrule*[Left=(RF)(CO)]{
+			\inferrule*[Left=(WR)(.\0)]{
+				\inferrule*[Left=($._{\cup distL}$)]{
+					\inferrule*[Left=(Def \fr)]{
+						\inferrule*[Left=($CO_{trans}$)]{
+							\inferrule*[Left=(Def \fr)($._{\cup distL}$)]{
+								\inferrule*[Left=($\cup_{comm}$)]{
+									\inferrule*[Left=($\cup_{2R}$)]{ true
+									}{\fr.\rf ? \subseteq \fr.\rf ? \cup \rf \cup \co.\rf ?}
+								}{\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
+							}{\rf^{-1}.\co.\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+						}{\rf^{-1}.\co.\co.\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+					}{\fr.\co.\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+				}{(\fr.\co \cup \0).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+			}{(\fr.\co \cup \rf^{-1}.[W].\co.[W].[R].\rf^{-1}.[W].\co).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+		}{(\fr.\co \cup \rf^{-1}.\co.\rf^{-1}.\co).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+	}{(\fr.\co \cup \fr.\fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+}{\fr.(\co \cup \fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
+\end{mathpar}
 
 
-
-
+\end{itemize}
 \end{appendix}
 %\includepdf{includes/eidesstattlichevers.pdf}
 
