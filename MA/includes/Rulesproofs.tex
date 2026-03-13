@@ -167,4 +167,21 @@ R.T &=& \{(e_1,e_3) \in R.T\} \\
 &\impl & (e_1,e_3) \in R'.R \reason{R'.R \subseteq S} \\
 &\impl & (e_1,e_3) \in S
 \end{eqnarray*}
+\todo{bis hier Begründungen vor der Umformung und ab hier nach der Umformung. Muss noch vereinheitlicht werden}
+\item ($+_R$): $R \subseteq S \impl R \subseteq S^+$
+\begin{eqnarray*}
+(e,e') \in R &\impl & (e,e') \in S \reason{R \subseteq S} \\
+&\impl & (e,e') \in S.\id \\
+&\impl & (e,e') \in S.\id \lor (e,e') \in S.S^+ \\
+&\impl & (e,e') \in S.(\id \cup S^+) \\
+&\impl & (e,e') \in S.(S^*) \\
+&\impl & (e,e') \in S^+
+\end{eqnarray*}
+\item ($+_{LR}$): $R \subseteq S^+ \impl R^+ \subseteq S^+$
+\begin{eqnarray*}
+(e,e') \in R^+ &\impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in R \\
+& \impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in S^+ \reason{R \subseteq S^+}\\
+& \impl & (e,e') \in S^{+^+} \\
+& \impl & (e,e') \in S^+
+\end{eqnarray*}
 \end{itemize}

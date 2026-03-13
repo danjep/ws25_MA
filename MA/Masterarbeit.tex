@@ -404,6 +404,7 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 %\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
 %\inferrule*{true}{R.R^* = R^+} \and
+\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
 \textcolor{red}{
 \inferrule*[left=($+_{R}$)]{R \subseteq S}{R \subseteq S^+}} \and
 \inferrule*[left=($+_{LR}$)]{R \subseteq S^+}{R^+ \subseteq S^+} \and
@@ -412,15 +413,20 @@ The most basic rules are those which are always true for any relations. We list 
 \inferrule*[left=($+_L$)]{R \subseteq S \\ R.S \subseteq S}{R^+ \subseteq S}
 \end{mathpar}
 
-\item Reflexive Closure $?$
+\item Reflexive Closure $?$ \\
+Let $\Gamma[t]$ be a term that includes the subterm $t$.
 \begin{mathpar}
-\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
-\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
-\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
+\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
+\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
+\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
+\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
+%\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
+%\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
+%\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
 %\inferrule*{R \subseteq S \\ \id \subseteq S}{R? \subseteq S} \and durch (2) und (con)
 %\inferrule*{R \subseteq S}{R? \subseteq S?} \and durch (ref) und (con)
-\inferrule*[left=($?_{strength}$)]{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
-\inferrule*[left=($?_{weak}$)]{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} \and
+%\inferrule*[left=($?_{strength}$)]{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
+%\inferrule*[left=($?_{weak}$)]{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} \and
 %\inferrule*{true}{R? \cup S? = (R \cup S) ?} \and
 %\inferrule*{true}{R? \cap S? = (R \cap S)?} \and
 %\inferrule*{true}{R?.S? = R? \cup S? \cup (R.S) ?}
@@ -428,6 +434,7 @@ The most basic rules are those which are always true for any relations. We list 
 
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
+\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} \and
 \inferrule*[left=($*_{2R}$)]{R \subseteq S}{R \subseteq S^*} \and
 \inferrule*[left=($*_{1R}$)]{true}{\id \subseteq R^*} \and  
 \inferrule*[left=($+*$)]{true}{R^+ \subseteq R^*} \and
@@ -503,15 +510,15 @@ For common set theoretic operators like $\cup$ and $\cap$ there exist commonly k
 \inferrule*[left=($._{\cup distL}$)]{\Gamma[S.R \cup S'.R]}{\Gamma[(S \cup S').R]} \and
 \inferrule*[left=($._{\cap distR}$)]{\Gamma[R.S \cap R.S']}{\Gamma[R.(S \cap S')]} \and
 \inferrule*[left=($._{\cap distL}$)]{\Gamma[S.R \cap S'.R]}{\Gamma[(S \cap S').R]} \and
-\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
-\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
-\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
-\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
+%\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
+%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
+%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
+%\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
 \inferrule*[left=($\sim$)]{\Gamma[R]}{\Gamma[\sim \sim R]} \and
 \inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sim R \cup \sim S]}{\Gamma[\sim (R \cap S)]} \and
 \inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sim R \cap \sim S]}{\Gamma[\sim (R \cup S)]} \and
-\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
-\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
+%\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
+%\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
 \end{mathpar}
 
 All of these rules are invertible and can be applied in reverse.
@@ -633,23 +640,42 @@ These will be needed to eliminate the constraint from the term.
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
 \[ \texttt{assume R \& S = \0} \text{ or } \texttt{let R = (S | T)+}\]
 for an assumption of an empty intersection between $R$ and $S$ and a definition of $R$ as the transitive closure of $S \cup T$. \\
-These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing.
-\todo{}
+These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing. To avoid producing extraordinary long terms, we use the former method.
+Assumptions can easily be turned into axioms of the proof system. 
 
+For an assumption \texttt{assume R <= S} we construct the rule 
+\begin{mathpar}
+\inferrule*[left=(assume)]{true}{R \subseteq S}
+\end{mathpar}
+
+For the assumption \texttt{assume rfi <= po} for example, we construct the rule
+\begin{mathpar}
+\inferrule*[left=(assume)]{true}{\textsf{rfi} \subseteq \po}
+\end{mathpar}
+
+We use definitions like \texttt{let R = S} as a rule
+\begin{mathpar}
+\inferrule*[left=(def)]{\Gamma[S]}{\Gamma[R]}
+\end{mathpar}
+\pagebreak
 
 \subsection{Handling Recursion}
-With the keywords \texttt{let rec} CAT lets it's users define relations recursively. In order to handle this recursion we need to construct appropriate rules.
-Usually, recursive definitions can be replaced through transitive closures, i.e. $R = R.S$ can be $R=S^+$.
-
+With the keywords \texttt{let rec} CAT lets it's users define relations recursively. In order to handle this recursion we need to construct appropriate rules. \\
+Let $R$ be a derived relation that uses recursion in it's definition and let $\Upsilon$ be a term that does not feature $R$ at all. If the definition of $R$ consists only of $R$ itself and $\Upsilon$ the recursion can be replaced by a transitive closure, i.e. $R = R.\Upsilon$ can be $R=\Upsilon^+$.
+\todo{Nur Regeln für Rekursionsfreie Terme}
 \begin{mathpar}
-\inferrule*[left=($rec_{L.L}$)]{S^+ \subseteq T}{R = R.S \subseteq T} \and
-\inferrule*[left=($rec_{L.R}$)]{S^+ \subseteq T}{R = S.R \subseteq T} \and
-\inferrule*[left=($rec_{R.L}$)]{T \subseteq S^+}{T \subseteq R.S = R} \and
-\inferrule*[left=($rec_{R.L}$)]{T \subseteq S^+}{T \subseteq S.R = R} 
+\inferrule*[left=($rec_{L.L}$)]{\Upsilon^+ \subseteq T}{R = R.\Upsilon \subseteq T} \and
+\inferrule*[left=($rec_{L.R}$)]{\Upsilon^+ \subseteq T}{R = \Upsilon.R \subseteq T} \and
+\inferrule*[left=($rec_{R.L}$)]{T \subseteq \Upsilon^+}{T \subseteq R.\Upsilon = R} \and
+\inferrule*[left=($rec_{R.L}$)]{T \subseteq \Upsilon^+}{T \subseteq \Upsilon.R = R} \and
+\inferrule*[left=($rec_{\cup L}$)]{\Upsilon^+ \subseteq T}{R = \Upsilon \cup R \subseteq T} \and
+\inferrule*[left=($rec_{\cup R}$)]{T \subseteq \Upsilon^+}{T \subseteq R = \Upsilon \cup R} \and
+\inferrule*[left=($rec_{\cap L}$)]{\Upsilon \subseteq T}{R = R \cap \Upsilon \subseteq T} \and
+\inferrule*[left=($rec_{\cap R}$)]{T \subseteq \Upsilon}{T \subseteq R = R \cap \Upsilon}
 \end{mathpar}
-\todo{}
+\todo{was tun bei allen anderen Termen?}
 
-\pagebreak
+
 \section{Conclusion}\label{sec:conclusion}
 
 
@@ -716,6 +742,52 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 
 
 \include{includes/Rulesproofs.tex}
+\begin{itemize}
+\item ($+_{weak}$): $R \subseteq S^+ \land S \subseteq T \impl R \subseteq T^+$
+\begin{eqnarray*}
+(e,e') \in R &\impl & (e,e') \in S^+ \reason{R \subseteq S^+} \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in S \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \reason{S \subseteq T} \\
+&\impl & (e,e') \in T^+
+\end{eqnarray*}
+\item ($+_{strength}$): $R^+ \subseteq S \land T \subseteq R \impl T^+ \subseteq S$
+\begin{eqnarray*}
+(e,e') \in T^+ &\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in R \reason{T \subseteq R} \\
+&\impl & (e,e') \in R^+ \\
+&\impl & (e,e') \in S \reason{R^+ \subseteq S}
+\end{eqnarray*}
+\item ($+_L$): $R \subseteq S \land R.S \subseteq S \impl R^+ \subseteq S$
+\begin{eqnarray*}
+(e,e') \in R^+ &\impl & \exists n\in \N: (e,e') \in R^n \\
+&\impl & \exists n \in \N : (e,e') \in R^{n-1}.R \\
+&\impl & \exists n \in \N : (e,e') \in R^{n-1}.S \reason{R \subseteq S} \\
+&\impl & \exists n \in \N : (e,e') \in R^{n-2}.R.S \\
+&\impl & \exists n \in \N : (e,e') \in R^{n-2}.S \reason{R.S \subseteq S} \\
+&\impl & \exists n \in \N : (e,e') \in R^{n-3}.S \reason{R.S \subseteq S} \\
+&& \dots \\
+&\impl & (e,e') \in R.S \reason{R.S \subseteq S} \\
+&\impl & (e,e') \in S \reason{R.S \subseteq S} \\
+\end{eqnarray*}
+\item ($?_{1R}$): $true \impl \id \subseteq R?$
+\begin{eqnarray*}
+(e,e') \in \id &\impl & (e,e') \in \id \cup R \reason{(\cup_{2R})} \\
+&\impl & (e,e') \in R? \reason{\text{Semantics }\bangle{rel}?}
+\end{eqnarray*}
+\item ($?_{1L}$): $\id \subseteq R \impl R? \subseteq R$
+\begin{eqnarray*}
+(e,e') \in R? &\impl & (e,e') \in R \cup \id \reason{\text{Semantics}} \\
+&\impl & (e,e') \in R \lor (e,e') \in \id \\
+&\impl & (e,e') \in R \lor (e,e') \in R \reason{\id \subseteq R} \\
+&\impl & (e,e') \in R
+\end{eqnarray*}
+%\item ($?_{strength}$): $R? \subseteq S \land T \subseteq R \impl T? \subseteq S$
+%\begin{eqnarray*}
+%
+%\end{eqnarray*}
+\end{itemize}
+
+
 \todo{Für eine Beweisart entscheiden, entsprechend anpasssen und alle Beweise fertig machen}
 \section{Examples}
 
