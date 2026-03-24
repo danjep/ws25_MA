@@ -201,10 +201,10 @@ Axiomatic models are defined in three stages: mapping each instruction onto a ma
 They are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \Cref{sec:cat}.\\
 To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfills all constraints of the model. \\
 For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
-The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to \cite{GruMey25} it consists of five tasks that an automated verification tool should ideally cover:
+The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
 The first task is to check generic properties of MCMs like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
-For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{GruMey25} which both are not able to handle every possible MCM but only a fragment.
+For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26} which both are not able to handle every possible MCM but only a fragment.
 
 The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow \po .
 Later, models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} were developed to allow for more optimization by the hardware.
@@ -233,7 +233,7 @@ CAT has some built-in base relations which include the already mentioned \po{} a
 Besides the given base relations, one can define derived relations in the CAT language like \textit{from-read} (\fr), connecting reads to those writes that occur after the write operation from which they read or \textit{happens-before} (\hb) which relates each event to the ones that occurred before \cite{Lam78}. The derivations can be written with the keyword \texttt{let} and using the operations in \Cref{fig:cat} like this:
 \[\texttt{let } \fr = \text{\rf}^{-1}\text{.\co} \qquad \texttt{let } \text{\hb}=\textsf{po}\cup \text{\co}\cup \text{\rf} \cup \text{\fr}\]
 The language also includes some base sets of events. These include the set of all events E, all reads (R) and writes (W), initial writes IW and fences F. \\
-The Memory Models from the last section can be formalized according to \cite{GruMey25,Kou+24} like this:
+The Memory Models from the last section can be formalized according to \cite{Gru+26,Kou+24} like this:
 \begin{align*}
 &\text{(SC) } \hfill &\texttt{acyclic }\hb \\
 &\text{(TSO) } \hfill &\texttt{irreflexive }(\po \setminus (W\times R) \cup (\rf \cap \textsf{ext}) \cup \co \cup \fr)^+ \\
@@ -253,14 +253,14 @@ Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the us
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
-The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{GruMey25}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
+The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{Gru+26}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
 By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and then a formula $ \psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. 
 
 Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
-This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
+This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. 
 
 
 \section{Preliminaries} \label{sec:preliminaries}
@@ -269,7 +269,7 @@ This master's thesis will be about the issue of whether the proof system in \cit
 \begin{itemize}
 \item $R^n$ for $R.R.R. \dots$ ($n$ times)
 \end{itemize}
-\subsubsection{Write and Read Restrictions}
+\subsubsection{Write and Read Restrictions} \label{sec:restrictions}
 Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $W \times W \cap \id$ and $R \times R \cap \id$. These relations can be used to restrict other relations to write and read operations.
 An example is $[W].\po .[R]$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
 This notation is furthermore justified by the semantics of the CAT language, since the expression
@@ -326,19 +326,19 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{itemize}
 \item No operator:
 \begin{mathpar}
-\inferrule*[left=(reflexivity)]{true}{R \subseteq R} \and
-\textcolor{red}{\inferrule*[left=(transitivity)]{R \subseteq S \\ S \subseteq T}{R \subseteq T}} \and
+\inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
+\textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rel{s} \subseteq \rel{t}}{\rel{r} \subseteq \rel{t}}} \and
 %\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
 %\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y} Für jeden Operator hinzugefügt
 \end{mathpar}
 \item Unification $\cup$
 \begin{mathpar}
-\inferrule*[left=($\cup_{2R}$)]{true}{R \subseteq R \cup S} \and 
-\inferrule*[left=($\cup_{2L}$)]{R \subseteq S}{R \cup S \subseteq S} \and
-\textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{R \subseteq S}{R \subseteq S \cup T}} \and
+\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and 
+\inferrule*[left=($\cup_{2L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
+\textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
 %\inferrule*{true}{S \cup R = R \cup S} \and
-\inferrule*[left=($\cup_{weak}$)]{R \subseteq S \cup S' \\ S' \subseteq T}{R \subseteq S \cup T} \and
-\inferrule*[left=($\cup_{strength}$)]{R \cup R' \subseteq S \\ T \subseteq R'}{R \cup T \subseteq S} \and
+\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and
+\inferrule*[left=($\cup_{strength}$)]{\sf r \cup r' \subseteq s \\ \sf t \subseteq r'}{\sf r \cup t \subseteq s} \and
 %\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
 %\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
 %\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
@@ -347,10 +347,10 @@ The most basic rules are those which are always true for any relations. We list 
 
 \item Intersection $\cap$
 \begin{mathpar}
-\inferrule*[left=($\cap_{2L}$)]{true}{R \cap S \subseteq R} \and 
-\inferrule*[left=($\cap_{2R}$)]{R \subseteq S}{R \subseteq R \cap S} \and
+\inferrule*[left=($\cap_{2L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
+\inferrule*[left=($\cap_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
 %\inferrule*{true}{S \cap R = R \cap S} \and
-\inferrule*[left=($\cap_{weak}$)]{R \subseteq S \cap S' \\ S' \subseteq T}{R \subseteq S \cap T} \and
+\inferrule*[left=($\cap_{weak}$)]{\sf r \subseteq s \cap s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cap t} \and
 \inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
 %\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
 %\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
@@ -362,12 +362,15 @@ The most basic rules are those which are always true for any relations. We list 
 \item Concatenation $.$ 
 \begin{mathpar}
 \textcolor{red}{
-\inferrule*[left=($._{1}$)]{R \subseteq \id}{R = R.R} \and 
+\inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r = r.r} \and 
 %\inferrule*{R \subseteq \id}{R.R \subseteq R} \and Redundant
-\inferrule*[left=($._{2Rl}$)]{\id \subseteq S}{R \subseteq S.R} \and
-\inferrule*[left=($._{2Rr}$)]{\id \subseteq S}{R \subseteq R.S}} \and 
-\textcolor{red}{\inferrule*[left=($._{2Lr}$)]{R \subseteq \id}{S.R \subseteq S} \and
-\inferrule*[left=($._{2Ll}$)]{R \subseteq \id}{R.S \subseteq S}} \and
+\inferrule*[left=($._{2Rl}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
+\inferrule*[left=($._{2Rr}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
+\textcolor{red}{\inferrule*[left=($._{2Lr}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
+\inferrule*[left=($._{2Ll}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
+\inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} \and 
+%\inferrule*[left=($-1_{elimR}$)]{R \subseteq S}{R \subseteq R.S^{-1}.S} \and 
+%\inferrule*[left=($-1_{elimL}$)]{R \subseteq S}{R \subseteq S.S^{-1}.R} \and 
 \inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
 \inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
 \inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
@@ -404,22 +407,22 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 %\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
 %\inferrule*{true}{R.R^* = R^+} \and
-\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
+\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
 \textcolor{red}{
-\inferrule*[left=($+_{R}$)]{R \subseteq S}{R \subseteq S^+}} \and
-\inferrule*[left=($+_{LR}$)]{R \subseteq S^+}{R^+ \subseteq S^+} \and
-\inferrule*[left=($+_{weak}$)]{R \subseteq S^+ \\ S \subseteq T}{R \subseteq T^+} \and
+\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and
+\inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
+\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
 \inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
-\inferrule*[left=($+_L$)]{R \subseteq S \\ R.S \subseteq S}{R^+ \subseteq S}
+\textcolor{red}{\inferrule*[left=($+_L$)]{\sf r \subseteq s \\ \sf r.s \subseteq s}{\sf r^+ \subseteq s}}
 \end{mathpar}
 
 \item Reflexive Closure $?$ \\
 Let $\Gamma[t]$ be a term that includes the subterm $t$.
 \begin{mathpar}
-\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
-\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
-\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
-\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
+\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
+\inferrule*[left=($?_{\cup dist}$)]{\Gamma[\sf r? \cup s?]}{\Gamma[\sf (r \cup s)?]} \and
+\inferrule*[left=($?_{\cap dist}$)]{\Gamma[\sf r? \cap s?]}{\Gamma[\sf (r \cap s)?]} \and
+\inferrule*[left=($._{?dist}$)]{\Gamma[\sf r? \cup s? \cup (r.s)?]}{\Gamma[\sf r?.s?]} \and
 %\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
 %\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
 %\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
@@ -434,21 +437,24 @@ Let $\Gamma[t]$ be a term that includes the subterm $t$.
 
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
-\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} \and
-\inferrule*[left=($*_{2R}$)]{R \subseteq S}{R \subseteq S^*} \and
-\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq R^*} \and  
-\inferrule*[left=($+*$)]{true}{R^+ \subseteq R^*} \and
-\inferrule*[left=($?*$)]{true}{R? \subseteq R^*} \and
-\inferrule*[left=($*_{2L}$)]{\id \subseteq S \\ R^+ \subseteq S}{R^* \subseteq S} \and
+\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*} \and
+\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
+\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
+\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
+\inferrule*[left=($*_{2L}$)]{\sf \id \subseteq s \\ \sf r^+ \subseteq s}{\sf r^* \subseteq s} \and
 %\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
-\inferrule*[left=($*_{weak}$)]{R \subseteq S^* \\ S \subseteq T}{R \subseteq T^*} \and
-\inferrule*[left=($*_{strength}$)]{R^* \subseteq S \\ T \subseteq R}{T^* \subseteq S} \and
+\inferrule*[left=($*_{\cup elim}$)]{\sf (r^*.s^*)^*}{\sf (r \cup s)^*} \and
+\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} \and
+\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
+\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s} \and
 \end{mathpar}
 
 
-%\item Inverse $^{-1}$ Braucht nicht, weil man ^-1 immer reinziehen kann
+%\item Inverse $^{-1}$ %Braucht nicht, weil man ^-1 immer reinziehen kann
 %\begin{mathpar}
 %\inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
+%\inferrule*[left=($-1_{comm}$)]{true}{R.R^-1 \subseteq \id} \and
 %\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R^{-1} \subseteq R} \and
 %\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R \subseteq R^{-1}} \and
 %\inferrule*{}{R^{-1} \subseteq S} \and
@@ -459,14 +465,14 @@ Let $\Gamma[t]$ be a term that includes the subterm $t$.
 \item Complement $\sim$
 \begin{mathpar}
 %\inferrule*{true}{\sim \sim R = R} \and
-\inferrule*[left=($\sim_{\cap 2R}$)]{R \subseteq S}{R~ \cap \sim S \subseteq 0} \and
+\inferrule*[left=($\sim_{\cap 2R}$)]{\sf r \subseteq s}{\sf r~ \cap \sim s \subseteq 0} \and
 %\inferrule*{false}{\sim R \subseteq R} \and
 %\inferrule*{false}{R \subseteq \sim R} \and
 %\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
-\inferrule*[left=($\sim_{2R}$)]{R \cap S \subseteq \0}{R \subseteq \sim S} \and
-\inferrule*[left=($\sim_{2LR}$)]{R \subseteq S}{\sim S \subseteq \sim R} \and
-\inferrule*[left=($\sim_{strength}$)]{\sim R \subseteq S \\ R \subseteq T}{\sim T \subseteq S} \and
-\inferrule*[left=($\sim_{weak}$)]{R \subseteq \sim S \\ T \subseteq S}{R \subseteq \sim T} \and
+\inferrule*[left=($\sim_{2R}$)]{\sf r \cap s \subseteq \0}{\sf r \subseteq \sim s} \and
+\inferrule*[left=($\sim_{2LR}$)]{\sf r \subseteq s}{\sf \sim s \subseteq \sim r} \and
+\inferrule*[left=($\sim_{strength}$)]{\sf \sim r \subseteq s \\ \sf r \subseteq t}{\sf \sim t \subseteq s} \and
+\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
 %\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
 %\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
 \end{mathpar}
@@ -474,49 +480,63 @@ Let $\Gamma[t]$ be a term that includes the subterm $t$.
 
 We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations.
 \begin{lemma}\label{lem:inversion}
-Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix.
+Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
 \end{lemma}
 
+The proof in \Cref{sec:inversionproof} provides the following rules for handling terms that include inversions:
+\begin{mathpar}
+\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
+\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and
+\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
+\end{mathpar}
 
 \subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
 \begin{mathpar}
-\inferrule*[left=($\cup_{3RL}$)]{R \subseteq S}{R \cup R' \subseteq S \cup R'} =
-\inferrule*[left=($\cup_{strength}$)]{
-	\inferrule*[left=($\cup_{2L}$)]{
-		\inferrule*[left=($\cup_{3R}$)]{R \subseteq S}{R \subseteq S \cup R'}
-	}{R \cup S \cup R' \subseteq S \cup R'}
+\inferrule*[left=($\cup_{3RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
+\inferrule*[left=($\cup_{strength}$),vcenter]{
+	\inferrule*[Left=($\cup_{2L}$)]{
+		\inferrule*[Left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup r'}
+	}{\sf r \cup s \cup r' \subseteq s \cup r'}
 	\\
-	\inferrule*[right=($\cup_{2R}$)]{true}{R' \subseteq S \cup R'}
-}{R \cup R' \subseteq S \cup R'}
+	\inferrule*[Right=($\cup_{2R}$)]{\true}{\sf r' \subseteq s \cup r'}
+}{\sf r \cup r' \subseteq s \cup r'}
 \end{mathpar}
 \begin{mathpar}
-\inferrule*[left=($\cup_{3L}$)]{ }{ } = \inferrule*[right=($\cup_{strength}$)]{
-	\inferrule*[right=($\cup_{2L}$)]{R \subseteq T}{R \cup T \subseteq T}
+\inferrule*[left=($\cup_{3L}$),vcenter]{\sf r \subseteq t \\ \sf s \subseteq t}{\sf r \cup s \subseteq t}$=$ \quad
+\inferrule*[right=($\cup_{strength}$),vcenter]{
+	\inferrule*[right=($\cup_{2L}$)]{\sf r \subseteq t}{\sf r \cup t \subseteq t}
 	\\
-	S \subseteq T}
-{R \cup S \subseteq T}
+	\inferrule*[]{}{\sf s \subseteq t}}
+{\sf r \cup s \subseteq t}
 \end{mathpar}
 
 \subsection{Classic transformations}\label{sec:transformations}
 For common set theoretic operators like $\cup$ and $\cap$ there exist commonly known rules like distributivity and commutativity. To incorporate the capabilities of those rules, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
 \begin{mathpar}
-\inferrule*[Left=($\cup_{comm}$)]{\Gamma[R\cup S]}{\Gamma[S \cup R]} \and
-\inferrule*[left=($\cup_{dist}$)]{\Gamma[R \cup S \cup S']}{\Gamma[R \cup (S \cup S')]} \and
-\inferrule*[left=($\cap_{comm}$)]{\Gamma[R \cap S]}{\Gamma[S \cap R]} \and
-\inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[R \cup (S \cap S')]}{\Gamma[(R \cup S) \cap (R \cup S')]} \and
-\inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[R \cap (S \cup S')]}{\Gamma[(R \cap S) \cup (R \cap S')]} \and
-\inferrule*[left=($\cap_{dist})$)]{\Gamma[R \cap S \cap S']}{\Gamma[R \cap (S \cap S')]} \and
-\inferrule*[left=($._{\cup distR}$)]{\Gamma[R.S \cup R.S']}{\Gamma[R.(S \cup S')]} \and
-\inferrule*[left=($._{\cup distL}$)]{\Gamma[S.R \cup S'.R]}{\Gamma[(S \cup S').R]} \and
-\inferrule*[left=($._{\cap distR}$)]{\Gamma[R.S \cap R.S']}{\Gamma[R.(S \cap S')]} \and
-\inferrule*[left=($._{\cap distL}$)]{\Gamma[S.R \cap S'.R]}{\Gamma[(S \cap S').R]} \and
+\inferrule*[left=($\cup_{comm}$)]{\Gamma[\sf r\cup s]}{\Gamma[\sf s \cup r]} \and
+\inferrule*[left=($\cap_{comm}$)]{\Gamma[\sf r \cap s]}{\Gamma[\sf s \cap r]} \and
+\inferrule*[left=($*_{comm}$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^*.r]} \and
+\inferrule*[left=($\cup_{dist}$)]{\Gamma[\sf r \cup s \cup s']}{\Gamma[\sf r \cup (s \cup s')]} \and
+\inferrule*[left=($\cap_{dist})$)]{\Gamma[\sf r \cap s \cap s']}{\Gamma[\sf r \cap (s \cap s')]} \and
+\inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[\sf r \cup (s \cap s')]}{\Gamma[\sf (r \cup s) \cap (r \cup s')]} \and
+\inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[\sf r \cap (s \cup s')]}{\Gamma[\sf (r \cap s) \cup (r \cap s')]} \and
+\inferrule*[left=($._{\cup distR}$)]{\Gamma[\sf r.s \cup r.s']}{\Gamma[\sf r.(s \cup s')]} \and
+\inferrule*[left=($._{\cup distL}$)]{\Gamma[\sf s.r \cup s'.r]}{\Gamma[\sf(s \cup s').r]} \and
+\inferrule*[left=($._{\cap distR}$)]{\Gamma[\sf r.s \cap r.s']}{\Gamma[\sf r.(s \cap s')]} \and
+\inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} \and
 %\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
 %\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
 %\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
 %\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
-\inferrule*[left=($\sim$)]{\Gamma[R]}{\Gamma[\sim \sim R]} \and
-\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sim R \cup \sim S]}{\Gamma[\sim (R \cap S)]} \and
-\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sim R \cap \sim S]}{\Gamma[\sim (R \cup S)]} \and
+\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
+\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
+\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
+\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
+\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
 %\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
 %\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
 \end{mathpar}
@@ -527,32 +547,43 @@ All of these rules are invertible and can be applied in reverse.
 
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
-Memory Consistency Models are defined on a group of relations. For each of them there exist some inclusion rules:
-
-\noindent Let $R$ be a relation.
+Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
 \begin{mathpar}
-\inferrule*[left=(\0)]{true}{\0 \subseteq R} \and
-\inferrule*[left=(.\0)]{true}{R.\0.S \subseteq T} \and
-\inferrule*[left=(W)]{true}{[W] \subseteq \id} \and
-\inferrule*[left=(R)]{true}{[R] \subseteq \id} \and
-\inferrule*[left=(WR)]{true}{[W].[R] \subseteq \0} \and
-\inferrule*[left=(RW)]{true}{[R].[W] \subseteq \0} \and
-\inferrule*[left=(\textsf{ppo})]{true}{\textsf{ppo} \subseteq \po} \and
-\inferrule*[left=($\po_{trans}$)]{true}{\po .\po \subseteq \po} \and
-\inferrule*[left=(rf)]{true}{\rf = [W].\rf .[R]} \and
-\inferrule*[left=(rf+)]{true}{\rf .\rf \subseteq \0} \and
-\inferrule*[left=($\text{rf}_{symm}$)]{true}{\rf .\rf^{-1} \subseteq \id} \and
-\inferrule*[left=(\text{rfloc})]{true}{\rf \subseteq \loc} \and
-\inferrule*[left=(\id)]{true}{\id^{-1} \subseteq \id} \and
-\inferrule*[left=($\text{id}_{trans}$)]{true}{R.\id \subseteq R} \and
-\inferrule*[left=(co)]{true}{\co = [W].\co .[W]} \and
-\inferrule*[left=($\text{co}_{trans}$)]{true}{\co .\co \subseteq \co} \and
-\inferrule*[left=(\loc)]{true}{\loc^{-1} \subseteq \loc} \and
-\inferrule*[left=($\loc_{trans}$)]{true}{\loc .\loc \subseteq \loc} \and
-\inferrule*[left=(\ext)]{true}{\ext^{-1} \subseteq \ext}
+\inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
+\inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
+\inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
+\inferrule*[left=($\text{id}_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
+\end{mathpar}
+The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\id_{symm}$) rule.
+\begin{mathpar}
+\inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
+\inferrule*[left=($\loc_{symm}$)]{\it true}{\loc^{-1} \subseteq \loc} \and
+\inferrule*[left=($\ext_{symm}$)]{\it true}{\ext^{-1} \subseteq \ext} \and
+\inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
+\inferrule*[left=($\po_{trans}$)]{\true}{\po .\po \subseteq \po} \and
+\inferrule*[left=($\text{co}_{trans}$)]{\true}{\co .\co \subseteq \co} \and
+\inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} \and
+\inferrule*[left=($r_{symm}$)]{\Gamma[\sf r^{-1}] \\ \sf r \subseteq \id}{\Gamma[\sf r]} 
+\end{mathpar}
+As we have described in \Cref{sec:restrictions}, the relations $[W]$ and $[R]$ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
+Besides this we use some rules to handle $[W]$ and $[R]$ themselves.
+\begin{mathpar}
+\inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
+\inferrule*[left=(R)]{\true}{\sf [R] \subseteq \id} \and
+\inferrule*[left=(WR)]{\true}{\sf [W].[R] \subseteq \0} \and
+\inferrule*[left=(RW)]{\it true}{\sf [R].[W] \subseteq \0} \and
+\inferrule*[left=(rf)]{\it true}{\sf \rf = [W].\rf .[R]} \and
+\inferrule*[left=(co)]{\it true}{\sf \co = [W].\co .[W]} 
+\end{mathpar}
+The last part of relation-specific rules concerns inclusions between base relations like the one between \textsf{ppo} and \po. The inclusion between \rf{} and \loc{} is based on the fact, that \rf{} relates two events on the same memory location, namely one read and the write that provided the value in that location. Since \loc{} includes connections between all events on the same location, every entry of \rf{} needs to be in \loc{}. The same holds for the consecutive writes on the same location in \co{}. 
+\begin{mathpar}
+\inferrule*[left=(\textsf{ppo})]{\true}{\textsf{ppo} \subseteq \po} \and
+%\inferrule*[left=(rf+)]{true}{\rf .\rf \subseteq \0} \and wegen (RW) überflüssig
+\inferrule*[left=(\text{rfloc})]{\true}{\rf \subseteq \loc} \and
+\inferrule*[left=(\text{coloc})]{\true}{\co \subseteq \loc} 
 \end{mathpar}
 
-The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$.
+
 
 
 
@@ -638,24 +669,24 @@ These will be needed to eliminate the constraint from the term.
 
 \subsection{Incorporating the Assumptions and Definitions}\label{sec:assumptions}
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
-\[ \texttt{assume R \& S = \0} \text{ or } \texttt{let R = (S | T)+}\]
-for an assumption of an empty intersection between $R$ and $S$ and a definition of $R$ as the transitive closure of $S \cup T$. \\
+\[ \texttt{assume r \& s = \0} \text{ or } \texttt{let r = (s | t)+}\]
+for an assumption of an empty intersection between \rel{r} and \rel{s} and a definition of \rel{r} as the transitive closure of $\sf s \cup t$. \\
 These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing. To avoid producing extraordinary long terms, we use the former method.
 Assumptions can easily be turned into axioms of the proof system. 
 
-For an assumption \texttt{assume R <= S} we construct the rule 
+For an assumption \texttt{assume r <= s} we construct the rule 
 \begin{mathpar}
-\inferrule*[left=(assume)]{true}{R \subseteq S}
+\inferrule*[left=(assume)]{\true}{\sf r \subseteq s}
 \end{mathpar}
 
-For the assumption \texttt{assume rfi <= po} for example, we construct the rule
-\begin{mathpar}
-\inferrule*[left=(assume)]{true}{\textsf{rfi} \subseteq \po}
-\end{mathpar}
+%For the assumption \texttt{assume rfi <= po} for example, we construct the rule
+%\begin{mathpar}
+%\inferrule*[left=(assume)]{true}{\textsf{rfi} \subseteq \po}
+%\end{mathpar}
 
-We use definitions like \texttt{let R = S} as a rule
+We use definitions like \texttt{let r = s} as a rule
 \begin{mathpar}
-\inferrule*[left=(def)]{\Gamma[S]}{\Gamma[R]}
+\inferrule*[left=(def)]{\Gamma[\sf s]}{\Gamma[\sf r]}
 \end{mathpar}
 \pagebreak
 
@@ -675,6 +706,7 @@ Let $R$ be a derived relation that uses recursion in it's definition and let $\U
 \end{mathpar}
 \todo{was tun bei allen anderen Termen?}
 
+\section{Completeness}
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -687,7 +719,7 @@ Let $R$ be a derived relation that uses recursion in it's definition and let $\U
 
 \begin{appendix}
 \addcontentsline{toc}{part}{Appendix}
-\section{Proof of the Inversion lemma}
+\section{Proof of the Inversion lemma}\label{sec:inversionproof}
 \Cref{lem:inversion}:
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. \\
 \begin{proof}
