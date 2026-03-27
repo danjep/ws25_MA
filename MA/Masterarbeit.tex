@@ -314,6 +314,8 @@ Let $M$ be a memory consistency model, $\bangle{cat},\bangle{cat}_1,\bangle{cat}
 \end{definition}
 For better readability, the \semsof{\cdot} symbols can be omitted when dealing with relations, since the semantics are equal to the intuitive definition of relations.
 
+\pagebreak
+
 \section{The Proof System} \label{sec:proofsys}
 In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
 Since there may be multiple branches of reasoning it is important to clarify that every branch needs to start at $true$ in order to verify the inclusion.
@@ -328,6 +330,8 @@ The most basic rules are those which are always true for any relations. We list 
 \begin{mathpar}
 \inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
 \textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rel{s} \subseteq \rel{t}}{\rel{r} \subseteq \rel{t}}} \and
+\inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s'] \\ \sf s' \subseteq t}{{\sf r \subseteq} \Delta[t]} \and
+\inferrule*[left=(weak)]{\Delta[\sf r'] \subseteq s \\ \sf t \subseteq r'}{\Delta[\sf t] \subseteq s} \and
 %\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
 %\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y} Für jeden Operator hinzugefügt
 \end{mathpar}
@@ -337,8 +341,8 @@ The most basic rules are those which are always true for any relations. We list 
 \inferrule*[left=($\cup_{2L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
 \textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
 %\inferrule*{true}{S \cup R = R \cup S} \and
-\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and
-\inferrule*[left=($\cup_{strength}$)]{\sf r \cup r' \subseteq s \\ \sf t \subseteq r'}{\sf r \cup t \subseteq s} \and
+%\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and
+%\inferrule*[left=($\cup_{strength}$)]{\sf r \cup r' \subseteq s \\ \sf t \subseteq r'}{\sf r \cup t \subseteq s} \and
 %\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
 %\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
 %\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
@@ -350,8 +354,8 @@ The most basic rules are those which are always true for any relations. We list 
 \inferrule*[left=($\cap_{2L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
 \inferrule*[left=($\cap_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
 %\inferrule*{true}{S \cap R = R \cap S} \and
-\inferrule*[left=($\cap_{weak}$)]{\sf r \subseteq s \cap s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cap t} \and
-\inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
+%\inferrule*[left=($\cap_{weak}$)]{\sf r \subseteq s \cap s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cap t} \and
+%\inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
 %\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
 %\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
 %\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and durch 2 und con1
@@ -371,10 +375,10 @@ The most basic rules are those which are always true for any relations. We list 
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} \and 
 %\inferrule*[left=($-1_{elimR}$)]{R \subseteq S}{R \subseteq R.S^{-1}.S} \and 
 %\inferrule*[left=($-1_{elimL}$)]{R \subseteq S}{R \subseteq S.S^{-1}.R} \and 
-\inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
-\inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
-\inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
-\inferrule*[left=($._{strengthL}$)]{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
+%\inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
+%\inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
+%\inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
+%\inferrule*[left=($._{strengthL}$)]{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
 %\inferrule*{true}{R.(S\cup S') = R.S \cup R.S'}
 %\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and per (4) und (con2)
 %\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and wie oben nur mit (5)
@@ -408,12 +412,14 @@ The most basic rules are those which are always true for any relations. We list 
 %\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
 %\inferrule*{true}{R.R^* = R^+} \and
 \inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
-\textcolor{red}{
-\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and
+%\textcolor{red}{
+%\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and durch weakening und s \subseteq s^+
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
-\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
-\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
-\textcolor{red}{\inferrule*[left=($+_L$)]{\sf r \subseteq s \\ \sf r.s \subseteq s}{\sf r^+ \subseteq s}}
+%\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
+%\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
+\textcolor{red}{\inferrule*[left=($+I$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}} \and
+\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
+\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
 \end{mathpar}
 
 \item Reflexive Closure $?$ \\
@@ -438,16 +444,16 @@ Let $\Gamma[t]$ be a term that includes the subterm $t$.
 \item Reflexive-transitive Closure $^*$
 \begin{mathpar}
 \inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
-\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*} \and
-\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
-\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
-\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
+%\textcolor{red}{\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*}} \and durch weakening
+%\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
+%\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
+%\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
 \inferrule*[left=($*_{2L}$)]{\sf \id \subseteq s \\ \sf r^+ \subseteq s}{\sf r^* \subseteq s} \and
 %\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
-\inferrule*[left=($*_{\cup elim}$)]{\sf (r^*.s^*)^*}{\sf (r \cup s)^*} \and
-\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} \and
-\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
-\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s} \and
+\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
+\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} %\and
+%\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
+%\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s}
 \end{mathpar}
 
 
@@ -462,20 +468,20 @@ Let $\Gamma[t]$ be a term that includes the subterm $t$.
 %\inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
 %\end{mathpar}
 
-\item Complement $\sim$
-\begin{mathpar}
+%\item Complement $\sim$
+%\begin{mathpar}
 %\inferrule*{true}{\sim \sim R = R} \and
-\inferrule*[left=($\sim_{\cap 2R}$)]{\sf r \subseteq s}{\sf r~ \cap \sim s \subseteq 0} \and
+%\inferrule*[left=($\sim_{\cap 2R}$)]{\sf r \subseteq s}{\sf r~ \cap \sim s \subseteq 0} \and
 %\inferrule*{false}{\sim R \subseteq R} \and
 %\inferrule*{false}{R \subseteq \sim R} \and
 %\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
-\inferrule*[left=($\sim_{2R}$)]{\sf r \cap s \subseteq \0}{\sf r \subseteq \sim s} \and
-\inferrule*[left=($\sim_{2LR}$)]{\sf r \subseteq s}{\sf \sim s \subseteq \sim r} \and
-\inferrule*[left=($\sim_{strength}$)]{\sf \sim r \subseteq s \\ \sf r \subseteq t}{\sf \sim t \subseteq s} \and
-\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
+%\inferrule*[left=($\sim_{2R}$)]{\sf r \cap s \subseteq \0}{\sf r \subseteq \sim s} \and
+%\inferrule*[left=($\sim_{2LR}$)]{\sf r \subseteq s}{\sf \sim s \subseteq \sim r} \and
+%\inferrule*[left=($\sim_{strength}$)]{\sf \sim r \subseteq s \\ \sf r \subseteq t}{\sf \sim t \subseteq s} \and
+%\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
 %\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
 %\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
-\end{mathpar}
+%\end{mathpar}
 \end{itemize}
 
 We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations.
@@ -495,6 +501,7 @@ The proof in \Cref{sec:inversionproof} provides the following rules for handling
 \end{mathpar}
 
 \subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
+While testing the proof system, a few rules were repeatedly needed, to shorten the proofs eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 \begin{mathpar}
 \inferrule*[left=($\cup_{3RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
 \inferrule*[left=($\cup_{strength}$),vcenter]{
@@ -514,12 +521,25 @@ The proof in \Cref{sec:inversionproof} provides the following rules for handling
 {\sf r \cup s \subseteq t}
 \end{mathpar}
 
-\subsection{Classic transformations}\label{sec:transformations}
-For common set theoretic operators like $\cup$ and $\cap$ there exist commonly known rules like distributivity and commutativity. To incorporate the capabilities of those rules, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
+\subsection{Transformations}\label{sec:transformations}
+The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive. 
+\begin{definition}[Commutativity, Associativity, Distributivity]
+Let $\circ$ and $\star$ be two operations on a set $S$ and $r,s \in S$.
+\begin{eqnarray*}
+\text{(Commutativity) }& r \circ s &= s \circ r \\
+\text{(Associativity) }& r \circ (s \circ t) &= (r \circ s) \circ t \\
+\text{(Distributivity) }& r \circ (s \star t) &= (r \circ s) \star (r \circ t)
+\end{eqnarray*}
+\end{definition}
+
+To incorporate the capabilities these properties offer, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
+
 \begin{mathpar}
 \inferrule*[left=($\cup_{comm}$)]{\Gamma[\sf r\cup s]}{\Gamma[\sf s \cup r]} \and
 \inferrule*[left=($\cap_{comm}$)]{\Gamma[\sf r \cap s]}{\Gamma[\sf s \cap r]} \and
 \inferrule*[left=($*_{comm}$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^*.r]} \and
+\inferrule*[left=($\cup_{ass}$)]{\Gamma[\sf (r \cup s) \cup t]}{\Gamma[\sf r \cup (s \cup t)]} \and
+\inferrule*[left=($\cap_{ass}$)]{\Gamma[\sf (r \cap s) \cap t]}{\Gamma[\sf r \cap (s \cap t)]} \and
 \inferrule*[left=($\cup_{dist}$)]{\Gamma[\sf r \cup s \cup s']}{\Gamma[\sf r \cup (s \cup s')]} \and
 \inferrule*[left=($\cap_{dist})$)]{\Gamma[\sf r \cap s \cap s']}{\Gamma[\sf r \cap (s \cap s')]} \and
 \inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[\sf r \cup (s \cap s')]}{\Gamma[\sf (r \cup s) \cap (r \cup s')]} \and
@@ -527,16 +547,19 @@ For common set theoretic operators like $\cup$ and $\cap$ there exist commonly k
 \inferrule*[left=($._{\cup distR}$)]{\Gamma[\sf r.s \cup r.s']}{\Gamma[\sf r.(s \cup s')]} \and
 \inferrule*[left=($._{\cup distL}$)]{\Gamma[\sf s.r \cup s'.r]}{\Gamma[\sf(s \cup s').r]} \and
 \inferrule*[left=($._{\cap distR}$)]{\Gamma[\sf r.s \cap r.s']}{\Gamma[\sf r.(s \cap s')]} \and
-\inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} \and
+\inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} 
+\end{mathpar}
+
+
+
+\begin{mathpar}
 %\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
 %\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
 %\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
 %\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
-\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
-\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
-\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
-\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
-\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
+%\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
+%\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
+%\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
 %\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
 %\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
 \end{mathpar}
