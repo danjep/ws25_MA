@@ -324,164 +324,49 @@ Additionally to the rules that model logical implications between relational ter
 
 \subsection{Basic Rules}
 The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like unification there is only one version of each rule since there is no different effect when interchanging the relations. Furthermore, in \Cref{sec:transformations} we state rules for commutativity and others. \\
+Let $\Delta[t]$ be a relation term that includes the subterm $t$. 
+
 
 \begin{itemize}
 \item No operator:
 \begin{mathpar}
 \inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
 \textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rel{s} \subseteq \rel{t}}{\rel{r} \subseteq \rel{t}}} \and
-\inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s'] \\ \sf s' \subseteq t}{{\sf r \subseteq} \Delta[t]} \and
-\inferrule*[left=(weak)]{\Delta[\sf r'] \subseteq s \\ \sf t \subseteq r'}{\Delta[\sf t] \subseteq s} \and
-%\inferrule*[left=(con1)]{X \subseteq Y[R] \\ R \subseteq S}{X \subseteq Y[S]} \and
-%\inferrule*[left=(con2)]{X[S] \subseteq Y \\ R \subseteq S}{X[R] \subseteq Y} Für jeden Operator hinzugefügt
+\inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
+\inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} 
 \end{mathpar}
 \item Unification $\cup$
 \begin{mathpar}
-\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and 
+%\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
 \inferrule*[left=($\cup_{2L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
 \textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
-%\inferrule*{true}{S \cup R = R \cup S} \and
-%\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and
-%\inferrule*[left=($\cup_{strength}$)]{\sf r \cup r' \subseteq s \\ \sf t \subseteq r'}{\sf r \cup t \subseteq s} \and
-%\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
-%\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
-%\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
-%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R \cup R' \subseteq S \cup S'}} durch 1,2,weak und nochmal weak
 \end{mathpar}
 
 \item Intersection $\cap$
 \begin{mathpar}
 \inferrule*[left=($\cap_{2L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
 \inferrule*[left=($\cap_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
-%\inferrule*{true}{S \cap R = R \cap S} \and
-%\inferrule*[left=($\cap_{weak}$)]{\sf r \subseteq s \cap s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cap t} \and
-%\inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
-%\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
-%\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
-%\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and durch 2 und con1
-%\textcolor{red}{\inferrule*[left=($\cap_{3LR}$)]{R \subseteq S}{R \cap R' \subseteq S \cap R'}} \and durch 1,con1,2,con1,1 und transitivität
-%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}} von der Regel vorher die Sachen plus einmal con1
 \end{mathpar}
 
 \item Concatenation $.$ 
 \begin{mathpar}
 \textcolor{red}{
 \inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r = r.r} \and 
-%\inferrule*{R \subseteq \id}{R.R \subseteq R} \and Redundant
 \inferrule*[left=($._{2Rl}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
 \inferrule*[left=($._{2Rr}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
 \textcolor{red}{\inferrule*[left=($._{2Lr}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
 \inferrule*[left=($._{2Ll}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} \and 
-%\inferrule*[left=($-1_{elimR}$)]{R \subseteq S}{R \subseteq R.S^{-1}.S} \and 
-%\inferrule*[left=($-1_{elimL}$)]{R \subseteq S}{R \subseteq S.S^{-1}.R} \and 
-%\inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
-%\inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
-%\inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
-%\inferrule*[left=($._{strengthL}$)]{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
-%\inferrule*{true}{R.(S\cup S') = R.S \cup R.S'}
-%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and per (4) und (con2)
-%\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and wie oben nur mit (5)
-%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq S.R'} \and (3) und (con2)
-%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq R'.S}} \and (2) und (con2)
-%\textcolor{red}{\inferrule*{R \subseteq S}{R'.R \subseteq R'.S} \and per (ref) und (con1)
-%\inferrule*{R \subseteq S}{R.R' \subseteq S.R'} \and analog
-%\inferrule*{R \subseteq S \\ R' \subseteq S'}{R.R' \subseteq S.S'}} per (ref) und zweimal (con1)
-%\inferrule*{R.R \subseteq R}{R^+ \subseteq R} 
-\end{mathpar}
 
-%\item Difference $\setminus$ Ist wahrscheinlich nicht möglich, deshalb weglassen
-%\begin{mathpar}
-%\inferrule*{true}{R \setminus R \subseteq S} \and
-%\inferrule*{R \subseteq \0}{R \subseteq R \setminus R} \and
-%\inferrule*{true}{S \setminus R \subseteq S} \and
-%\inferrule*{R \subseteq S}{R \setminus S \subseteq S} \and
-%\textcolor{red}{\inferrule*{S \subseteq \0 \text{ oder R ist leere Rel}}{R \subseteq R \setminus S}} \and
-%\inferrule*{R \subseteq \0}{R \subseteq S \setminus R} \and
-%\inferrule*{R \subseteq S}{R \setminus S \subseteq S \setminus R} \and
-%\textcolor{red}{\inferrule*{R \subseteq S}{R \setminus R' \subseteq S}} \and
-%\inferrule*{R \subseteq R' \\ R \cap S \subseteq \0}{R \subseteq R' \setminus S} \and
-%\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'} \and
-%\inferrule*{S \subseteq R}{R' \setminus R \subseteq R' \setminus S} \and
-%\textcolor{red}{\inferrule*{R \subseteq S \setminus S'}{R \setminus R' \subseteq S \setminus S'}}
-%\end{mathpar}
+\end{mathpar}
 
 
 \item Transitive Closure $^+$
 \begin{mathpar}
-%\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
-%\inferrule*{true}{R.R^* = R^+} \and
-\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
-%\textcolor{red}{
-%\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and durch weakening und s \subseteq s^+
+
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
-%\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
-%\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
-\textcolor{red}{\inferrule*[left=($+I$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}} \and
-\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
-\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
+\textcolor{red}{\inferrule*[left=($+I$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}} 
 \end{mathpar}
-
-\item Reflexive Closure $?$ \\
-Let $\Gamma[t]$ be a term that includes the subterm $t$.
-\begin{mathpar}
-\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
-\inferrule*[left=($?_{\cup dist}$)]{\Gamma[\sf r? \cup s?]}{\Gamma[\sf (r \cup s)?]} \and
-\inferrule*[left=($?_{\cap dist}$)]{\Gamma[\sf r? \cap s?]}{\Gamma[\sf (r \cap s)?]} \and
-\inferrule*[left=($._{?dist}$)]{\Gamma[\sf r? \cup s? \cup (r.s)?]}{\Gamma[\sf r?.s?]} \and
-%\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
-%\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
-%\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
-%\inferrule*{R \subseteq S \\ \id \subseteq S}{R? \subseteq S} \and durch (2) und (con)
-%\inferrule*{R \subseteq S}{R? \subseteq S?} \and durch (ref) und (con)
-%\inferrule*[left=($?_{strength}$)]{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
-%\inferrule*[left=($?_{weak}$)]{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} \and
-%\inferrule*{true}{R? \cup S? = (R \cup S) ?} \and
-%\inferrule*{true}{R? \cap S? = (R \cap S)?} \and
-%\inferrule*{true}{R?.S? = R? \cup S? \cup (R.S) ?}
-\end{mathpar}
-
-\item Reflexive-transitive Closure $^*$
-\begin{mathpar}
-\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
-%\textcolor{red}{\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*}} \and durch weakening
-%\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
-%\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
-%\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
-\inferrule*[left=($*_{2L}$)]{\sf \id \subseteq s \\ \sf r^+ \subseteq s}{\sf r^* \subseteq s} \and
-%\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
-\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
-\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} %\and
-%\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
-%\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s}
-\end{mathpar}
-
-
-%\item Inverse $^{-1}$ %Braucht nicht, weil man ^-1 immer reinziehen kann
-%\begin{mathpar}
-%\inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
-%\inferrule*[left=($-1_{comm}$)]{true}{R.R^-1 \subseteq \id} \and
-%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R^{-1} \subseteq R} \and
-%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R \subseteq R^{-1}} \and
-%\inferrule*{}{R^{-1} \subseteq S} \and
-%\inferrule*{}{R \subseteq S^{-1}} \and
-%\inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
-%\end{mathpar}
-
-%\item Complement $\sim$
-%\begin{mathpar}
-%\inferrule*{true}{\sim \sim R = R} \and
-%\inferrule*[left=($\sim_{\cap 2R}$)]{\sf r \subseteq s}{\sf r~ \cap \sim s \subseteq 0} \and
-%\inferrule*{false}{\sim R \subseteq R} \and
-%\inferrule*{false}{R \subseteq \sim R} \and
-%\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
-%\inferrule*[left=($\sim_{2R}$)]{\sf r \cap s \subseteq \0}{\sf r \subseteq \sim s} \and
-%\inferrule*[left=($\sim_{2LR}$)]{\sf r \subseteq s}{\sf \sim s \subseteq \sim r} \and
-%\inferrule*[left=($\sim_{strength}$)]{\sf \sim r \subseteq s \\ \sf r \subseteq t}{\sf \sim t \subseteq s} \and
-%\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
-%\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
-%\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
-%\end{mathpar}
 \end{itemize}
 
 We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations.
@@ -489,22 +374,11 @@ We can ignore the \textit{inversion} operator since according to \Cref{lem:inver
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
 \end{lemma}
 
-The proof in \Cref{sec:inversionproof} provides the following rules for handling terms that include inversions:
-\begin{mathpar}
-\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
-\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
-\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
-\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and
-\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
-\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
-\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
-\end{mathpar}
-
 \subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
 While testing the proof system, a few rules were repeatedly needed, to shorten the proofs eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 \begin{mathpar}
 \inferrule*[left=($\cup_{3RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
-\inferrule*[left=($\cup_{strength}$),vcenter]{
+\inferrule*[left=($weak$),vcenter]{
 	\inferrule*[Left=($\cup_{2L}$)]{
 		\inferrule*[Left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup r'}
 	}{\sf r \cup s \cup r' \subseteq s \cup r'}
@@ -514,7 +388,7 @@ While testing the proof system, a few rules were repeatedly needed, to shorten t
 \end{mathpar}
 \begin{mathpar}
 \inferrule*[left=($\cup_{3L}$),vcenter]{\sf r \subseteq t \\ \sf s \subseteq t}{\sf r \cup s \subseteq t}$=$ \quad
-\inferrule*[right=($\cup_{strength}$),vcenter]{
+\inferrule*[right=($weak$),vcenter]{
 	\inferrule*[right=($\cup_{2L}$)]{\sf r \subseteq t}{\sf r \cup t \subseteq t}
 	\\
 	\inferrule*[]{}{\sf s \subseteq t}}
@@ -522,6 +396,7 @@ While testing the proof system, a few rules were repeatedly needed, to shorten t
 \end{mathpar}
 
 \subsection{Transformations}\label{sec:transformations}
+Another part of the rules are transformations which are based on equalities of terms (e.g. $\sf r \cup s= s \cup r$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
 The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive. 
 \begin{definition}[Commutativity, Associativity, Distributivity]
 Let $\circ$ and $\star$ be two operations on a set $S$ and $r,s \in S$.
@@ -550,6 +425,28 @@ To incorporate the capabilities these properties offer, they will be added to th
 \inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} 
 \end{mathpar}
 
+The proof in \Cref{sec:inversionproof} provides the following rules for handling terms that include inversions:
+\begin{mathpar}
+\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
+\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and
+\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
+\end{mathpar}
+
+
+The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a unification operator. Therefore we do not need explicit rules for these operators, but can rely on the rules for unification. 
+\begin{mathpar}
+\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
+\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
+\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
+\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]}
+\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
+\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} 
+\end{mathpar}
 
 
 \begin{mathpar}
@@ -577,7 +474,7 @@ Memory Consistency Models are defined on a group of relations. Each of them come
 \inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
 \inferrule*[left=($\text{id}_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
 \end{mathpar}
-The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\id_{symm}$) rule.
+The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\text{ID}_{symm}$) rule.
 \begin{mathpar}
 \inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
 \inferrule*[left=($\loc_{symm}$)]{\it true}{\loc^{-1} \subseteq \loc} \and
@@ -588,8 +485,8 @@ The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every 
 \inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} \and
 \inferrule*[left=($r_{symm}$)]{\Gamma[\sf r^{-1}] \\ \sf r \subseteq \id}{\Gamma[\sf r]} 
 \end{mathpar}
-As we have described in \Cref{sec:restrictions}, the relations $[W]$ and $[R]$ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
-Besides this we use some rules to handle $[W]$ and $[R]$ themselves.
+As we have described in \Cref{sec:restrictions}, the relations \rel{[W]} and \rel{[R]} can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
+Besides this we use some rules to handle \rel{[W]} and \rel{[R]} themselves.
 \begin{mathpar}
 \inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
 \inferrule*[left=(R)]{\true}{\sf [R] \subseteq \id} \and
@@ -614,7 +511,7 @@ The last part of relation-specific rules concerns inclusions between base relati
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}
-For any $R_1 \subseteq R_2$ it applies that $\bangle{constraint}~ R_2 \subseteq \bangle{constraint}~ R_1$ if the constraint is the same for each relation.
+For any $\rel{r}_1 \subseteq \rel{r}_2$ it applies that $\bangle{constraint}~ \rel{r}_2 \subseteq \bangle{constraint}~ \rel{r}_1$ if the constraint is the same for each relation.
 \end{lemma}
 \begin{proof}
 We can prove this for each of the constraints. 
@@ -644,9 +541,9 @@ R_1 \subseteq R_2
 \end{proof}
 \noindent This lemma generates the following three rules:
 \begin{mathpar} 
-\inferrule*[left=(empty)] {R_1 \subseteq R_2}{\semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}} \and 
-\inferrule*[left=(acyclic)] {R_1 \subseteq R_2}{\semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}} \and
-\inferrule*[left={(irreflexive)}] {R_1 \subseteq R_2}{\semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}}
+\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{empty}~ r_2} \subseteq \semsof{\sf \texttt{empty}~ r_1}} \and 
+\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{acyclic}~ r_2} \subseteq \semsof{\texttt{acyclic}~ r_1}} \and
+\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{irreflexive}~ r_2} \subseteq \semsof{\texttt{irreflexive}~ r_1}}
 \end{mathpar}
 
 Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
@@ -1016,6 +913,114 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 
 
 \end{itemize}
+
+\section{Regeln die es nicht in die Arbeit geschafft haben}
+%\begin{mathpar}
+%\inferrule*{true}{S \cup R = R \cup S} \and
+%\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and
+%\inferrule*[left=($\cup_{strength}$)]{\sf r \cup r' \subseteq s \\ \sf t \subseteq r'}{\sf r \cup t \subseteq s} \and
+%\inferrule*{true}{R \cup (S \cup S') = R \cup S \cup S'}
+%\inferrule*{R \subseteq S}{R \cup R' \subseteq S \cup R'} \and durch die nächste und die ersten beiden
+%\inferrule*{R \subseteq S \\ R' \subseteq S}{R \cup R' \subseteq S} \and durch weakening und die zweite
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R \cup R' \subseteq S \cup S'}} durch 1,2,weak und nochmal weak
+%
+%\inferrule*{true}{S \cap R = R \cap S} \and
+%\inferrule*[left=($\cap_{weak}$)]{\sf r \subseteq s \cap s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cap t} \and
+%\inferrule*[left=($\cap_{strength}$)]{R \cap R' \subseteq S \\ T \subseteq R'}{R \cap T \subseteq S} \and
+%\inferrule*{true}{R \cap (S \cap S') = R \cap S \cap S'}
+%\textcolor{red}{\inferrule*{R \subseteq S}{R \cap R' \subseteq S}} \and durch con1 und 1
+%\inferrule*{R \subseteq S \\ R \subseteq R'}{R \subseteq S \cap R'} \and durch 2 und con1
+%\textcolor{red}{\inferrule*[left=($\cap_{3LR}$)]{R \subseteq S}{R \cap R' \subseteq S \cap R'}} \and durch 1,con1,2,con1,1 und transitivität
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq S'}{R\cap R' \subseteq S \cap S'}} von der Regel vorher die Sachen plus einmal con1
+%
+%\inferrule*{R \subseteq \id}{R.R \subseteq R} \and Redundant
+%\inferrule*[left=($-1_{elimR}$)]{R \subseteq S}{R \subseteq R.S^{-1}.S} \and 
+%\inferrule*[left=($-1_{elimL}$)]{R \subseteq S}{R \subseteq S.S^{-1}.R} \and 
+%\inferrule*[left=($._{weakR}$)]{R \subseteq S.S' \\ S' \subseteq T}{R \subseteq S.T} \and
+%\inferrule*[left=($._{weakL}$)]{R \subseteq S'.S \\ S' \subseteq T}{R \subseteq T.S} \and
+%\inferrule*[left=($._{strengthR}$)]{R.R' \subseteq S \\ T \subseteq R'}{R.T \subseteq S} \and
+%\inferrule*[left=($._{strengthL}$)]{R'.R \subseteq S \\ T \subseteq R'}{T.R \subseteq S} \and
+%\inferrule*{true}{R.(S\cup S') = R.S \cup R.S'}
+%\textcolor{red}{\inferrule*{R \subseteq S \\ R' \subseteq \id}{R.R' \subseteq S} \and per (4) und (con2)
+%\inferrule*{R \subseteq S \\ R' \subseteq \id}{R'.R \subseteq S} \and wie oben nur mit (5)
+%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq S.R'} \and (3) und (con2)
+%\inferrule*{R \subseteq S \\ \id \subseteq R'}{R \subseteq R'.S}} \and (2) und (con2)
+%\textcolor{red}{\inferrule*{R \subseteq S}{R'.R \subseteq R'.S} \and per (ref) und (con1)
+%\inferrule*{R \subseteq S}{R.R' \subseteq S.R'} \and analog
+%\inferrule*{R \subseteq S \\ R' \subseteq S'}{R.R' \subseteq S.S'}} per (ref) und zweimal (con1)
+%\inferrule*{R.R \subseteq R}{R^+ \subseteq R} 
+%
+%\inferrule*{true}{R \setminus R \subseteq S} \and
+%\inferrule*{R \subseteq \0}{R \subseteq R \setminus R} \and
+%\inferrule*{true}{S \setminus R \subseteq S} \and
+%\inferrule*{R \subseteq S}{R \setminus S \subseteq S} \and
+%\textcolor{red}{\inferrule*{S \subseteq \0 \text{ oder R ist leere Rel}}{R \subseteq R \setminus S}} \and
+%\inferrule*{R \subseteq \0}{R \subseteq S \setminus R} \and
+%\inferrule*{R \subseteq S}{R \setminus S \subseteq S \setminus R} \and
+%\textcolor{red}{\inferrule*{R \subseteq S}{R \setminus R' \subseteq S}} \and
+%\inferrule*{R \subseteq R' \\ R \cap S \subseteq \0}{R \subseteq R' \setminus S} \and
+%\inferrule*{R \subseteq S}{R\setminus R' \subseteq S\setminus R'} \and
+%\inferrule*{S \subseteq R}{R' \setminus R \subseteq R' \setminus S} \and
+%\textcolor{red}{\inferrule*{R \subseteq S \setminus S'}{R \setminus R' \subseteq S \setminus S'}}
+%
+%\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
+%\inferrule*{true}{R.R^* = R^+} \and
+%\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
+%\textcolor{red}{
+%\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and durch weakening und s \subseteq s^+
+%\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
+%\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
+%\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
+%\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
+%
+%\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
+%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[\sf r? \cup s?]}{\Gamma[\sf (r \cup s)?]} \and
+%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[\sf r? \cap s?]}{\Gamma[\sf (r \cap s)?]} \and
+%\inferrule*[left=($._{?dist}$)]{\Gamma[\sf r? \cup s? \cup (r.s)?]}{\Gamma[\sf r?.s?]} \and
+%\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
+%\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
+%\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
+%\inferrule*{R \subseteq S \\ \id \subseteq S}{R? \subseteq S} \and durch (2) und (con)
+%\inferrule*{R \subseteq S}{R? \subseteq S?} \and durch (ref) und (con)
+%\inferrule*[left=($?_{strength}$)]{R? \subseteq S \\ T \subseteq R}{T? \subseteq S} \and
+%\inferrule*[left=($?_{weak}$)]{R \subseteq S? \\ S \subseteq T}{R \subseteq T?} \and
+%\inferrule*{true}{R? \cup S? = (R \cup S) ?} \and
+%\inferrule*{true}{R? \cap S? = (R \cap S)?} \and
+%\inferrule*{true}{R?.S? = R? \cup S? \cup (R.S) ?}
+%
+%\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+%\textcolor{red}{\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*}} \and durch weakening
+%\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
+%\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
+%\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
+%\inferrule*[left=($*_{2L}$)]{\sf \id \subseteq s \\ \sf r^+ \subseteq s}{\sf r^* \subseteq s} \and
+%\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
+%\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
+%\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} %\and
+%\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
+%\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s}
+%
+%\inferrule*{true}{R^{-1^{-1}} \subseteq R} \and
+%\inferrule*[left=($-1_{comm}$)]{true}{R.R^-1 \subseteq \id} \and
+%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R^{-1} \subseteq R} \and
+%\inferrule*{\forall (e,e') \in R: (e',e) \in R}{R \subseteq R^{-1}} \and
+%\inferrule*{}{R^{-1} \subseteq S} \and
+%\inferrule*{}{R \subseteq S^{-1}} \and
+%\inferrule*{R \subseteq S}{R^{-1} \subseteq S^{-1}}
+%
+%\inferrule*{true}{\sim \sim R = R} \and
+%\inferrule*[left=($\sim_{\cap 2R}$)]{\sf r \subseteq s}{\sf r~ \cap \sim s \subseteq 0} \and
+%\inferrule*{false}{\sim R \subseteq R} \and
+%\inferrule*{false}{R \subseteq \sim R} \and
+%\inferrule*{\sim R~ \cap \sim S \subseteq \0}{\sim R \subseteq S} \and mit der nächsten
+%\inferrule*[left=($\sim_{2R}$)]{\sf r \cap s \subseteq \0}{\sf r \subseteq \sim s} \and
+%\inferrule*[left=($\sim_{2LR}$)]{\sf r \subseteq s}{\sf \sim s \subseteq \sim r} \and
+%\inferrule*[left=($\sim_{strength}$)]{\sf \sim r \subseteq s \\ \sf r \subseteq t}{\sf \sim t \subseteq s} \and
+%\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
+%\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
+%\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
+%\end{mathpar}
+
 \end{appendix}
 %\includepdf{includes/eidesstattlichevers.pdf}
 

@@ -103,15 +103,15 @@
 
 
 \theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
+\newtheorem{theorem}{Theorem}%[section]
 
-\newtheorem{proposition}{Proposition}[section]
+\newtheorem{proposition}[theorem]{Proposition}%[section]
 \crefname{proposition}{Proposition}{Propositions}
 
-\newtheorem{property}{Eigenschaft}[section]
+\newtheorem{property}[theorem]{Eigenschaft}%[section]
 \crefname{property}{Eigenschaft}{Eigenschaften}
 
-\newtheorem{lemma}{Lemma}[section]
+\newtheorem{lemma}[theorem]{Lemma}%[section]
 \crefname{lemma}{Lemma}{Lemmata}
 
 %\newtheorem{definition}{Definition}[section]
@@ -124,7 +124,7 @@ innertopmargin=\topskip,
 }
 \mdfsetup{skipabove=\topskip , skipbelow=\topskip}
 \mdfdefinestyle{defistyle}{linecolor=darkgray, linewidth=2pt, roundcorner=15pt, frametitlebackgroundcolor=gray!40, frametitlefont=\bfseries, theoremtitlefont=\bfseries, innertopmargin=5pt}
-\mdtheorem[style=defistyle, nobreak=true]{definition}{Definition}[section]
+\mdtheorem[style=defistyle, nobreak=true]{definition}[theorem]{Definition}%[section]
 
 
 
