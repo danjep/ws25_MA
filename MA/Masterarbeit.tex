@@ -375,7 +375,7 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 \subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
-While testing the proof system, a few rules were repeatedly needed, to shorten the proofs eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
+While testing the proof system, a few rules were repeatedly needed to shorten the proofs, eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 \begin{mathpar}
 \inferrule*[left=($\cup_{3RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
 \inferrule*[left=($weak$),vcenter]{
@@ -396,8 +396,8 @@ While testing the proof system, a few rules were repeatedly needed, to shorten t
 \end{mathpar}
 
 \subsection{Transformations}\label{sec:transformations}
-Another part of the rules are transformations which are based on equalities of terms (e.g. $\sf r \cup s= s \cup r$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
-The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive. 
+Another part of the rules are transformations which are based on equalities of terms (e.g. $\sf r~ \cup~ s= s~ \cup~ r$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
+The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive and commutative for two equal terms. 
 \begin{definition}[Commutativity, Associativity, Distributivity]
 Let $\circ$ and $\star$ be two operations on a set $S$ and $r,s \in S$.
 \begin{eqnarray*}
@@ -412,11 +412,11 @@ To incorporate the capabilities these properties offer, they will be added to th
 \begin{mathpar}
 \inferrule*[left=($\cup_{comm}$)]{\Gamma[\sf r\cup s]}{\Gamma[\sf s \cup r]} \and
 \inferrule*[left=($\cap_{comm}$)]{\Gamma[\sf r \cap s]}{\Gamma[\sf s \cap r]} \and
-\inferrule*[left=($*_{comm}$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^*.r]} \and
+\inferrule*[left=($._{comm}$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^*.r]} \and
 \inferrule*[left=($\cup_{ass}$)]{\Gamma[\sf (r \cup s) \cup t]}{\Gamma[\sf r \cup (s \cup t)]} \and
 \inferrule*[left=($\cap_{ass}$)]{\Gamma[\sf (r \cap s) \cap t]}{\Gamma[\sf r \cap (s \cap t)]} \and
 \inferrule*[left=($\cup_{dist}$)]{\Gamma[\sf r \cup s \cup s']}{\Gamma[\sf r \cup (s \cup s')]} \and
-\inferrule*[left=($\cap_{dist})$)]{\Gamma[\sf r \cap s \cap s']}{\Gamma[\sf r \cap (s \cap s')]} \and
+\inferrule*[left=($\cap_{dist}$)]{\Gamma[\sf r \cap s \cap s']}{\Gamma[\sf r \cap (s \cap s')]} \and
 \inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[\sf r \cup (s \cap s')]}{\Gamma[\sf (r \cup s) \cap (r \cup s')]} \and
 \inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[\sf r \cap (s \cup s')]}{\Gamma[\sf (r \cap s) \cup (r \cap s')]} \and
 \inferrule*[left=($._{\cup distR}$)]{\Gamma[\sf r.s \cup r.s']}{\Gamma[\sf r.(s \cup s')]} \and
@@ -438,28 +438,60 @@ The proof in \Cref{sec:inversionproof} provides the following rules for handling
 
 
 The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a unification operator. Therefore we do not need explicit rules for these operators, but can rely on the rules for unification. 
+There are still some transformations for these operators based on their definition:
 \begin{mathpar}
 \inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
-\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
-\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
-\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]}
+\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
 \inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+\end{mathpar}
+
+The following transformations may come in handy but are less straightforward. We will need to prove them. 
+\begin{mathpar}
+%\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and nicht invertible
+\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} \and 
 \inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
 \inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} 
 \end{mathpar}
+\begin{lemma}
+Let \textsf{r,s} be relations. Then $\sf r^+ \cap s^+ = (r^+ \cap s^+)^+$ holds. 
+\end{lemma}
+\begin{proof}
+\begin{eqnarray*}
+(e,e') \in {\sf r^+ \cap s^+} &\Leftrightarrow & (e,e') \in {\sf r^+} \land (e,e') \in {\sf s^+} \\
+&\Leftrightarrow & (e,e_1),\dots ,(e_n,e') \in {\sf r^+} \land (e,e_1),\dots,(e_n,e') \in \sf s^+ \\
+&\Leftrightarrow & (e,e_1),\dots ,(e_n,e') \in {\sf (r^+ \cap s^+)} \\
+&\Leftrightarrow & (e,e') \in {\sf (r^+ \cap s^+)^+}
+\end{eqnarray*}
+\end{proof}
 
 
-\begin{mathpar}
-%\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
-%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
-%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
-%\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
-%\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
-%\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
-%\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
-%\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
-%\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
-\end{mathpar}
+\begin{lemma} Let {\sf r,s} be relations. Then $\sf (r^*.s^*)^* = (r \cup s)^*$ holds.
+\end{lemma}
+\begin{proof}
+\begin{itemize}
+\item[$\subseteq$:] For any $(e_1,e_h) \in \sf (r^*.s^*)^*$ there exist $k,m_1,\dots m_k,n_1,\dots n_k \in \N_0$ with $(e_1,e_h) \in {\sf r}^{m_1}.{\sf s}^{n_1}. \dots {\sf r}^{m_k}.{\sf s}^{n_k}$.
+Consequently, there need to be $(e_1,e_{2}),\dots ,(e_{h-1},e_{h})$ where every $(e_i,e_{i+1})$ is either in \textsf{r} or \textsf{s} and $h = \sum_{j=1}^k m_j + n_j$.
+Accordingly, $(e_1,e_h)$ is in $\sf (r \cup s)^h$ and thus $(e_1,e_h) \in \sf (r \cup s)^*$.
+\item[$\supseteq$:] We can use other transformations to prove this direction.
+\begin{eqnarray*}
+\sf (r^*.s^*)^* &=& \sf (r^*.s^*)^+ \cup \id \\
+&=& \sf ((r^+ \cup \id).(s^+ \cup \id))^+ \cup \id \\
+&=& \sf (r^+.s^+ \cup r^+.\id \cup \id.s^+ \cup \id.\id)^+ \cup \id \\
+&=& \sf (r^+.s^+ \cup r^+ \cup s^+ \cup \id)^+ \cup \id \\
+&\supseteq & \sf (r \cup s)^+ \cup \id \\
+&=& \sf (r \cup s)^*
+\end{eqnarray*}
+\end{itemize}
+\end{proof}
+
+
+\begin{lemma} Let {\sf r} be a relation. Then $\sf r^* = r^*.r^*$ holds. \end{lemma}
+\begin{proof}
+\begin{itemize}
+\item[$\subseteq$:] For any $(e,e') \in \sf r^*$ it holds that $(e,e') \in \sf r^*.\id$ and hence $(e,e') \in \sf r^*.r^*$. \\
+\item[$\supseteq$:] For any $(e,e') \in \sf r^*.r^*$ there exist $n,m \in \N_0$ with $(e,e') \in \sf r^n.r^m$. Since $\sf r^n.r^m$ is the same as ${\sf r}^{n+m}$, it holds that $(e,e') \in \sf r^{n+m}$ and therefore $(e,e') \in \sf r^*$.
+\end{itemize}
+\end{proof}
 
 All of these rules are invertible and can be applied in reverse.
 \pagebreak
@@ -517,26 +549,26 @@ For any $\rel{r}_1 \subseteq \rel{r}_2$ it applies that $\bangle{constraint}~ \r
 We can prove this for each of the constraints. 
 Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
-R_1 \subseteq R_2 
-& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {R_2}_X \impl \nexists (e_1,e_2) \in {R_1}_X) \\
-& \impl &(X \in \semsof{\texttt{empty}~ R_2} \impl X \in \semsof{\texttt{empty}~ R_1}) \\
-& \impl & \semsof{\texttt{empty}~ R_2} \subseteq \semsof{\texttt{empty}~ R_1}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2}_X \impl \nexists (e_1,e_2) \in {\sf r_1}_X) \\
+& \impl &(X \in \semsof{\texttt{empty}~ \sf r_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
 \end{eqnarray*}
 
 \noindent For the constraint \texttt{irreflexive}:
 \begin{eqnarray*}
-R_1 \subseteq R_2 
-& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X) \\
-& \impl &(X \in \semsof{\texttt{irreflexive}~ R_2} \impl X \in \semsof{\texttt{irreflexive}~ R_1}) \\
-& \impl & \semsof{\texttt{irreflexive}~ R_2} \subseteq \semsof{\texttt{irreflexive}~ R_1}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X) \\
+& \impl &(X \in \semsof{\texttt{irreflexive}~ \sf r_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{irreflexive}~ \sf r_2} \subseteq \semsof{\texttt{irreflexive}~ \sf r_1}
 \end{eqnarray*}
 
 \noindent For the \texttt{acyclicity} constraint:
 \begin{eqnarray*}
-R_1 \subseteq R_2 
-& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {R_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {R_1}_X^+) \\
-& \impl &(X \in \semsof{\texttt{acyclic}~ R_2} \impl X \in \semsof{\texttt{acyclic}~ R_1}) \\
-& \impl & \semsof{\texttt{acyclic}~ R_2} \subseteq \semsof{\texttt{acyclic}~ R_1}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X^+) \\
+& \impl &(X \in \semsof{\texttt{acyclic}~ \sf r_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
 \end{eqnarray*}
 \end{proof}
 \noindent This lemma generates the following three rules:
@@ -556,34 +588,34 @@ This is given via the \Cref{def:sem} of $\semsof{\texttt{acyclic}~ \bangle{rel}}
 \end{proof}
 
 \begin{lemma}\label{lem:emptyirr}
-For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt{irreflexive}~ R.R^-1}$.
+For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}$.
 \end{lemma}
 \begin{proof} This can equally be proven using \Cref{def:sem}.
 \begin{eqnarray*}
-\semsof{\texttt{empty}~ R} &=& \{X \in \E \mid \nexists (e_1,e_2) \in R_X\} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in R_X\} \\
-&= & \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in R_X.R_X^{-1} \} \\
-&=& \semsof{\texttt{irreflexive}~ R.R^{-1}}
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X\} \\
+&= & \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X.r_X^{-1} \} \\
+&=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}
 \end{eqnarray*}
 \end{proof}
 
 \begin{lemma}\label{lem:emptyacy}
-For any relation $R$ it holds that $\semsof{\texttt{empty}~ R} = \semsof{\texttt{acyclic}~ R \cup R^{-1}}$.
+For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}}$.
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
-\semsof{\texttt{empty}~ R} &=& \{X \in \E \mid \nexists (e_1,e_2) \in R_X\} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in R_X \} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in R_X \cup R_X^-1 \} \\
-&=& \semsof{\texttt{acyclic}~ R \cup R^{-1}} \\
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X \} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X \cup r_X^{-1} \} \\
+&=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \\
 \end{eqnarray*}
 \end{proof}
 
-From the \cref{lem:irracy,lem:emptyirr,lem:emptyacy} stem the following three rules:
+The \cref{lem:irracy,lem:emptyirr,lem:emptyacy} give us the following three rules:
 \begin{mathpar}
-\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ R^+}}{\semsof{\texttt{acyclic}~ R}} \and
-\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ R.R^{-1}}}{\semsof{\texttt{empty}~ R}} \and
-\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ R\cup R^{-1}}}{\semsof{\texttt{empty}~ R}}
+\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r^+}}{\semsof{\texttt{acyclic}~ \sf r}} \and
+\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r.r^{-1}}}{\semsof{\texttt{empty}~ \sf r}} \and
+\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ \sf r\cup r^{-1}}}{\semsof{\texttt{empty}~ \sf r}}
 \end{mathpar}
 These will be needed to eliminate the constraint from the term.
 
@@ -627,6 +659,14 @@ Let $R$ be a derived relation that uses recursion in it's definition and let $\U
 \todo{was tun bei allen anderen Termen?}
 
 \section{Completeness}
+To prove the completeness on the rational CAT fragment of this proof system we will transform every proof from \cite{Gru+26}, where completeness was proven, into one of ours.  
+The approach of \cite{Gru+26} transforms an inclusion of the form $\bangle{cat}_1 \subseteq \bangle{cat}_2$ into a logical formula $\varphi_{\neg \bangle{cat}_2} \land \varphi_{\bangle{cat}_1}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
+Hence, the Theorem to be proven is this:
+\begin{theorem}
+If a RAT-CAT formula $\varphi_r \land \varphi_{\neg s}$ is $\mathcal{T}_\Sigma$-unsatisfiable, then there exists a proof  for $\sf r \subseteq s$
+\end{theorem}
+
+
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -1019,6 +1059,16 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 %\inferrule*[left=($\sim_{weak}$)]{\sf r \subseteq \sim s \\ \sf t \subseteq s}{\sf r \subseteq \sim t} \and
 %\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
 %\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
+
+%\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
+%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
+%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
+%\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
+%\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
+%\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
+%\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
+%\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
+%\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
 %\end{mathpar}
 
 \end{appendix}
