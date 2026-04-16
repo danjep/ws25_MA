@@ -165,7 +165,7 @@ Case 3 ($a=0, b=1$): \\
 
 \pagebreak
 
-While \Cref{fig:examplegraph} shows the possible executions when the threads' instructions are interleaved, \Cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behavior. \\
+While \Cref{fig:examplegraph} shows all possible executions when the threads' instructions are interleaved, \Cref{fig:storebuffering} exhibits what might happen if the instructions are reordered or if writes are not immediately stored in the memory. That is why this execution is sometimes called \textit{store buffering} behavior. \\
 Besides \textit{program order} and \textit{read-from} there are many relations that can be used to define important properties of memory consistency models. We will explain some of them in \cref{sec:cat}.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -197,11 +197,11 @@ Besides \textit{program order} and \textit{read-from} there are many relations t
 \end{wrapfigure}
 
 Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focused on this type. 
-Axiomatic models are defined in three stages: mapping each instruction onto a mathematical object and defining relations on the events, constructing a set of candidate executions like in \Cref{fig:examplegraph,fig:storebuffering} and deciding which executions are valid according to the constraints on the relations. \\
-They are typically expressed in the CAT language of \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \Cref{sec:cat}.\\
+Axiomatic models are defined in three stages: Map each instruction onto a mathematical object and defining relations on the events. Then, enumerate all candidate executions like in \Cref{fig:examplegraph,fig:storebuffering}. Finally, decide which executions are valid according to the constraints on the relations. \\
+They are typically expressed in the CAT language of Alglave et al. \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \Cref{sec:cat}.\\
 To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfills all constraints of the model. \\
 For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
-The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
+The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to Grünke et al. \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
 The first task is to check generic properties of MCMs like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
 For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26} which both are not able to handle every possible MCM but only a fragment.
@@ -283,7 +283,7 @@ Executions consist of a set of all events that occur $E_X$, the set of initial w
 An execution $X$ is the following tuple: \todo{brauchen wir die tiefgestellten X?}
 \[X := (E_X, IW_X, \po_X , \rf_X, \rmw_X, \co_x, \loc_X, \ext_X , \id_X)\]  
 where $\po_X, \rf_X, \rmw_X, \co_X, \loc_X, \ext_X, \id_X \subseteq E_X \times E_X$.
-$\mathbb{E} = \mathbb{P}(X)$ denotes the set of all possible executions. \\
+$\mathbb{E}$ denotes the set of all possible executions. \\
 Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
 \end{definition}
 
@@ -317,12 +317,100 @@ For better readability, the \semsof{\cdot} symbols can be omitted when dealing w
 \pagebreak
 
 \section{The Proof System} \label{sec:proofsys}
-In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
+In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that derive the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
+\begin{definition}[Inclusion proofs]
+Let $M,M'$ be CAT expressions constituting sets of executions on a domain of events $E$. A Proof $\mathcal{P}$ is a finite derivation tree that starts at the bottom with $\semsof{M} \subseteq \semsof{M'}$ and ends at potentially several axioms using the rules from this section.
+The proof derives therefore the implication $true \impl \semsof{M} \subseteq \semsof{M'}$.
+\end{definition}
+
 Since there may be multiple branches of reasoning it is important to clarify that every branch needs to start at $true$ in order to verify the inclusion.
-Additionally to the rules that model logical implications between relational terms, we need common transformations like commutativity of the unification, we need the definitions of derived relations that use only the base relations and we need rules to eliminate the constraints. 
+These proofs need rules to handle the CAT constraints which are given in the next subsection. When the constraints are eliminated only an inclusion term between two relation terms remain. We can then apply transformations and relational implications on the relational terms. 
+By transformations we mean rules that are based on equivalences like the commutativity of unification and intersection.
+Since this proof system is not designed to handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations. Furthermore, there is a need to incorporate assumptions about the base relations and definitions of derived relations.
+
+\subsection{Eliminating the Constraints}\label{sec:constraints}
+One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
+This means the following:
+\begin{lemma}
+For any $\rel{r}_1 \subseteq \rel{r}_2$ it applies that $\bangle{constraint}~ \rel{r}_2 \subseteq \bangle{constraint}~ \rel{r}_1$ if the constraint is the same for each relation.
+\end{lemma}
+\begin{proof}
+We can prove this for each of the constraints. 
+Let the constraint be \texttt{empty}:
+\begin{eqnarray*}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2}_X \impl \nexists (e_1,e_2) \in {\sf r_1}_X) \\
+& \impl &(X \in \semsof{\texttt{empty}~ \sf r_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
+\end{eqnarray*}
+
+\noindent For the constraint \texttt{irreflexive}:
+\begin{eqnarray*}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X) \\
+& \impl &(X \in \semsof{\texttt{irreflexive}~ \sf r_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{irreflexive}~ \sf r_2} \subseteq \semsof{\texttt{irreflexive}~ \sf r_1}
+\end{eqnarray*}
+
+\noindent For the \texttt{acyclicity} constraint:
+\begin{eqnarray*}
+\sf r_1 \subseteq r_2 
+& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X^+) \\
+& \impl &(X \in \semsof{\texttt{acyclic}~ \sf r_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
+& \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
+\end{eqnarray*}
+\end{proof}
+\noindent This lemma generates the following three rules:
+\begin{mathpar} 
+\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{empty}~ r_2} \subseteq \semsof{\sf \texttt{empty}~ r_1}} \and 
+\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{acyclic}~ r_2} \subseteq \semsof{\texttt{acyclic}~ r_1}} \and
+\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{irreflexive}~ r_2} \subseteq \semsof{\texttt{irreflexive}~ r_1}}
+\end{mathpar}
+
+Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
+
+\begin{lemma}\label{lem:irracy}
+For a relation $R$, it holds that $\semsof{\texttt{irreflexive}~ R^+} = \semsof{\texttt{acyclic}~ R}$.
+\end{lemma}
+\begin{proof}
+This is given via the \Cref{def:sem} of $\semsof{\texttt{acyclic}~ \bangle{rel}}$.
+\end{proof}
+
+\begin{lemma}\label{lem:emptyirr}
+For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}$.
+\end{lemma}
+\begin{proof} This can equally be proven using \Cref{def:sem}.
+\begin{eqnarray*}
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X\} \\
+&= & \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X.r_X^{-1} \} \\
+&=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}
+\end{eqnarray*}
+\end{proof}
+
+\begin{lemma}\label{lem:emptyacy}
+For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}}$.
+\end{lemma}
+\begin{proof}
+\begin{eqnarray*}
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X \} \\
+&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X \cup r_X^{-1} \} \\
+&=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \\
+\end{eqnarray*}
+\end{proof}
+
+The \cref{lem:irracy,lem:emptyirr,lem:emptyacy} give us the following three rules:
+\begin{mathpar}
+\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r^+}}{\semsof{\texttt{acyclic}~ \sf r}} \and
+\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r.r^{-1}}}{\semsof{\texttt{empty}~ \sf r}} \and
+\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ \sf r\cup r^{-1}}}{\semsof{\texttt{empty}~ \sf r}}
+\end{mathpar}
+These will be needed to eliminate the constraint from the term.
 
 
-\subsection{Basic Rules}
+
+\subsection{Relational implications}
 The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like unification there is only one version of each rule since there is no different effect when interchanging the relations. Furthermore, in \Cref{sec:transformations} we state rules for commutativity and others. \\
 Let $\Delta[t]$ be a relation term that includes the subterm $t$. 
 
@@ -351,7 +439,7 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \item Concatenation $.$ 
 \begin{mathpar}
 \textcolor{red}{
-\inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r = r.r} \and 
+\inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
 \inferrule*[left=($._{2Rl}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
 \inferrule*[left=($._{2Rr}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
 \textcolor{red}{\inferrule*[left=($._{2Lr}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
@@ -369,8 +457,10 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \end{mathpar}
 \end{itemize}
 
-We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations.
-\begin{lemma}\label{lem:inversion}
+We can ignore the \textit{inversion} operator since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unifications of other relations according to their definition.
+
+
+\begin{lemma}[Inversion Lemma]\label{lem:inversion}
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
 \end{lemma}
 
@@ -493,13 +583,13 @@ Accordingly, $(e_1,e_h)$ is in $\sf (r \cup s)^h$ and thus $(e_1,e_h) \in \sf (r
 \end{itemize}
 \end{proof}
 
-All of these rules are invertible and can be applied in reverse.
 \pagebreak
 
 
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
-Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
+Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. In \cite{Gru+26} this concept is called \textit{Hypotheses}. \\
+The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
 \begin{mathpar}
 \inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
@@ -535,89 +625,6 @@ The last part of relation-specific rules concerns inclusions between base relati
 \inferrule*[left=(\text{coloc})]{\true}{\co \subseteq \loc} 
 \end{mathpar}
 
-
-
-
-
-\subsection{Eliminating the Constraints}
-One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
-This means the following:
-\begin{lemma}
-For any $\rel{r}_1 \subseteq \rel{r}_2$ it applies that $\bangle{constraint}~ \rel{r}_2 \subseteq \bangle{constraint}~ \rel{r}_1$ if the constraint is the same for each relation.
-\end{lemma}
-\begin{proof}
-We can prove this for each of the constraints. 
-Let the constraint be \texttt{empty}:
-\begin{eqnarray*}
-\sf r_1 \subseteq r_2 
-& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2}_X \impl \nexists (e_1,e_2) \in {\sf r_1}_X) \\
-& \impl &(X \in \semsof{\texttt{empty}~ \sf r_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
-& \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
-\end{eqnarray*}
-
-\noindent For the constraint \texttt{irreflexive}:
-\begin{eqnarray*}
-\sf r_1 \subseteq r_2 
-& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X) \\
-& \impl &(X \in \semsof{\texttt{irreflexive}~ \sf r_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
-& \impl & \semsof{\texttt{irreflexive}~ \sf r_2} \subseteq \semsof{\texttt{irreflexive}~ \sf r_1}
-\end{eqnarray*}
-
-\noindent For the \texttt{acyclicity} constraint:
-\begin{eqnarray*}
-\sf r_1 \subseteq r_2 
-& \impl &\forall X \in \E : (\forall e \in E_X: \nexists(e,e) \in {\sf r_2}_X^+ \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}_X^+) \\
-& \impl &(X \in \semsof{\texttt{acyclic}~ \sf r_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
-& \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
-\end{eqnarray*}
-\end{proof}
-\noindent This lemma generates the following three rules:
-\begin{mathpar} 
-\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{empty}~ r_2} \subseteq \semsof{\sf \texttt{empty}~ r_1}} \and 
-\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{acyclic}~ r_2} \subseteq \semsof{\texttt{acyclic}~ r_1}} \and
-\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{irreflexive}~ r_2} \subseteq \semsof{\texttt{irreflexive}~ r_1}}
-\end{mathpar}
-
-Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
-
-\begin{lemma}\label{lem:irracy}
-For a relation $R$, it holds that $\semsof{\texttt{irreflexive}~ R^+} = \semsof{\texttt{acyclic}~ R}$.
-\end{lemma}
-\begin{proof}
-This is given via the \Cref{def:sem} of $\semsof{\texttt{acyclic}~ \bangle{rel}}$.
-\end{proof}
-
-\begin{lemma}\label{lem:emptyirr}
-For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}$.
-\end{lemma}
-\begin{proof} This can equally be proven using \Cref{def:sem}.
-\begin{eqnarray*}
-\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X\} \\
-&= & \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X.r_X^{-1} \} \\
-&=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}
-\end{eqnarray*}
-\end{proof}
-
-\begin{lemma}\label{lem:emptyacy}
-For any relation $\sf r$ it holds that $\semsof{\texttt{empty}~ \sf r} = \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}}$.
-\end{lemma}
-\begin{proof}
-\begin{eqnarray*}
-\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r_X\} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e') \in \sf r_X \} \\
-&=& \{X \in \E \mid \forall e \in E_X: \nexists (e,e) \in \sf r_X \cup r_X^{-1} \} \\
-&=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \\
-\end{eqnarray*}
-\end{proof}
-
-The \cref{lem:irracy,lem:emptyirr,lem:emptyacy} give us the following three rules:
-\begin{mathpar}
-\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r^+}}{\semsof{\texttt{acyclic}~ \sf r}} \and
-\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r.r^{-1}}}{\semsof{\texttt{empty}~ \sf r}} \and
-\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ \sf r\cup r^{-1}}}{\semsof{\texttt{empty}~ \sf r}}
-\end{mathpar}
-These will be needed to eliminate the constraint from the term.
 
 \subsection{Incorporating the Assumptions and Definitions}\label{sec:assumptions}
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
@@ -658,7 +665,112 @@ Let $R$ be a derived relation that uses recursion in it's definition and let $\U
 \end{mathpar}
 \todo{was tun bei allen anderen Termen?}
 
+
+\section{Soundness}
+\begin{theorem}[Soundness]
+If there is a proof $\mathcal{P}$ for an inclusion $\semsof{M} \subseteq \semsof{M'}$, then the inclusion holds.
+\end{theorem}
+\noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator.
+
+
+\begin{itemize}
+\item $(REFLEXIVITY)$: $true \impl \sf r \subseteq r$ \\ 
+Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
+\item $(TRANSITIVITY)$: $\sf r \subseteq s \land s \subseteq t \impl r \subseteq t$
+\begin{eqnarray*}
+(e,e') \in \sf r &\impl & (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
+&\impl & (e,e') \in \sf t \quad \mid \sf s \subseteq t
+\end{eqnarray*}
+
+
+\item ($\cup_{2L}$): $\rel{r} \subseteq \rel{s} \impl \rel{r} \cup \rel{s} \subseteq \sf s$
+\begin{eqnarray*}
+(e,e') \in \sf r \cup s &\impl & (e,e') \in \rel{r} \lor (e,e') \in \rel{s} \\
+&\impl & (e,e') \in \rel{s} \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
+&=& (e,e') \in \sf s 
+\end{eqnarray*}
+
+
+\item ($\cup_{3R}$): $\sf r \subseteq r \impl \sf r \subseteq s \cup t$
+\begin{eqnarray*}
+&\sf r \\
+\{\text{Definition Semantics}\} &=& \{(e,e') \in \sf r\} \\
+\{R \subseteq S\} & \subseteq & \{(e,e') \in \sf s\} \\
+& \subseteq & \{(e,e') \in \rel{ s} \lor (e,e') \in \sf t\} \\
+\{\text{Definition Semantics}\} &=& \sf s\cup t
+\end{eqnarray*}
+
+\item ($._1$): $\sf r \subseteq \id \impl r \subseteq r.r$
+\begin{eqnarray*}
+(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\rel{r} \subseteq \id} \\
+&\impl & (e,e).(e,e) \in \sf r.r \\
+&\impl & (e,e) \in \sf r.r
+\end{eqnarray*}
+\item ($._{2Rl}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
+\begin{eqnarray*}
+(e,e') \in \sf r &\impl & (e,e).(e,e') \in \sf \id.r \\
+&\impl & (e,e) \in \id \land (e,e') \in \sf r \\
+&\impl & (e,e) \in \rel{ s} \land (e,e') \in \sf r \reason{\id \subseteq s}\\
+&\impl & (e,e).(e,e') \in \sf s.r \\
+&=& (e,e') \in \sf s.r 
+\end{eqnarray*}
+\item ($._{2Rr}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
+\begin{eqnarray*}
+(e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \\
+&\impl & (e,e') \in \rel{r} \land (e',e') \in \id \\
+&\impl & (e,e') \in \rel{r} \land (e',e') \in \rel{s} \reason{\id \subseteq \sf s} \\
+&\impl & (e,e').(e',e') \in \sf r.s \\
+&\impl & (e,e') \in \sf r.s
+\end{eqnarray*}
+
+\item ($._{2Ll}$): $\sf r \subseteq \id \impl s.r \subseteq s$
+\begin{eqnarray*}
+(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rel{s} \land (e_2,e_3) \in \sf r\} \\
+&\impl & (e_1,e_2) \in \rel{s} \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
+&\impl & (e_1,e_3) \in \rel{s} \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
+&\impl & (e_1,e_3) \in \sf s
+\end{eqnarray*}
+
+\item ($._{2Lr}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
+\begin{eqnarray*}
+(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \rel{r} \land (e_2,e_3) \in \sf s \\
+&\impl & (e_2,e_3) \in \rel{s} \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
+&\impl & (e_1,e_3) \in \rel{s} \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
+&\impl & (e_1,e_3) \in \rel{s}
+\end{eqnarray*}
+
+\item ($+_{LR}$): $\sf r \subseteq s^+ \impl r^+ \subseteq s^+$
+\begin{eqnarray*}
+(e,e') \in \rel{r}^+ &\impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in \rel{r} \\
+& \impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in \rel{s}^+ \reason{\sf r \subseteq s^+}\\
+& \impl & (e,e') \in \rel{s}^{+^+} \\
+& \impl & (e,e') \in \sf s^+
+\end{eqnarray*}
+
+\item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$
+\begin{eqnarray*}
+(e,e') \in \rel{r}^+ &\impl & \exists n\in \N: (e,e') \in \rel{r}^n \\
+&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-1}.\rel{r} \\
+&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-1}.\rel{I} \reason{\sf r \subseteq I} \\
+&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-2}.\sf r.I \\
+&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-2}.\rel{I} \reason{\sf r.I \subseteq I} \\
+&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-3}.\rel{I} \reason{\sf r.I \subseteq I} \\
+&& \dots \\
+&\impl & (e,e') \in \sf r.I \reason{r.I \subseteq I} \\
+&\impl & (e,e') \in \sf I \reason{r.I \subseteq I} \\
+&\impl & (e,e') \in \sf s \reason{I \subseteq s}
+\end{eqnarray*}
+
+\end{itemize}
+
+\todo{Weakening und Strengthening Beweise}
+
 \section{Completeness}
+
+\begin{theorem}[Completeness]
+For every true inclusion $\semsof{M} \subseteq \semsof{M'}$ of two CAT expressions there exists a proof $\mathcal{P}$.
+\end{theorem}
+
 To prove the completeness on the rational CAT fragment of this proof system we will transform every proof from \cite{Gru+26}, where completeness was proven, into one of ours.  
 The approach of \cite{Gru+26} transforms an inclusion of the form $\bangle{cat}_1 \subseteq \bangle{cat}_2$ into a logical formula $\varphi_{\neg \bangle{cat}_2} \land \varphi_{\bangle{cat}_1}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
 Hence, the Theorem to be proven is this:
@@ -666,6 +778,11 @@ Hence, the Theorem to be proven is this:
 If a RAT-CAT formula $\varphi_r \land \varphi_{\neg s}$ is $\mathcal{T}_\Sigma$-unsatisfiable, then there exists a proof  for $\sf r \subseteq s$
 \end{theorem}
 
+To prove this theorem, any proof $\pi$ in \cite{Gru+26} needs to have an equivalent proof $\mathcal{P}_\pi$ here.
+For finite proofs we can emulate the applied rules with rules from our proof system as follows:
+\todo{finite proofs}
+
+For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Similar to the completeness proof in \cite{Das+18} we construct an invariant $\mathcal{I}$ which we can use in the $(+I)$ rule that works for every occurance of a backlink in $\pi$
 
 
 \section{Conclusion}\label{sec:conclusion}
