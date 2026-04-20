@@ -1,40 +1,6 @@
 \section{Proof of the rules}
-
+\todo{Hier ist noch die alte Notation drin und die Regeln kommen in das Soundness Kapitel, (weak)\&(strength) müssen noch angepasst werden}
 \begin{itemize}
-\item $(REFLEXIVITY)$: $true \impl R \subseteq R$ \\ 
-Since $R=R$, obviously $R \subseteq R$ always holds.
-\item $(TRANSITIVITY)$: $R \subseteq S \land S \subseteq T \impl R \subseteq T$
-\begin{eqnarray*}
-R &=& \{(e,e') \in R\} \quad \mid R \subseteq S \\
-&\subseteq & \{(e,e') \in S\} \quad \mid S \subseteq T\\
-&\subseteq & \{(e,e') \in T\}\\
-&\subseteq & T
-\end{eqnarray*}
-
-\item ($\cup_{2R}$): $true \impl R \subseteq R \cup S$
-\begin{eqnarray*}
-R &=& \{(r,r') \in R\} \\
-&\subseteq & \{(r,r') \in R \lor (r,r') \in S\} \\
-&=& R \cup S
-\end{eqnarray*}
-
-\item ($\cup_{2L}$): $R \subseteq S \impl R \cup S \subseteq S$
-\begin{eqnarray*}
-R \cup S &=& \{(e,e') \in R \lor (e,e') \in S\} \quad \mid R \subseteq S \\
-&\subseteq & \{(e,e') \in S \lor (e,e') \in S\} \\
-&=& \{(e,e') \in S\} \\
-&=& S 
-\end{eqnarray*}
-
-
-\item ($\cup_{3R}$): $R \subseteq S \impl R \subseteq S \cup T$
-\begin{eqnarray*}
-&R \\
-\{\text{Definition Semantics}\} &=& \{(e,e') \in R\} \\
-\{R \subseteq S\} & \subseteq & \{(e,e') \in S\} \\
-& \subseteq & \{(e,e') \in S \lor (e,e') \in T\} \\
-\{\text{Definition Semantics}\} &=& S\cup T
-\end{eqnarray*}
 \item ($\cup_{weak}$): $R \subseteq S \cup S' \land S' \subseteq T \impl R \subseteq S \cup T$
 \begin{eqnarray*}
 %\semsof{R \subseteq S \cup S'} \land \semsof{S' \subseteq T} &\Leftrightarrow &  ((e,e') \in R \impl (e,e') \in \semsof{S \cup S'}) \land ((e,e') \in S' \impl (e,e') \in T) \\
@@ -56,19 +22,19 @@ R \cup T &=& \{(e,e') \in R \lor (e,e') \in T\} \qquad \mid T \subseteq R' \\
 &\subseteq & \{(e,e') \in S\} \\
 &=& S
 \end{eqnarray*}
-\item ($\cap_{2L}$): $true \impl R \cup S \subseteq R$
-\begin{eqnarray*}
-R \cup S &=& \{(e,e') \in R \land (e,e') \in S\} \\
-& \subseteq & \{(e,e') \in R\} \\
-&=& R
-\end{eqnarray*}
-\item ($\cap_{2R}$): $R \subseteq S \impl R \subseteq R \cap S$
-\begin{eqnarray*}
-R &=& \{(e,e') \in R\} \qquad \mid \psi \Leftrightarrow \psi \land \psi \\
-&=& \{(e,e') \in R \land (e,e') \in R\} \qquad \mid R \subseteq S \\
-& \subseteq &  \{(e,e') \in R \land (e,e') \in S\} \\
-&=& R \cap S
-\end{eqnarray*}
+%\item ($\cap_{2L}$): $true \impl R \cup S \subseteq R$
+%\begin{eqnarray*}
+%R \cup S &=& \{(e,e') \in R \land (e,e') \in S\} \\
+%& \subseteq & \{(e,e') \in R\} \\
+%&=& R
+%\end{eqnarray*}
+%\item ($\cap_{2R}$): $R \subseteq S \impl R \subseteq R \cap S$
+%\begin{eqnarray*}
+%R &=& \{(e,e') \in R\} \qquad \mid \psi \Leftrightarrow \psi \land \psi \\
+%&=& \{(e,e') \in R \land (e,e') \in R\} \qquad \mid R \subseteq S \\
+%& \subseteq &  \{(e,e') \in R \land (e,e') \in S\} \\
+%&=& R \cap S
+%\end{eqnarray*}
 \item ($\cap_{weak}$): $R \subseteq S \cap S' \land S' \subseteq T \impl R \subseteq S \cap T$
 \begin{eqnarray*}
 R &=& \{(e,e') \in R\} \reason{R \subseteq S \cap S'} \\
@@ -84,55 +50,55 @@ R \cap T &=& \{(e,e') \in R \land (e,e') \in T\} \reason{T \subseteq R'} \\
 &\subseteq & \{(e,e') \in S\} \\
 &=& S
 \end{eqnarray*}
-\item ($._1$): $R \subseteq \id \impl R = R.R$
-\begin{eqnarray*}
-R &=& \{(e,e') \in R\} \reason{R \subseteq \id} \\
-&=& \{(e,e) \in R\} \\
-&=& \{(e,e).(e,e) \in R.R\} \\
-&=& \{(e,e) \in R.R\} \\
-&=& R.R
-\end{eqnarray*}
-\item ($._{2Rl}$): $\id \subseteq S \impl R \subseteq S.R$ 
-\begin{eqnarray*}
-R &=& \{(e,e') \in R\} \\
-&=& \{(e,e).(e,e') \in R \} \\
-&=& \{(e,e).(e,e') \in \id .R\} \\
-&=& \{(e,e) \in \id \land (e,e') \in R\} \reason{\id \subseteq S}\\
-&\subseteq & \{(e,e) \in S \land (e,e') \in R\} \\
-&=& \{(e,e).(e,e') \in S.R\} \\
-&=& \{(e,e') \in S.R\} \\
-&=& S.R
-\end{eqnarray*}
-\item ($._{2Rr}$): $\id \subseteq S \impl R \subseteq R.S$ 
-\begin{eqnarray*}
-R &=& \{(e,e') \in R\} \\
-&=& \{(e,e').(e',e') \in R \} \\
-&=& \{(e,e').(e',e') \in R.\id \} \\
-&=& \{(e',e') \in \id \land (e,e') \in R\}  \reason{\id \subseteq S}\\
-&\subseteq & \{(e',e') \in S \land (e,e') \in R\} \\
-&=& \{(e,e').(e',e') \in R.S\} \\
-&=& \{(e,e') \in R.S\} \\
-&=& R.S
-\end{eqnarray*}
-
-\item ($._{2Ll}$): $R \subseteq \id \impl S.R \subseteq S$
-\begin{eqnarray*}
-S.R &=& \{(e_1,e_2).(e_2,e_3) \in S.R\} \\
-&=& \{(e_1,e_2) \in S \land (e_2,e_3) \in R\} \reason{R \subseteq \id} \\
-&\subseteq & \{(e_1,e_2) \in S \land (e_2,e_3) \in \id \} \reason{(e_2,e_3)\in \id \impl e_2 = e_3}\\
-&=& \{(e_1,e_3) \in S \land (e_3,e_3) \in \id \} \\
-&=& \{(e_1,e_3) \in S\} \\
-&=& S 
-\end{eqnarray*}
-\item ($._{2Lr}$): $R \subseteq \id \impl R.S \subseteq S$
-\begin{eqnarray*}
-R.S &=& \{(e_1,e_2).(e_2,e_3) \in R.S\} \\
-&=& \{(e_1,e_2) \in R \land (e_2,e_3) \in S\} \reason{R \subseteq \id} \\
-&\subseteq & \{(e_2,e_3) \in S \land (e_1,e_2) \in \id \} \reason{(e_1,e_2)\in \id \impl e_1 = e_2}\\
-&=& \{(e_1,e_3) \in S \land (e_1,e_1) \in \id \} \\
-&=& \{(e_1,e_3) \in S\} \\
-&=& S 
-\end{eqnarray*}
+%\item ($._1$): $R \subseteq \id \impl R = R.R$
+%\begin{eqnarray*}
+%R &=& \{(e,e') \in R\} \reason{R \subseteq \id} \\
+%&=& \{(e,e) \in R\} \\
+%&=& \{(e,e).(e,e) \in R.R\} \\
+%&=& \{(e,e) \in R.R\} \\
+%&=& R.R
+%\end{eqnarray*}
+%\item ($._{2Rl}$): $\id \subseteq S \impl R \subseteq S.R$ 
+%\begin{eqnarray*}
+%R &=& \{(e,e') \in R\} \\
+%&=& \{(e,e).(e,e') \in R \} \\
+%&=& \{(e,e).(e,e') \in \id .R\} \\
+%&=& \{(e,e) \in \id \land (e,e') \in R\} \reason{\id \subseteq S}\\
+%&\subseteq & \{(e,e) \in S \land (e,e') \in R\} \\
+%&=& \{(e,e).(e,e') \in S.R\} \\
+%&=& \{(e,e') \in S.R\} \\
+%&=& S.R
+%\end{eqnarray*}
+%\item ($._{2Rr}$): $\id \subseteq S \impl R \subseteq R.S$ 
+%\begin{eqnarray*}
+%R &=& \{(e,e') \in R\} \\
+%&=& \{(e,e').(e',e') \in R \} \\
+%&=& \{(e,e').(e',e') \in R.\id \} \\
+%&=& \{(e',e') \in \id \land (e,e') \in R\}  \reason{\id \subseteq S}\\
+%&\subseteq & \{(e',e') \in S \land (e,e') \in R\} \\
+%&=& \{(e,e').(e',e') \in R.S\} \\
+%&=& \{(e,e') \in R.S\} \\
+%&=& R.S
+%\end{eqnarray*}
+%
+%\item ($._{2Ll}$): $R \subseteq \id \impl S.R \subseteq S$
+%\begin{eqnarray*}
+%S.R &=& \{(e_1,e_2).(e_2,e_3) \in S.R\} \\
+%&=& \{(e_1,e_2) \in S \land (e_2,e_3) \in R\} \reason{R \subseteq \id} \\
+%&\subseteq & \{(e_1,e_2) \in S \land (e_2,e_3) \in \id \} \reason{(e_2,e_3)\in \id \impl e_2 = e_3}\\
+%&=& \{(e_1,e_3) \in S \land (e_3,e_3) \in \id \} \\
+%&=& \{(e_1,e_3) \in S\} \\
+%&=& S 
+%\end{eqnarray*}
+%\item ($._{2Lr}$): $R \subseteq \id \impl R.S \subseteq S$
+%\begin{eqnarray*}
+%R.S &=& \{(e_1,e_2).(e_2,e_3) \in R.S\} \\
+%&=& \{(e_1,e_2) \in R \land (e_2,e_3) \in S\} \reason{R \subseteq \id} \\
+%&\subseteq & \{(e_2,e_3) \in S \land (e_1,e_2) \in \id \} \reason{(e_1,e_2)\in \id \impl e_1 = e_2}\\
+%&=& \{(e_1,e_3) \in S \land (e_1,e_1) \in \id \} \\
+%&=& \{(e_1,e_3) \in S\} \\
+%&=& S 
+%\end{eqnarray*}
 \item ($._{weakR}$): $R \subseteq S.S' \land S' \subseteq T \impl R \subseteq S.T$
 \begin{eqnarray*}
 R &=& \{(e_1,e_3) \in R\} \reason{R \subseteq S.S'} \\
@@ -168,20 +134,20 @@ R.T &=& \{(e_1,e_3) \in R.T\} \\
 &\impl & (e_1,e_3) \in S
 \end{eqnarray*}
 \todo{bis hier Begründungen vor der Umformung und ab hier nach der Umformung. Muss noch vereinheitlicht werden}
-\item ($+_R$): $R \subseteq S \impl R \subseteq S^+$
-\begin{eqnarray*}
-(e,e') \in R &\impl & (e,e') \in S \reason{R \subseteq S} \\
-&\impl & (e,e') \in S.\id \\
-&\impl & (e,e') \in S.\id \lor (e,e') \in S.S^+ \\
-&\impl & (e,e') \in S.(\id \cup S^+) \\
-&\impl & (e,e') \in S.(S^*) \\
-&\impl & (e,e') \in S^+
-\end{eqnarray*}
-\item ($+_{LR}$): $R \subseteq S^+ \impl R^+ \subseteq S^+$
-\begin{eqnarray*}
-(e,e') \in R^+ &\impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in R \\
-& \impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in S^+ \reason{R \subseteq S^+}\\
-& \impl & (e,e') \in S^{+^+} \\
-& \impl & (e,e') \in S^+
-\end{eqnarray*}
+%\item ($+_R$): $R \subseteq S \impl R \subseteq S^+$
+%\begin{eqnarray*}
+%(e,e') \in R &\impl & (e,e') \in S \reason{R \subseteq S} \\
+%&\impl & (e,e') \in S.\id \\
+%&\impl & (e,e') \in S.\id \lor (e,e') \in S.S^+ \\
+%&\impl & (e,e') \in S.(\id \cup S^+) \\
+%&\impl & (e,e') \in S.(S^*) \\
+%&\impl & (e,e') \in S^+
+%\end{eqnarray*}
+%\item ($+_{LR}$): $R \subseteq S^+ \impl R^+ \subseteq S^+$
+%\begin{eqnarray*}
+%(e,e') \in R^+ &\impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in R \\
+%& \impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in S^+ \reason{R \subseteq S^+}\\
+%& \impl & (e,e') \in S^{+^+} \\
+%& \impl & (e,e') \in S^+
+%\end{eqnarray*}
 \end{itemize}
