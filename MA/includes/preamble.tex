@@ -116,7 +116,9 @@
 }
 \newenvironment{rules}[1]{%
 \begin{tcolorbox}[mybox, title={ \textbf{#1}}]
-\begin{mathpar}}{\end{mathpar}
+\begin{mathpar}
+}{
+\end{mathpar}
 \end{tcolorbox}}
 
 % Formelboxen
@@ -126,7 +128,7 @@
 \end{tcolorbox}}
 
 
-\theoremstyle{definition}
+%\theoremstyle{definition}
 \newtheorem{theorem}{Theorem}%[section]
 
 \newtheorem{proposition}[theorem]{Proposition}%[section]
@@ -138,7 +140,7 @@
 \newtheorem{lemma}[theorem]{Lemma}%[section]
 \crefname{lemma}{Lemma}{Lemmata}
 
-%\newtheorem{definition}{Definition}[section]
+%\newtheorem{definition}{Definition}
 \mdfdefinestyle{theoremstyle}{%
 linecolor=red,middlelinewidth=2pt,%
 frametitlerule=true,%
@@ -149,12 +151,15 @@ innertopmargin=\topskip,
 \mdfsetup{skipabove=\topskip , skipbelow=\topskip}
 \mdfdefinestyle{defistyle}{linecolor=darkgray, linewidth=2pt, roundcorner=15pt, frametitlebackgroundcolor=gray!40, frametitlefont=\bfseries, theoremtitlefont=\bfseries, innertopmargin=5pt}
 \mdtheorem[style=defistyle, nobreak=true]{definition}[theorem]{Definition}%[section]
+\crefname{definition}{definition}{definitions}
+\let\olddefinition\definition
+\renewcommand{\definition}{\crefalias{theorem}{definition}\olddefinition}
 
 
 
 % Beispiele
 \newcounter{excount}
-\theoremstyle{definition}
+%\theoremstyle{definition}
 \newtheorem{exi}[excount]{Beispiel}
 \crefname{example}{Beispiel}{Beispiele}
 \newenvironment{example}[2]{%
