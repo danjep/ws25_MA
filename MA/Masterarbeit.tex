@@ -266,36 +266,24 @@ Can the popular models written in CAT be transformed into ones that are written 
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. 
 
-
+\pagebreak
 \section{Preliminaries} \label{sec:preliminaries}
 
-\subsection{Notation}
-\begin{itemize}
-\item $R^n$ for $R.R.R. \dots$ ($n$ times)
-\end{itemize}
-\subsubsection{Write and Read Restrictions} \label{sec:restrictions}
-Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $W \times W \cap \id$ and $R \times R \cap \id$. These relations can be used to restrict other relations to write and read operations.
-An example is $[W].\po .[R]$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
-This notation is furthermore justified by the semantics of the CAT language, since the expression
-\[[W].\rf .[R] := \{(w,r) \mid (w,w) \in [W] \land (w,r) \in \rf \land (r,r) \in [R]\}\]
-allows only for entries that consist of a write and a read event. 
-In \Cref{sec:relationspecific} we use this notation to represent the known restrictions on the base relations in the rules and in \Cref{sec:assumptions} to integrate assumptions that are defined in the CAT file.
-
 \subsection{Executions}
-Executions consist of a set of all events that occur $E_X$, the set of initial writes $IW_X$ and the base relations relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
+Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and the base relations relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
 \begin{definition}[Execution]
 An execution $X$ is the following tuple:
 \[X := (E, IW, \po, \rf, \rmw, \co, \loc, \ext, \id)\]  
 where $\po, \rf, \rmw, \co, \loc, \ext, \id \subseteq E \times E$.
-$\mathbb{E}$ denotes the set of all possible executions. \\
-Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
+$\mathbb{E}$ denotes the set of all possible executions. 
+%Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
 \end{definition}
 
 
 \subsection{Semantics} \label{sec:semantics}
 The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows. The semantics of relations is simply the set of elements in the relation.
 \begin{definition}[Semantics] 
-Let $M$ be a memory consistency model, $\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and\\ $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq E \times E$ be relations. The semantics of the CAT expressions are sets of executions and defined as follows:
+Let $M$ be a memory consistency model, $\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and\\ $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq (E \times E)$ be relations. The semantics of the CAT expressions are sets of executions and defined as follows:
 \begin{align*}
 \semsof{\bangle{cat}_1~ \bangle{cat}_2} & := \semsof{\bangle{cat}_1} \cap \semsof{\bangle{cat}_2} \\
 \semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \semsof{\bangle{rel}}\} \\
@@ -311,7 +299,7 @@ For the relational subterms of the CAT expressions, the semantics differ in the 
 \semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \{ (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \notin \semsof{\bangle{rel}_2}\} \\
 \semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \semsof{\bangle{rel}}\} \\
-\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: (e,e_1), \dots ,(e_n,e') \in \semsof{\bangle{rel}}\} \\
+\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: e = e_1 \land e'=e_n \land \forall i\in [1,n]: (e_i,e_{i+1}) \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}?} &:= \semsof{\bangle{rel}} \cup \id \\
 \semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}?} \cup \semsof{\bangle{rel}^+} \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
@@ -320,6 +308,21 @@ For the relational subterms of the CAT expressions, the semantics differ in the 
 \end{definition}
 For better readability, the \semsof{\cdot} symbols can be omitted when dealing with relations, since the semantics are equal to the intuitive definition of relations.
 
+
+\subsection{Notation}
+\subsubsection{Abbreviation for Concatenation}
+Let $\relr \subseteq (E \times E)$ be a relation. For any term where \relr~ is concatenated with itself $n \in \N$ times, we can instead write $\relr^n$. In this notation, $\relr$ is equal to $\relr^1$. This notation will shorten terms and increases readability. Furthermore, it yields a definition of the semantics of $\rel^+$ that is equivalent to the one in \Cref{def:sem}:
+\begin{definition}[Alternative Definition of the Transitive Closure] \label{def:alttc}
+Let $\rel \subseteq (E\times E)$ be a relation.
+\[\semsof{\bangle{rel}^+} := \{(e,e') \mid \exists n \in \N: \edgein \bangle{rel}^n\] \end{definition}
+
+\subsubsection{Write and Read Restrictions} \label{sec:restrictions}
+Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $(W \times W) \cap \id$ and $(R \times R) \cap \id$. These relations can be used to restrict other relations to write and read operations.
+An example is $[W].\po .[R]$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
+This notation is furthermore justified by the semantics of the CAT language, since the expression
+\[[W].\rf .[R] := \{(w,r) \mid (w,w) \in [W] \land (w,r) \in \rf \land (r,r) \in [R]\}\]
+allows only for entries that consist of a write and a read event. 
+In \Cref{sec:relationspecific} we use this notation to represent the known restrictions on the base relations in the rules and in \Cref{sec:assumptions} to integrate assumptions that are defined in the CAT file.
 \pagebreak
 
 \section{The Proof System} \label{sec:proofsys}
@@ -339,7 +342,7 @@ Since this proof system is designed to handle CAT expressions and not just arbit
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}
-For any $\rel{r}_1 \subseteq \rel{r}_2$ it applies that $\bangle{constraint}~ \rel{r}_2 \subseteq \bangle{constraint}~ \rel{r}_1$ if the constraint is the same for each relation.
+For any $\relr_1 \subseteq \relr_2$ it applies that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
 \end{lemma}
 \begin{proof}
 We can prove this for each of the constraints. 
@@ -347,7 +350,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2} \impl \nexists (e_1,e_2) \in {\sf r_1}) \\
-& \impl &(X \in \semsof{\texttt{empty}~ \rel{ r}_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{empty}~ \relr_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
 & \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
 \end{eqnarray*}
 
@@ -355,7 +358,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\forall e \in E: \nexists(e,e) \in {\sf r_2} \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}) \\
-& \impl &(X \in \semsof{\texttt{irreflexive}~ \rel{ r}_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{irreflexive}~ \relr_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
 & \impl & \semsof{\texttt{irreflexive}~ \sf r_2} \subseteq \semsof{\texttt{irreflexive}~ \sf r_1}
 \end{eqnarray*}
 
@@ -363,7 +366,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\forall e \in E: \nexists(e,e) \in {\sf r_2}^+ \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}^+) \\
-& \impl &(X \in \semsof{\texttt{acyclic}~ \rel{ r}_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{acyclic}~ \relr_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
 & \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
 \end{eqnarray*}
 \end{proof}
@@ -377,7 +380,7 @@ Let the constraint be \texttt{empty}:
 Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
 
 \begin{lemma}\label{lem:irracy}
-For a relation $R$, it holds that $\semsof{\mathtt{irreflexive}~ \rel{r}^+} = \semsof{\mathtt{acyclic}~ \sf r}$.
+For a relation $R$, it holds that $\semsof{\mathtt{irreflexive}~ \relr^+} = \semsof{\mathtt{acyclic}~ \sf r}$.
 \end{lemma}
 \begin{proof}
 This is given via the semantics of $\semsof{\mathtt{acyclic}~ \bangle{rel}}$ in \Cref{def:sem}.
@@ -396,11 +399,11 @@ For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof
 \end{proof}
 
 \begin{lemma}\label{lem:irrempty}
-For any relation \rel{r} it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \semsof{\mathtt{empty}~ \sf r \cap \id}$.
+For any relation \relr it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \semsof{\mathtt{empty}~ \relr \cap \id}$.
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
-\semsof{\texttt{irreflexive } \rel{r}} &=& \{X \in \E \mid \forall e \in E: (e,e) \notin \rel{r}\} \\
+\semsof{\texttt{irreflexive } \relr} &=& \{X \in \E \mid \forall e \in E: (e,e) \notin \relr\} \\
 &=& \{X \in \E \mid \forall e \in E: (e,e) \notin \sf r \cap \id\} \\
 &=& \{X \in \E \mid \nexists (e,e') \in \sf r \cap \id\} \\
 &=& \semsof{\texttt{empty } \sf r \cap \id} 
@@ -408,7 +411,7 @@ For any relation \rel{r} it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \
 \end{proof}
 
 \begin{lemma}\label{lem:emptyacy}
-For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}}$.
+For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{acyclic}~ \sf r \cup r^{-1}}$.
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
@@ -436,7 +439,7 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 
 \begin{rules}{No Operator}
 \inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
-\textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rel{s} \subseteq \rel{t}}{\rel{r} \subseteq \rel{t}}} \and
+\textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rels \subseteq \relt}{\relr \subseteq \relt}} \and
 \inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
 \inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} 
 \end{rules}
@@ -463,31 +466,17 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 
 \begin{rules}{Transitive Closure}
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
-\inferrule*[left=($+I$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}
+\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}
 \end{rules}
 
 
-We can ignore the \textit{inversion} operator in the implications since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations. For this transformation we need the rules in \Cref{fig:inversion}. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unifications of other relations according to their definition.
+We can ignore the \textit{inversion} operator in the implications since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations. For this transformation we need the rules in \Cref{rule:inversion}. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unifications of other relations according to their definition.
 
 
 \begin{lemma}[Inversion Lemma]\label{lem:inversion}
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
 \end{lemma}
 
-\begin{figure}[h]
-\begin{rules}{Inversiontransformations}
-%\begin{mathpar}
-\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
-\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
-\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
-%\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
-\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
-\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
-\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
-%\end{mathpar}
-\end{rules}
-\caption{The proof in \Cref{sec:inversionproof} provides these rules for handling terms that include inversions. Applying them sufficiently on any inclusion term yields a term which only uses inversions on the base relations.}\label{fig:inversion}
-\end{figure}
 
 \subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
 While testing the proof system, a few rules were repeatedly needed to shorten the proofs, eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
@@ -513,7 +502,20 @@ While testing the proof system, a few rules were repeatedly needed to shorten th
 \end{mathpar}
 
 \subsection{Transformations}\label{sec:transformations}
-Another part of the rules are transformations which are based on equalities of terms (e.g. $\sf r~ \cup~ s= s~ \cup~ r$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
+Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
+As mentioned in the previous section in \Cref{lem:inversion}, it is possible to transform any inclusion term into one that uses inversion only on base relations. The proof in \Cref{sec:inversionproof} for this lemma therefore provides some useful transformations:
+\begin{rules}{Inversiontransformations}\label{rule:inversion}
+%\begin{mathpar}
+\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
+%\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
+\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
+%\end{mathpar}
+\end{rules}
+
 The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive.
 \begin{definition}[Commutativity, Associativity, Distributivity]
 Let $\circ$ and $\star$ be two operations on a set $S$ and $r,s \in S$.
@@ -551,27 +553,47 @@ There are still some transformations for these operators based on their definiti
 \inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
 \end{rules}
 
+
 The following transformations may come in handy but are less straightforward. We will need to prove them. 
 \begin{mathpar}
 %\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and nicht invertible
+\inferrule*[left=($+^+$)]{\Gamma[\relr^+]}{\Gamma[\relr^{+^+}]} \and
 \inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} \and 
 \inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
 \inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} 
 \end{mathpar}
 \begin{lemma}
-Let \textsf{r,s} be relations. Then $\sf r^+ \cap s^+ = (r^+ \cap s^+)^+$ holds. 
+Let $\relr \subseteq (E \times E)$ be a relation. $\relr^+ = \relr^{+^+}$ holds.
 \end{lemma}
 \begin{proof}
+\todo{}
+\end{proof}
+
+\begin{lemma}
+Let $\relr,\rels \subseteq (E \times E)$ be relations. Then $\sf r^+ \cap s^+ = (r^+ \cap s^+)^+$ holds. 
+\end{lemma}
+\begin{proof} The $\impl$ direction is very intuitive and easy to show:
 \begin{eqnarray*}
-(e,e') \in {\sf r^+ \cap s^+} &\Leftrightarrow & (e,e') \in {\sf r^+} \land (e,e') \in {\sf s^+} \\
-&\Leftrightarrow & (e,e_1),\dots ,(e_n,e') \in {\sf r^+} \land (e,e_1),\dots,(e_n,e') \in \sf s^+ \\
-&\Leftrightarrow & (e,e_1),\dots ,(e_n,e') \in {\sf (r^+ \cap s^+)} \\
-&\Leftrightarrow & (e,e') \in {\sf (r^+ \cap s^+)^+}
+\edgein \relr^+ \cap \rels^+ &\Leftrightarrow & \edgein (\relr^+ \cap \rels^+)^1 \\
+&\impl & \exists n \in \N: \edgein (\relr^+ \cap \rels^+)^n \\
+%(e,e') \in {\sf r^+ \cap s^+} &\Leftrightarrow & (e,e') \in {\sf r^+} \land (e,e') \in {\sf s^+} \reason{\defof \cap} \\
+%&\Leftrightarrow & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i\in [1,n]: (e_i,e_{i+1}) \in \relr \\
+%&&\land \exists m \in \N: e=e_1 \land e'=e_m \land \forall i\in [1,m]: (e_i,e_{i+1}) \in \rels \reason{\defof +}\\
+%&\Leftrightarrow &  \edgein {\sf (r^+ \cap s^+)} \\
+&\Leftrightarrow & (e,e') \in {\sf (r^+ \cap s^+)^+} \reason{\Cref{def:alttc}}
+\end{eqnarray*}
+For the other direction, we need to prove that $\edgein (\relr^+ \cap \rels^+)^n \impl \edgein (\relr^+ \cap \rels^+)$. 
+\begin{eqnarray*}
+\edgein (\relr^+ \cap \rels^+)^n &\Leftrightarrow & \exists n\in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr^+ \cap \rels^+ \\
+& \impl & \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr^+ \land (e_i,e_{i+1}) \in \rels^+ \\
+& \impl & \edgein \relr^{+^+} \land \edgein \rels^{+^+} \\
+& \Leftrightarrow & \edgein \relr^+ \land \edgein \rels^+ \\
+& \Leftrightarrow & \edgein \relr^+ \cap \rels^+
 \end{eqnarray*}
 \end{proof}
 
 
-\begin{lemma} Let {\sf r,s} be relations. Then $\sf (r^*.s^*)^* = (r \cup s)^*$ holds.
+\begin{lemma} Let $\relr,\rels \subseteq (E\times E)$ be relations. Then $\sf (r^*.s^*)^* = (r \cup s)^*$ holds.
 \end{lemma}
 \begin{proof}
 \begin{itemize}
@@ -591,15 +613,14 @@ Accordingly, $(e_1,e_h)$ is in $\sf (r \cup s)^h$ and thus $(e_1,e_h) \in \sf (r
 \end{proof}
 
 
-\begin{lemma} Let {\sf r} be a relation. Then $\sf r^* = r^*.r^*$ holds. \end{lemma}
+\begin{lemma} Let $\relr \subseteq (E\times E)$ be a relation. Then $\sf r^* = r^*.r^*$ holds. \end{lemma}
 \begin{proof}
 \begin{itemize}
 \item[$\subseteq$:] For any $(e,e') \in \sf r^*$ it holds that $(e,e') \in \sf r^*.\id$ and hence $(e,e') \in \sf r^*.r^*$. \\
-\item[$\supseteq$:] For any $(e,e') \in \sf r^*.r^*$ there exist $n,m \in \N_0$ with $(e,e') \in {\sf r}^n.\rel{r}^m$. Since ${\sf r}^n.\rel{r}^m$ is the same as $\rel{ r}^{n+m}$, it holds that $(e,e') \in {\sf r}^{n+m}$ and therefore $(e,e') \in {\sf r}^*$.
+\item[$\supseteq$:] For any $(e,e') \in \sf r^*.r^*$ there exist $n,m \in \N_0$ with $(e,e') \in {\sf r}^n.\relr^m$. Since ${\sf r}^n.\relr^m$ is the same as $\relr^{n+m}$, it holds that $(e,e') \in {\sf r}^{n+m}$ and therefore $(e,e') \in {\sf r}^*$.
 \end{itemize}
 \end{proof}
 
-\pagebreak
 
 
 
@@ -610,47 +631,47 @@ The empty relation \0{} functions as a neutral element for unification and absor
 \inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
 \inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
-\inferrule*[left=($\text{id}_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
+\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
 \end{rules}
-The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\text{ID}_{symm}$) rule.
+The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\id_{symm}$) rule.
 \begin{rules}{Base Relation Properties}
 \inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
 \inferrule*[left=($\loc_{symm}$)]{\it true}{\loc^{-1} \subseteq \loc} \and
 \inferrule*[left=($\ext_{symm}$)]{\it true}{\ext^{-1} \subseteq \ext} \and
 \inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
 \inferrule*[left=($\po_{trans}$)]{\true}{\po .\po \subseteq \po} \and
-\inferrule*[left=($\text{co}_{trans}$)]{\true}{\co .\co \subseteq \co} \and
+\inferrule*[left=($\co_{trans}$)]{\true}{\co .\co \subseteq \co} \and
 \inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} \and
-\inferrule*[left=($r_{symm}$)]{\Gamma[\sf r^{-1}] \\ \sf r \subseteq \id}{\Gamma[\sf r]} 
+\inferrule*[left=($\relr_{symm}$)]{\Gamma[\sf r^{-1}] \\ \sf r \subseteq \id}{\Gamma[\sf r]} 
 \end{rules}
-Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \rel{r}.\todo{proof needed}
+Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.\todo{proof needed}
 \begin{mathpar}
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} 
 \end{mathpar}
 
-As we have described in \Cref{sec:restrictions}, the relations \rel{[W]} and \rel{[R]} can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
-Besides this we use some rules to handle \rel{[W]} and \rel{[R]} themselves. \todo{Ist $[W]\cap [R]$ besser?}
+As we have described in \Cref{sec:restrictions}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
+Besides this we use some rules to handle \relW~ and \relR~ themselves. \todo{Ist $[W]\cap [R]$ besser?}
 \begin{rules}{Write and Read Events}
 \inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
 \inferrule*[left=(R)]{\true}{\sf [R] \subseteq \id} \and
 \inferrule*[left=(WR)]{\true}{\sf [W].[R] \subseteq \0} \and
 \inferrule*[left=(RW)]{\it true}{\sf [R].[W] \subseteq \0} \and
-\inferrule*[left=(rf)]{\it true}{\sf \rf = [W].\rf .[R]} \and
-\inferrule*[left=(co)]{\it true}{\sf \co = [W].\co .[W]} 
+\inferrule*[left=(\rf)]{\it true}{\sf \rf = [W].\rf .[R]} \and
+\inferrule*[left=(\co)]{\it true}{\sf \co = [W].\co .[W]} 
 \end{rules}
 The last part of relation-specific rules concerns inclusions between base relations like the one between \textsf{ppo} and \po. The inclusion between \rf{} and \loc{} is based on the fact, that \rf{} relates two events on the same memory location, namely one read and the write that provided the value in that location. Since \loc{} includes connections between all events on the same location, every entry of \rf{} needs to be in \loc{}. The same holds for the consecutive writes on the same location in \co{}. 
 \begin{rules}{Inclusions}
 \inferrule*[left=(\textsf{ppo})]{\true}{\textsf{ppo} \subseteq \po} \and
 %\inferrule*[left=(rf+)]{true}{\rf .\rf \subseteq \0} \and wegen (RW) überflüssig
-\inferrule*[left=(\text{rfloc})]{\true}{\rf \subseteq \loc} \and
-\inferrule*[left=(\text{coloc})]{\true}{\co \subseteq \loc} 
+\inferrule*[left=(\text{\rf\loc})]{\true}{\rf \subseteq \loc} \and
+\inferrule*[left=(\text{\co\loc})]{\true}{\co \subseteq \loc} 
 \end{rules}
 
 
 \subsection{Incorporating the Assumptions and Definitions}\label{sec:assumptions}
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
 \[ \texttt{assume r \& s = \0} \text{ or } \texttt{let r = (s | t)+}\]
-for an assumption of an empty intersection between \rel{r} and \rel{s} and a definition of \rel{r} as the transitive closure of $\sf s \cup t$. \\
+for an assumption of an empty intersection between \relr and \rels and a definition of \relr as the transitive closure of $\sf s \cup t$. \\
 These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing. To avoid producing extraordinary long terms, we use the former method.
 Assumptions can easily be turned into axioms of the proof system. 
 
@@ -675,14 +696,14 @@ With the keywords \texttt{let rec} CAT lets it's users define relations recursiv
 Let $R$ be a derived relation that uses recursion in it's definition and let $\Upsilon$ be a term that does not feature $R$ at all. If the definition of $R$ consists only of $R$ itself and $\Upsilon$ the recursion can be replaced by a transitive closure, i.e. $R = R.\Upsilon$ can be $R=\Upsilon^+$.
 \todo{Nur Regeln für Rekursionsfreie Terme}
 \begin{rules}{Separated Recursion}
-\inferrule*[left=($rec_{L.L}$)]{\Upsilon^+ \subseteq \sf t}{\rel{ r} = \rel{r}.\Upsilon \sf \subseteq t} \and
-\inferrule*[left=($rec_{L.R}$)]{\Upsilon^+ \subseteq \sf t}{\rel{r} = \Upsilon.\sf r \subseteq t} \and
-\inferrule*[left=($rec_{R.L}$)]{\rel{t} \subseteq \Upsilon^+}{\rel{t} \subseteq \rel{r}.\Upsilon =\sf r} \and
-\inferrule*[left=($rec_{R.L}$)]{\rel{t} \subseteq \Upsilon^+}{\rel{t} \subseteq \Upsilon.\sf r = r} \and
-\inferrule*[left=($rec_{\cup L}$)]{\Upsilon^+ \subseteq \sf t}{\rel{r} = \Upsilon \sf \cup r \subseteq t} \and
-\inferrule*[left=($rec_{\cup R}$)]{\rel{t} \subseteq \Upsilon^+}{\rel{t} \subseteq \rel{r} = \Upsilon \cup \rel{r}} \and
+\inferrule*[left=($rec_{L.L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \relr.\Upsilon \sf \subseteq t} \and
+\inferrule*[left=($rec_{L.R}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon.\sf r \subseteq t} \and
+\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr.\Upsilon =\sf r} \and
+\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \Upsilon.\sf r = r} \and
+\inferrule*[left=($rec_{\cup L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon \sf \cup r \subseteq t} \and
+\inferrule*[left=($rec_{\cup R}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr = \Upsilon \cup \relr} \and
 \inferrule*[left=($rec_{\cap L}$)]{\Upsilon \subseteq \sf t}{{\sf r = r} \cap \Upsilon \subseteq \sf t} \and
-\inferrule*[left=($rec_{\cap R}$)]{\rel{t} \subseteq \Upsilon}{{\sf t \subseteq r = r} \cap \Upsilon}
+\inferrule*[left=($rec_{\cap R}$)]{\relt \subseteq \Upsilon}{{\sf t \subseteq r = r} \cap \Upsilon}
 \end{rules}
 \todo{was tun bei allen anderen Termen?}
 For terms where the recursion is not isolated, i.e. $\Upsilon$ is not recursion-free, it is more difficult to find rules. Here we need to use cyclic proofs with a progression rule.
@@ -690,109 +711,115 @@ The progression rule is the following:
 
 \section{Soundness}\label{sec:soundness}
 \begin{theorem}[Soundness]
-If there is a proof $\mathcal{P}$ for an inclusion $\semsof{M} \subseteq \semsof{M'}$, then the inclusion holds.
+If there is a proof $\mathcal{P}$ for an inclusion $\relr \subseteq \rels$, then the inclusion holds.
 \end{theorem}
-\noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator.
 
-\subsection{Proving Relational Implications}
+\noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
+The transformations are proven in the corresponding section or in the appendix. Using the proofs in \Cref{sec:prvrelimp} and the \Cref{lem:bmono,lem:umono} the theorem is proven.
+
+\subsection{Proving Relational Implications}\label{sec:prvrelimp}
+\begin{lemma}
+All rules rule! \todo{}
+\end{lemma}
+
 
 \begin{itemize}
-\item $(REFLEXIVITY)$: $true \impl \sf r \subseteq r$ \\ 
+\item $(\textsc{reflexivity})$: $true \impl \sf r \subseteq r$ \\ 
 Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
-\item $(TRANSITIVITY)$: $\sf r \subseteq s \land s \subseteq t \impl r \subseteq t$
+\item $(\textsc{transitivity})$: $\sf r \subseteq s \land s \subseteq t \impl r \subseteq t$
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
 &\impl & (e,e') \in \sf t \quad \mid \sf s \subseteq t
 \end{eqnarray*}
 
 
-\item ($\cup_{2L}$): $\rel{r} \subseteq \rel{s} \impl \rel{r} \cup \rel{s} \subseteq \sf s$
+\item ($\cup_{2L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
 \begin{eqnarray*}
-(e,e') \in \sf r \cup s &\impl & (e,e') \in \rel{r} \lor (e,e') \in \rel{s} \\
-&\impl & (e,e') \in \rel{s} \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
-&=& (e,e') \in \sf s 
+(e,e') \in \sf r \cup s &\impl & (e,e') \in \relr \lor (e,e') \in \rels \reason{\defof \cup}\\
+&\impl & (e,e') \in \rels \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
+&\impl & (e,e') \in \rels 
 \end{eqnarray*}
 
 
 \item ($\cup_{3R}$): $\sf r \subseteq s \impl \sf r \subseteq s \cup t$
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e') \in \sf s \reason{\sf r \subseteq s}\\
-& \impl & (e,e') \in \rel{ s} \lor (e,e') \in \sf t \\
-&\impl & (e,e') \in \sf s\cup t
+& \impl & (e,e') \in \rels \lor (e,e') \in \sf t  \\
+&\impl & (e,e') \in \sf s\cup t \reason{\defof \cup}
 \end{eqnarray*}
 
 \item ($\cap_{2L}$): $true \impl \sf r \cup s \subseteq r$
 \begin{eqnarray*}
-(e,e') \in \rel{r} \cap \rel{s} &\impl & (e,e') \in \rel{r} \land (e,e') \in \sf s \\
-&\impl & (e,e') \in \sf r
+(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \sf s \\
+&\impl & (e,e') \in \sf r \reason{\defof \cap}
 \end{eqnarray*}
 
 \item ($\cap_{2R}$): $\sf r \subseteq s \impl r \subseteq r \cap s$
 \begin{eqnarray*}
-(e,e') \in \rel{r} &\impl & (e,e') \in \rel{r} \land (e,e') \in \sf r \\
-& \impl &  (e,e') \in \rel{r} \land (e,e') \in \sf s \reason{ \sf r \subseteq s} \\
-&\impl & (e,e') \in \sf r \cap s
+(e,e') \in \relr &\impl & (e,e') \in \relr \land (e,e') \in \sf r \\
+& \impl &  (e,e') \in \relr \land (e,e') \in \sf s \reason{ \sf r \subseteq s} \\
+&\impl & (e,e') \in \sf r \cap s \reason{\defof \cap}
 \end{eqnarray*}
 
 \item ($._1$): $\sf r \subseteq \id \impl r \subseteq r.r$
 \begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\rel{r} \subseteq \id} \\
+(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\relr \subseteq \id} \\
 &\impl & (e,e).(e,e) \in \sf r.r \\
 &\impl & (e,e) \in \sf r.r
 \end{eqnarray*}
 \item ($._{2Rl}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
 \begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e).(e,e') \in \sf \id.r \\
-&\impl & (e,e) \in \id \land (e,e') \in \sf r \\
-&\impl & (e,e) \in \rel{ s} \land (e,e') \in \sf r \reason{\id \subseteq s}\\
-&\impl & (e,e).(e,e') \in \sf s.r \\
+(e,e') \in \sf r &\impl & (e,e).(e,e') \in \id.\relr \reason{(\id_{comm})}\\
+&\impl & (e,e) \in \id \land (e,e') \in \sf r \reason{\defof .}\\
+&\impl & (e,e) \in \rels \land (e,e') \in \sf r \reason{\id \subseteq s}\\
+&\impl & (e,e).(e,e') \in \rels.\relr \reason{\defof .}\\
 &=& (e,e') \in \sf s.r 
 \end{eqnarray*}
 \item ($._{2Rr}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \\
-&\impl & (e,e') \in \rel{r} \land (e',e') \in \id \\
-&\impl & (e,e') \in \rel{r} \land (e',e') \in \rel{s} \reason{\id \subseteq \sf s} \\
+&\impl & (e,e') \in \relr \land (e',e') \in \id \\
+&\impl & (e,e') \in \relr \land (e',e') \in \rels \reason{\id \subseteq \sf s} \\
 &\impl & (e,e').(e',e') \in \sf r.s \\
 &\impl & (e,e') \in \sf r.s
 \end{eqnarray*}
 
 \item ($._{2Ll}$): $\sf r \subseteq \id \impl s.r \subseteq s$
 \begin{eqnarray*}
-(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rel{s} \land (e_2,e_3) \in \sf r\} \\
-&\impl & (e_1,e_2) \in \rel{s} \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
-&\impl & (e_1,e_3) \in \rel{s} \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
+(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rels \land (e_2,e_3) \in \sf r\} \\
+&\impl & (e_1,e_2) \in \rels \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
+&\impl & (e_1,e_3) \in \rels \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
 &\impl & (e_1,e_3) \in \sf s
 \end{eqnarray*}
 
 \item ($._{2Lr}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
 \begin{eqnarray*}
-(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \rel{r} \land (e_2,e_3) \in \sf s \\
-&\impl & (e_2,e_3) \in \rel{s} \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
-&\impl & (e_1,e_3) \in \rel{s} \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
-&\impl & (e_1,e_3) \in \rel{s}
+(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
+&\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
+&\impl & (e_1,e_3) \in \rels \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
+&\impl & (e_1,e_3) \in \rels
 \end{eqnarray*}
 
 \item ($+_{LR}$): $\sf r \subseteq s^+ \impl r^+ \subseteq s^+$
 \begin{eqnarray*}
-(e,e') \in \rel{r}^+ &\impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in \rel{r} \\
-& \impl & \exists e_1,\dots e_n: (e,e_1),...,(e_n,e') \in \rel{s}^+ \reason{\sf r \subseteq s^+}\\
-& \impl & (e,e') \in \rel{s}^{+^+} \\
+(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
+& \impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels^+ \reason{\sf r \subseteq s^+}\\
+& \impl & (e,e') \in \rels^{+^+} \reason{\defof \rel^+}\\
 & \impl & (e,e') \in \sf s^+
 \end{eqnarray*}
 
 \item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$
 \begin{eqnarray*}
-(e,e') \in \rel{r}^+ &\impl & \exists n\in \N: (e,e') \in \rel{r}^n \\
-&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-1}.\rel{r} \\
-&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-1}.\rel{I} \reason{\sf r \subseteq I} \\
-&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-2}.\sf r.I \\
-&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-2}.\rel{I} \reason{\sf r.I \subseteq I} \\
-&\impl & \exists n \in \N : (e,e') \in \rel{r}^{n-3}.\rel{I} \reason{\sf r.I \subseteq I} \\
+(e,e') \in \relr^+ &\impl & \exists n\in \N: (e,e') \in \relr^n \\
+&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
+&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relI \reason{\relr \subseteq \relI} \\
+&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relr.\relI \\
+&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relI \reason{\relr.\relI \subseteq \relI} \\
+&\impl & \exists n \in \N : (e,e') \in \relr^{n-3}.\relI \reason{\relr.\relI \subseteq \relI} \\
 && \dots \\
-&\impl & (e,e') \in \sf r.I \reason{r.I \subseteq I} \\
-&\impl & (e,e') \in \sf I \reason{r.I \subseteq I} \\
-&\impl & (e,e') \in \sf s \reason{I \subseteq s}
+&\impl & (e,e') \in \relr.\relI \reason{\relr.\relI \subseteq \relI} \\
+&\impl & (e,e') \in \relI \reason{\relr.\relI \subseteq \relI} \\
+&\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
 \end{eqnarray*}
 \end{itemize}
 
@@ -803,62 +830,63 @@ To prove the weakening and strengthening rules, we need to prove monotinicity fo
 For proving monotonicity, the lemma needs to be shown for every binary operator in rational CAT.
 We will start with the unification operator:
 \begin{eqnarray*}
-(e,e') \in \sf t \cup r &\impl & (e,e') \in \rel{t} \lor (e,e') \in \sf r \\
-& \impl & (e,e') \in \rel{t} \lor (e,e') \in \sf s \reason{r \subseteq s} \\
+(e,e') \in \sf t \cup r &\impl & (e,e') \in \relt \lor (e,e') \in \sf r \\
+& \impl & (e,e') \in \relt \lor (e,e') \in \sf s \reason{r \subseteq s} \\
 &\impl & (e,e') \in \sf t \cup s
 \end{eqnarray*}
 Just as simple as for unification is the proof for intersection:
 \begin{eqnarray*}
-(e,e') \in \sf t \cap r &\impl & (e,e') \in \rel{t} \land (e,e') \in \sf r \\
-& \impl & (e,e') \in \rel{t} \land (e,e') \in \sf s \reason{r \subseteq s} \\
+(e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \sf r \\
+& \impl & (e,e') \in \relt \land (e,e') \in \sf s \reason{r \subseteq s} \\
 &\impl & (e,e') \in \sf t \cap s
 \end{eqnarray*}
 Since the first two operators were commutative, the order of the relations was not important. As this is not the case for concatenation, there needs to be a distinction between $\sf t.r$ and $\sf r.t$
 \begin{eqnarray*}
-(e,e'') \in \sf t.r &\impl & (e,e') \in \rel{t} \land (e',e'') \in \sf r \\
-& \impl & (e,e') \in \rel{t} \land (e',e'') \in \sf s \reason{r \subseteq s} \\
+(e,e'') \in \sf t.r &\impl & (e,e') \in \relt \land (e',e'') \in \sf r \\
+& \impl & (e,e') \in \relt \land (e',e'') \in \sf s \reason{r \subseteq s} \\
 &\impl & (e,e'') \in \sf t.s
 \end{eqnarray*}
 \begin{eqnarray*}
-(e,e'') \in \sf r.t &\impl & (e,e') \in \rel{r} \land (e',e'') \in \sf t \\
-& \impl & (e,e') \in \rel{s} \land (e',e'') \in \sf t \reason{r \subseteq s} \\
+(e,e'') \in \sf r.t &\impl & (e,e') \in \relr \land (e',e'') \in \sf t \\
+& \impl & (e,e') \in \rels \land (e',e'') \in \sf t \reason{r \subseteq s} \\
 &\impl & (e,e'') \in \sf s.t
 \end{eqnarray*}
 This proves monotonicity for every binary operator of rational CAT.
 \end{proof}
 The unary operators of rational CAT are inversion, reflexive closure, transitive closure and reflexive-transitive closure. The next step is to show monotonicity for these aswell.
-\begin{lemma}[Unary Monotonicity]\label{lem:umono} Let $f:(E\times E) \rightarrow (E \times E)$ be a unary operator (function) of rational CAT. It holds that for any $\rel{r,s} \subseteq E \times E$, if $\sf r \subset s$, then $f(\rel{r}) \subseteq f(\rel{s})$.
+\begin{lemma}[Unary Monotonicity]\label{lem:umono} Let $f:(E\times E) \rightarrow (E \times E)$ be a unary operator (function) of rational CAT. It holds that for any $\relr,\rels \subseteq E \times E$, if $\sf r \subset s$, then $f(\relr) \subseteq f(\rels)$.
 \end{lemma}
 \begin{proof}
 The first unary operator of rational CAT will be inversion:
 \begin{eqnarray*}
-(e,e') \in \rel{r}^{-1} &\impl & (e',e) \in \sf r \\
+(e,e') \in \relr^{-1} &\impl & (e',e) \in \relr \reason{\defof \rel^{-1}}\\
 &\impl & (e',e) \in \sf s \reason{\sf r \subseteq s} \\
-&\impl & (e,e') \in \rel{s}^{-1}
+&\impl & (e,e') \in \rels^{-1} \reason{\defof \rel^{-1}}
 \end{eqnarray*}
 Next up is the transitive closure:
 \begin{eqnarray*}
-(e,e') \in \rel{r}^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rel{r} \\
-&\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rel{s} \reason{\sf r \subseteq s} \\
+(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \\
+&\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels \reason{\sf r \subseteq s} \\
 &\impl & (e,e') \in \sf s^+
 \end{eqnarray*}
 For the unary operators reflexive closure the monotonicity is given through its definition and \Cref{lem:bmono}:
-\[\rel{r}? = \rel{r} \cup \id \subseteq \rel{s} \cup \id = \rel{s}?\]
+\[\relr? = \relr \cup \id \subseteq \rels \cup \id = \rels?\]
 For the reflexive-transitive closure the monotonicity is given through their definition and the monotonicity of the unification operator and the transitive closure:
-\[\rel{r}^* = \rel{r}^+ \cup \id \subseteq \rel{s}^+ \cup \id = \rel{s}^*\]
+\[\relr^* = \relr^+ \cup \id \subseteq \rels^+ \cup \id = \rels^*\]
 \end{proof}
 With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and strengthening rules.
 \begin{itemize}
-\item $\Delta[\rel{s}] \subseteq \rel{t} \land {\sf r \subseteq s} \impl \Delta[\rel{r}] \subseteq \rel{t}$
+\item $(\textsc{weak}):~ \Delta[\relr] \subseteq \rels \land {\sf t \subseteq r} \impl \Delta[\relt] \subseteq \rels$
 \begin{eqnarray*}
-(e,e') \in \Delta[\rel{r}] &\impl & (e,e') \in \Delta[s] \reason{\text{\Cref{lem:bmono,lem:umono}, } \sf r \subseteq s} \\
-& \impl & (e,e') \in \sf t \reason{\Delta[\rel{s}] \subseteq \rel{t}}
+(e,e') \in \Delta[\relt] &\impl & (e,e') \in \Delta[\relr] \reason{\text{\Cref{lem:bmono,lem:umono}, } \sf t \subseteq r} \\
+& \impl & (e,e') \in \rels \reason{\Delta[\relr] \subseteq \rels}
 \end{eqnarray*}
-\item
+\item $(\textsc{strength}):~ \relr \subseteq \Delta[s] \land \rels \subseteq \relt \impl \relr \subseteq \Delta[\relt]$
+\begin{eqnarray*}
+\edgein \relr &\impl & \edgein \Delta[\rels] \reason{\relr \subseteq \Delta[\rels]} \\
+&\impl & \edgein \Delta[\relt] \reason{\text{\Cref{lem:bmono,lem:umono}, } \rels \subseteq \relt}
+\end{eqnarray*}
 \end{itemize}
-\todo{zuende schreiben und evtl stilistisch überarbeiten}
-
-
 
 
 \section{Completeness}\label{sec:completeness}
@@ -902,107 +930,61 @@ For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Simi
 \Cref{lem:inversion}:
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. \\
 \begin{proof}
-When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation.
-\begin{align*}
-\semsof{(R \cup S)^{-1}} &=& \{(e,e') \mid (e',e) \in R \cup S\} \\
-&=& \{(e,e') \mid (e',e) \in R\} \cup \{(e,e') \mid (e',e) \in R\} \\
-&=& \semsof{R^{-1}} \cup \semsof{S^{-1}} \\
-&=& \semsof{R^{-1} \cup S^{-1}}
-\end{align*}
-\begin{align*}
-\semsof{(R \cap S)^{-1}} &=& \{(e,e') \mid (e',e) \in R\cap S\} \\
-&=& \{(e,e') \mid (e',e) \in R\} \cap \{(e,e')\mid (e',e) \in S\} \\
-&=& \semsof{R^{-1}} \cap \semsof{S^{-1}} \\
-&=& \semsof{R^{-1} \cap S^{-1}}
-\end{align*}
-\begin{align*}
-\semsof{(R.S)^{-1}} &=& \{(e,e'') \mid (e'',e) \in (R.S)\} \\
-&=& \{(e,e'') \mid \exists e': (e'',e') \in R, (e',e) \in S \} \\
-&=& \{(e,e'') \mid \exists e': (e',e'') \in R^{-1}, (e,e') \in S^{-1}\} \\
-&=& \semsof{R^{-1}.S^{-1}}
-\end{align*}
-\begin{align*}
-\semsof{(\sim R)^{-1}} &=& \{(e,e') \mid (e',e) \in~ \sim R\} \\
-&=& \{(e,e') \mid (e',e) \notin R\} \\
-&=& \{(e,e') \notin R^{-1}\} \\
-&=& \semsof{\sim (R^{-1})}
-\end{align*}
-\begin{align*}
-\semsof{(R^+)^{-1}} &=& \{(e,e') \mid (e',e) \in R^+\} \\
-&=& \{(e,e') \mid \exists n \in \N: (e',e_1),\dots ,(e_n,e) \in R\} \\
-&=& \{(e,e') \mid \exists n \in \N: (e,e_n),\dots ,(e_1,e') \in R^{-1}\} \\
-&=& \semsof{(R^{-1})^+}
-\end{align*}
-\begin{align*}
-\semsof{(R?)^{-1}} &=& \{(e,e') \mid (e',e) \in R?\} \\
-&=& \{(e,e') \mid (e',e) \in R \cup \id \} \\
-&=& \{(e,e') \in R^{-1} \cup \id^{-1}\} \\
-&=& \{(e,e') \in R^{-1} \cup \id\} \\
-&=& \{(e,e') \in (R^{-1})?\} \\
-&=& \semsof{(R^{-1})?}
-\end{align*}
-\begin{align*}
-\semsof{(R^*)^{-1}} &=& \{(e,e') \mid (e',e) \in \id \cup R^+\} \\
-&=& \{(e,e') \mid (e',e) \in \id\} \cup \{(e,e') \mid (e',e) \in R^+\} \\
-&=& \{(e,e') \in \id^{-1}\} \cup \{(e,e') \in (R^+)^{-1}\} \\
-&=& \{(e,e') \in \id \cup (R^{-1})^+ \} \\
-&=& \{(e,e') \in (R^{-1})^*\} \\
-&=& \semsof{(R^{-1})^*}
-\end{align*}
+When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation. \todo{Die richtigen Definitionen aus \Cref{def:sem} einfügen}
+\begin{eqnarray*}
+\semsof{(\relr \cup \rels)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr \cup \rels\} \\
+&=& \{(e,e') \mid (e',e) \in \relr\} \cup \{(e,e') \mid (e',e) \in \relr\} \\
+&=& \semsof{\relr^{-1}} \cup \semsof{\rels^{-1}} \\
+&=& \semsof{\relr^{-1} \cup \rels^{-1}}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\relr \cap \rels)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr\cap \rels\} \\
+&=& \{(e,e') \mid (e',e) \in \relr\} \cap \{(e,e')\mid (e',e) \in \rels\} \\
+&=& \semsof{\relr^{-1}} \cap \semsof{\rels^{-1}} \\
+&=& \semsof{\relr^{-1} \cap \rels^{-1}}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\relr.\rels)^{-1}} &=& \{(e,e'') \mid (e'',e) \in (\relr.\rels)\} \\
+&=& \{(e,e'') \mid \exists e': (e'',e') \in \relr, (e',e) \in \rels \} \\
+&=& \{(e,e'') \mid \exists e': (e',e'') \in \relr^{-1}, (e,e') \in \rels^{-1}\} \\
+&=& \semsof{\relr^{-1}.\rels^{-1}}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\sim \relr)^{-1}} &=& \{(e,e') \mid (e',e) \in~ \sim \relr\} \\
+&=& \{(e,e') \mid (e',e) \notin \relr\} \\
+&=& \{(e,e') \notin \relr^{-1}\} \\
+&=& \semsof{\sim (\relr^{-1})}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\relr^+)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr^+\} \\
+&=& \{(e,e') \mid \exists n \in \N: (e',e_1),\dots ,(e_n,e) \in \relr\} \\
+&=& \{(e,e') \mid \exists n \in \N: (e,e_n),\dots ,(e_1,e') \in \relr^{-1}\} \\
+&=& \semsof{(\relr^{-1})^+}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\relr?)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr?\} \\
+&=& \{(e,e') \mid (e',e) \in \relr \cup \id \} \\
+&=& \{(e,e') \in \relr^{-1} \cup \id^{-1}\} \\
+&=& \{(e,e') \in \relr^{-1} \cup \id\} \\
+&=& \{(e,e') \in (\relr^{-1})?\} \\
+&=& \semsof{(\relr^{-1})?}
+\end{eqnarray*}
+\begin{eqnarray*}
+\semsof{(\relr^*)^{-1}} &=& \{(e,e') \mid (e',e) \in \id \cup \relr^+\} \\
+&=& \{(e,e') \mid (e',e) \in \id\} \cup \{(e,e') \mid (e',e) \in \relr^+\} \\
+&=& \{(e,e') \in \id^{-1}\} \cup \{(e,e') \in (\relr^+)^{-1}\} \\
+&=& \{(e,e') \in \id \cup (\relr^{-1})^+ \} \\
+&=& \{(e,e') \in (\relr^{-1})^*\} \\
+&=& \semsof{(\relr^{-1})^*}
+\end{eqnarray*}
 \end{proof}
 
 
-\include{includes/Rulesproofs.tex}
-\begin{itemize}
-\item ($+_{weak}$): $R \subseteq S^+ \land S \subseteq T \impl R \subseteq T^+$
-\begin{eqnarray*}
-(e,e') \in R &\impl & (e,e') \in S^+ \reason{R \subseteq S^+} \\
-&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in S \\
-&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \reason{S \subseteq T} \\
-&\impl & (e,e') \in T^+
-\end{eqnarray*}
-\item ($+_{strength}$): $R^+ \subseteq S \land T \subseteq R \impl T^+ \subseteq S$
-\begin{eqnarray*}
-(e,e') \in T^+ &\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \\
-&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in R \reason{T \subseteq R} \\
-&\impl & (e,e') \in R^+ \\
-&\impl & (e,e') \in S \reason{R^+ \subseteq S}
-\end{eqnarray*}
-%\item ($+_L$): $R \subseteq S \land R.S \subseteq S \impl R^+ \subseteq S$
-%\begin{eqnarray*}
-%(e,e') \in R^+ &\impl & \exists n\in \N: (e,e') \in R^n \\
-%&\impl & \exists n \in \N : (e,e') \in R^{n-1}.R \\
-%&\impl & \exists n \in \N : (e,e') \in R^{n-1}.S \reason{R \subseteq S} \\
-%&\impl & \exists n \in \N : (e,e') \in R^{n-2}.R.S \\
-%&\impl & \exists n \in \N : (e,e') \in R^{n-2}.S \reason{R.S \subseteq S} \\
-%&\impl & \exists n \in \N : (e,e') \in R^{n-3}.S \reason{R.S \subseteq S} \\
-%&& \dots \\
-%&\impl & (e,e') \in R.S \reason{R.S \subseteq S} \\
-%&\impl & (e,e') \in S \reason{R.S \subseteq S} \\
-%\end{eqnarray*}
-%\item ($?_{1R}$): $true \impl \id \subseteq R?$
-%\begin{eqnarray*}
-%(e,e') \in \id &\impl & (e,e') \in \id \cup R \reason{(\cup_{2R})} \\
-%&\impl & (e,e') \in R? \reason{\text{Semantics }\bangle{rel}?}
-%\end{eqnarray*}
-%\item ($?_{1L}$): $\id \subseteq R \impl R? \subseteq R$
-%\begin{eqnarray*}
-%(e,e') \in R? &\impl & (e,e') \in R \cup \id \reason{\text{Semantics}} \\
-%&\impl & (e,e') \in R \lor (e,e') \in \id \\
-%&\impl & (e,e') \in R \lor (e,e') \in R \reason{\id \subseteq R} \\
-%&\impl & (e,e') \in R
-%\end{eqnarray*}
-%\item ($?_{strength}$): $R? \subseteq S \land T \subseteq R \impl T? \subseteq S$
-%\begin{eqnarray*}
-%
-%\end{eqnarray*}
-\end{itemize}
+%\include{includes/Rulesproofs.tex}
 
-
-\todo{Für eine Beweisart entscheiden, entsprechend anpasssen und alle Beweise fertig machen}
 \section{Examples}
 
-\subsection{Example 1}
+\subsection{Example 1: $a^* \subseteq (aa)^* \cup a(aa)^*$}
 \begin{mathpar}
 \inferrule*[left=($*_{2L}$)]{
 \inferrule*[left=($*$)]{
@@ -1169,11 +1151,9 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 	}{(\fr.\co \cup \fr.\fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
 }{\fr.(\co \cup \fr).\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
 \end{mathpar}
-
-
 \end{itemize}
 
-\section{Regeln die es nicht in die Arbeit geschafft haben}
+
 %\begin{mathpar}
 %\inferrule*{true}{S \cup R = R \cup S} \and
 %\inferrule*[left=($\cup_{weak}$)]{\sf r \subseteq s \cup s' \\ \sf s' \subseteq t}{\sf r \subseteq s \cup t} \and

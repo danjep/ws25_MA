@@ -150,4 +150,46 @@ R.T &=& \{(e_1,e_3) \in R.T\} \\
 %& \impl & (e,e') \in S^{+^+} \\
 %& \impl & (e,e') \in S^+
 %\end{eqnarray*}
+\item ($+_{weak}$): $R \subseteq S^+ \land S \subseteq T \impl R \subseteq T^+$
+\begin{eqnarray*}
+(e,e') \in R &\impl & (e,e') \in S^+ \reason{R \subseteq S^+} \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in S \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \reason{S \subseteq T} \\
+&\impl & (e,e') \in T^+
+\end{eqnarray*}
+\item ($+_{strength}$): $R^+ \subseteq S \land T \subseteq R \impl T^+ \subseteq S$
+\begin{eqnarray*}
+(e,e') \in T^+ &\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in T \\
+&\impl & \exists e_1,\dots e_n:(e,e_1),\dots ,(e_n,e') \in R \reason{T \subseteq R} \\
+&\impl & (e,e') \in R^+ \\
+&\impl & (e,e') \in S \reason{R^+ \subseteq S}
+\end{eqnarray*}
+%\item ($+_L$): $R \subseteq S \land R.S \subseteq S \impl R^+ \subseteq S$
+%\begin{eqnarray*}
+%(e,e') \in R^+ &\impl & \exists n\in \N: (e,e') \in R^n \\
+%&\impl & \exists n \in \N : (e,e') \in R^{n-1}.R \\
+%&\impl & \exists n \in \N : (e,e') \in R^{n-1}.S \reason{R \subseteq S} \\
+%&\impl & \exists n \in \N : (e,e') \in R^{n-2}.R.S \\
+%&\impl & \exists n \in \N : (e,e') \in R^{n-2}.S \reason{R.S \subseteq S} \\
+%&\impl & \exists n \in \N : (e,e') \in R^{n-3}.S \reason{R.S \subseteq S} \\
+%&& \dots \\
+%&\impl & (e,e') \in R.S \reason{R.S \subseteq S} \\
+%&\impl & (e,e') \in S \reason{R.S \subseteq S} \\
+%\end{eqnarray*}
+%\item ($?_{1R}$): $true \impl \id \subseteq R?$
+%\begin{eqnarray*}
+%(e,e') \in \id &\impl & (e,e') \in \id \cup R \reason{(\cup_{2R})} \\
+%&\impl & (e,e') \in R? \reason{\text{Semantics }\bangle{rel}?}
+%\end{eqnarray*}
+%\item ($?_{1L}$): $\id \subseteq R \impl R? \subseteq R$
+%\begin{eqnarray*}
+%(e,e') \in R? &\impl & (e,e') \in R \cup \id \reason{\text{Semantics}} \\
+%&\impl & (e,e') \in R \lor (e,e') \in \id \\
+%&\impl & (e,e') \in R \lor (e,e') \in R \reason{\id \subseteq R} \\
+%&\impl & (e,e') \in R
+%\end{eqnarray*}
+%\item ($?_{strength}$): $R? \subseteq S \land T \subseteq R \impl T? \subseteq S$
+%\begin{eqnarray*}
+%
+%\end{eqnarray*}
 \end{itemize}

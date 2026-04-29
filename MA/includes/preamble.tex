@@ -48,7 +48,8 @@
 \usepackage[labelfont=bf]{caption}
 
 % quotation
-\definecolor{citeblue}{rgb}{0,0.3,0.55}
+\definecolor{citeblue2}{RGB}{44,107,165}
+\definecolor{citeblue}{rgb}{0,0.25,0.5}
 \RequirePackage{csquotes}
 \usepackage[backend=biber, style=numeric]{biblatex}
 %\usepackage[citecolor=black, urlcolor=black, linkcolor=black]{hyperref}
@@ -61,6 +62,8 @@
 \newcommand{\semsof}[1]{\ensuremath{\llbracket #1 \rrbracket}}
 \newcommand{\impl}{\Rightarrow}
 \newcommand{\reason}[1]{\qquad \mid #1}
+\newcommand{\edgein}{\ensuremath{(e,e') \in }}
+\newcommand{\defof}{\text{Def. of }~}
 
 % Reelle, Natürliche, Ganze, Rationale Zahlen
 \newcommand{\R}{\ensuremath{\mathbb{R}}}
@@ -72,18 +75,25 @@
 
 % Kürzel für Basisrelationen
 \definecolor{rfgreen}{rgb}{0.2,0.55,0.2}
-\newcommand{\0}{\textsf{0}}
-\newcommand{\po}{\textsf{po}}
-\newcommand{\co}{\textsf{\textcolor{orange}{co}}}
-\newcommand{\rf}{\textsf{\textcolor{rfgreen}{rf}}}
-\newcommand{\ext}{\textsf{ext}}
-\newcommand{\rmw}{\textsf{rmw}}
-\newcommand{\hb}{\textsf{\textcolor{purple}{hb}}}
-\newcommand{\loc}{\textsf{loc}}
-\newcommand{\fr}{\textsf{\textcolor{violet}{fr}}}
-\newcommand{\id}{\textsf{id}}
+\newcommand{\0}{\textsf{\upshape 0}} % \upshape ensures that the relations remain their look in lemmata and inferrules
+\newcommand{\po}{\textsf{\upshape po}}
+\newcommand{\co}{\textsf{\textcolor{orange}{\upshape co}}}
+\newcommand{\rf}{\textsf{\textcolor{rfgreen}{\upshape rf}}}
+\newcommand{\ext}{\textsf{\upshape ext}}
+\newcommand{\rmw}{\textsf{\upshape rmw}}
+\newcommand{\hb}{\textsf{\textcolor{purple}{\upshape hb}}}
+\newcommand{\loc}{\textsf{\upshape loc}}
+\newcommand{\fr}{\textsf{\textcolor{violet}{\upshape fr}}}
+\newcommand{\id}{\textsf{\upshape id}}
 \newcommand{\true}{\textit{true}}
-\newcommand{\rel}[1]{\textsf{#1}}
+\newcommand{\rel}{\bangle{rel}}
+%\newcommand{\rel}[1]{\textsf{#1}}
+\newcommand{\relI}{\textsf{\upshape I}}
+\newcommand{\relW}{\textsf{\upshape [W]}}
+\newcommand{\relR}{\textsf{\upshape [R]}}
+\newcommand{\relr}{\textsf{\upshape r}}
+\newcommand{\rels}{\textsf{\upshape s}}
+\newcommand{\relt}{\textsf{\upshape t}}
 
 % Definitionsboxen
 \usepackage[most]{tcolorbox}
