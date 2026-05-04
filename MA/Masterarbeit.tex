@@ -326,15 +326,23 @@ In \Cref{sec:relationspecific} we use this notation to represent the known restr
 \pagebreak
 
 \section{The Proof System} \label{sec:proofsys}
-In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that derive the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $true$. The derivation therefore acts according to logical implication, since $true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $true$ to the inclusion that should be proven, then the inclusion cannot hold.
-\begin{definition}[Inclusion proofs]
-Let $M,M'$ be CAT expressions constituting sets of executions on a domain of events $E$. A Proof $\mathcal{P}$ is a finite derivation tree that starts at the bottom with $\semsof{M} \subseteq \semsof{M'}$ and ends at potentially several axioms using the rules from this section.
-The proof derives therefore the implication $true \impl \semsof{M} \subseteq \semsof{M'}$.
+In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that derive the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $\true$. The derivation therefore acts according to logical implication, since $\true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $\true$ to the inclusion that should be proven, then the inclusion cannot hold.
+Since there may be multiple branches of reasoning it is important to clarify that every branch needs to end at \true{} in order to verify the inclusion. We call a branch that ends in \true{} \textit{closed} and one that does not \textit{open}. Correspondingly, we call a derivation tree \textit{closed} if every branch is closed and \textit{open} otherwise.
+
+\begin{definition}[CAT Inclusion Proofs]
+Let $M,M'$ be CAT expressions constituting sets of executions on a domain of events $E$. A CAT Inclusion Proof $\prf^{CAT}$ is a closed derivation tree that starts at the bottom with $\semsof{M} \subseteq \semsof{M'}$ and ends at potentially several axioms using the rules from this section.
+Hence, the proof derives the implication $\true \impl \semsof{M} \subseteq \semsof{M'}$.
 \end{definition}
 
-Since there may be multiple branches of reasoning it is important to clarify that every branch needs to start at $true$ in order to verify the inclusion.
-These proofs need rules to handle the CAT constraints which are given in the next subsection (\Cref{sec:constraints}). When the constraints are eliminated only an inclusion term between two relation terms remain. We can then apply transformations (\Cref{sec:transformations}) and relational implications (\Cref{sec:implications}) on the relational terms. 
-By transformations we mean rules that are based on equivalences like the commutativity of unification and intersection.
+These proofs need rules to handle the CAT constraints which are given in the next subsection (\Cref{sec:constraints}). 
+
+When the constraints are eliminated, all that is left is a relational inclusion term.  We can then apply transformations (\Cref{sec:transformations}) and relational implications (\Cref{sec:implications}) on the relational terms. By transformations we mean rules that are based on equivalences like the commutativity of unification and intersection. With the rules of the mentioned two subsections we can construct a \textit{Relational Inclusion Proof} $\prf$ for this inclusion term which is part of the CAT Inclusion Proof $\prf^{CAT}$.
+
+\begin{definition}[Relational Inclusion Proofs]
+Let $\relr,\rels \subseteq (E \times E)$ be two relations on a domain $E$. A Relational Inclusion Proof $\prf$ for the inclusion $\relr \subseteq \rels$ is a closed derivation tree that starts with the inclusion at the root and ends at potentially several leafs with \true{} using the rules in \Cref{sec:implications,sec:transformations}. The proof derives the implication $\true \impl \relr \subseteq \rels$. 
+\end{definition}
+This is the core element of the proof system. Putting the memory consistency models aside, this part of the rules allows us to prove any inclusion of relations that is universally true, like for example $a^* \subseteq (aa)^* \cup a(aa)^*$. \todo{Übergang} \\ 
+
 Since this proof system is designed to handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations given in \Cref{sec:relationspecific}. Furthermore, there is a need to incorporate assumptions about the base relations and definitions of derived relations into the rules. We show this in \Cref{sec:assumptions}.
 
 
@@ -428,9 +436,9 @@ The \cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} give us the followi
 \inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r.r^{-1}}}{\semsof{\texttt{empty}~ \sf r}} \and
 \inferrule*[left=($i \rightarrow e$)]{\semsof{\texttt{empty}~ \sf r \cap \id}}{\semsof{\texttt{irreflexive}~ \sf r}} \and
 \inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ \sf r\cup r^{-1}}}{\semsof{\texttt{empty}~ \sf r}}
-\end{rules}
-These will be needed to eliminate the constraint from the term.
+\end{rules} 
 
+These will be needed to eliminate the constraint from the term and to be able to continue with a relational inclusion proof. 
 
 
 \subsection{Relational implications}\label{sec:implications}
@@ -440,21 +448,23 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \begin{rules}{No Operator}
 \inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
 \textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rels \subseteq \relt}{\relr \subseteq \relt}} \and
+\inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
+\inferrule*[left=(full)]{true}{\relr \subseteq (E \times E)} \and
 \inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
 \inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} 
 \end{rules}
-
+\vspace{-10pt}
 \begin{rules}{Unification}
 %\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
 \inferrule*[left=($\cup_{2L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
 \textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
 \end{rules}
-
+\vspace{-10pt}
 \begin{rules}{Intersection}
 \inferrule*[left=($\cap_{2L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
 \inferrule*[left=($\cap_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
 \end{rules}
-
+\vspace{-10pt}
 \begin{rules}{Concatenation}
 \textcolor{red}{
 \inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
@@ -463,12 +473,12 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \textcolor{red}{\inferrule*[left=($._{2Lr}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
 \inferrule*[left=($._{2Ll}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}}
 \end{rules}
-
+\vspace{-10pt}
 \begin{rules}{Transitive Closure}
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
 \inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}
 \end{rules}
-
+\vspace{11pt}
 
 We can ignore the \textit{inversion} operator in the implications since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations. For this transformation we need the rules in \Cref{rule:inversion}. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unifications of other relations according to their definition.
 
@@ -503,17 +513,13 @@ While testing the proof system, a few rules were repeatedly needed to shorten th
 
 \subsection{Transformations}\label{sec:transformations}
 Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
-As mentioned in the previous section in \Cref{lem:inversion}, it is possible to transform any inclusion term into one that uses inversion only on base relations. The proof in \Cref{sec:inversionproof} for this lemma therefore provides some useful transformations:
-\begin{rules}{Inversiontransformations}\label{rule:inversion}
-%\begin{mathpar}
-\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
-\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
-\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
-%\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
-\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
-\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
-\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
-%\end{mathpar}
+
+The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
+\begin{rules}{Neutral and Absorbing Element}
+\inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
+\inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
+\inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
+\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
 \end{rules}
 
 The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive.
@@ -544,7 +550,6 @@ To incorporate the capabilities these properties offer, they will be added to th
 \inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} 
 \end{rules}
 
-
 The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a unification operator. Therefore we do not need explicit rules for these operators, but can rely on the rules for unification. 
 There are still some transformations for these operators based on their definition:
 \begin{rules}{Operator Definitions}
@@ -552,7 +557,6 @@ There are still some transformations for these operators based on their definiti
 \inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
 \inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
 \end{rules}
-
 
 The following transformations may come in handy but are less straightforward. We will need to prove them. 
 \begin{mathpar}
@@ -621,18 +625,22 @@ Accordingly, $(e_1,e_h)$ is in $\sf (r \cup s)^h$ and thus $(e_1,e_h) \in \sf (r
 \end{itemize}
 \end{proof}
 
-
+As mentioned in the previous section in \Cref{lem:inversion}, it is possible to transform any inclusion term into one that uses inversion only on base relations. The proof in \Cref{sec:inversionproof} for this lemma therefore provides some useful transformations:
+\begin{rules}{Inversiontransformations}\label{rule:inversion}
+%\begin{mathpar}
+\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
+%\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
+\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
+%\end{mathpar}
+\end{rules}
 
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
 Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. In \cite{Gru+26} this concept is called \textit{Hypotheses}. \\
-The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
-\begin{rules}{Neutral and Absorbing Element}
-\inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
-\inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
-\inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
-\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
-\end{rules}
 The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\id_{symm}$) rule.
 \begin{rules}{Base Relation Properties}
 \inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
@@ -715,12 +723,14 @@ If there is a proof $\mathcal{P}$ for an inclusion $\relr \subseteq \rels$, then
 \end{theorem}
 
 \noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
-The transformations are proven in the corresponding section or in the appendix. Using the proofs in \Cref{sec:prvrelimp} and the \Cref{lem:bmono,lem:umono} the theorem is proven.
+The transformations are proven in the corresponding section or in the appendix. Using the \Cref{lem:implications,lem:bmono,lem:umono}, it is clear that every proof $\prf$ that uses only these rules is sound and therefore the inclusion at the root of $\prf$ holds.
 
 \subsection{Proving Relational Implications}\label{sec:prvrelimp}
-\begin{lemma}
-All rules rule! \todo{}
+\begin{lemma}\label{lem:implications}
+For every rule in \Cref{sec:implications}, it holds that the premises implicate the conclusion.
 \end{lemma}
+\begin{proof}
+We prove the lemma by showing that the implications hold for every rule in \Cref{sec:implications}:
 
 
 \begin{itemize}
@@ -731,6 +741,12 @@ Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
 (e,e') \in \sf r &\impl & (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
 &\impl & (e,e') \in \sf t \quad \mid \sf s \subseteq t
 \end{eqnarray*}
+
+\item $(\textsc{empty})$: $true \impl \0 \subseteq \relr$ \\
+\todo{}
+
+\item $(\textsc{full})$: $true \impl \relr \subseteq (E \times E)$ \\
+Given by the definition of the relation \relr.
 
 
 \item ($\cup_{2L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
@@ -748,10 +764,10 @@ Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
 &\impl & (e,e') \in \sf s\cup t \reason{\defof \cup}
 \end{eqnarray*}
 
-\item ($\cap_{2L}$): $true \impl \sf r \cup s \subseteq r$
+\item ($\cap_{2L}$): $true \impl \sf r \cap s \subseteq r$
 \begin{eqnarray*}
-(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \sf s \\
-&\impl & (e,e') \in \sf r \reason{\defof \cap}
+(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \sf s \reason{\defof \cap} \\
+&\impl & (e,e') \in \sf r 
 \end{eqnarray*}
 
 \item ($\cap_{2R}$): $\sf r \subseteq s \impl r \subseteq r \cap s$
@@ -808,7 +824,8 @@ Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
 & \impl & (e,e') \in \sf s^+
 \end{eqnarray*}
 
-\item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$
+\item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$ \\
+For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier.
 \begin{eqnarray*}
 (e,e') \in \relr^+ &\impl & \exists n\in \N: (e,e') \in \relr^n \\
 &\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
@@ -822,6 +839,8 @@ Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
 &\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
 \end{eqnarray*}
 \end{itemize}
+\end{proof}
+
 
 \subsection{Weakening and Strengthening}
 To prove the weakening and strengthening rules, we need to prove monotinicity for each operator. Starting with the binary operators, this guarantees that for unification, intersection and concatenation, it holds that replacing a subterm with a stronger one will not weaken the term and replacing a subterm with a weaker one will not strengthen the term.
@@ -888,7 +907,7 @@ With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and stre
 \end{eqnarray*}
 \end{itemize}
 
-
+\pagebreak
 \section{Completeness}\label{sec:completeness}
 
 \begin{theorem}[Completeness]
@@ -898,18 +917,77 @@ For every true inclusion $\semsof{M} \subseteq \semsof{M'}$ of two CAT expressio
 To prove the completeness on the rational CAT fragment of this proof system we will transform every proof from \cite{Gru+26}, where completeness was proven, into one of ours.  
 The approach of \cite{Gru+26} transforms an inclusion of the form $\bangle{cat}_1 \subseteq \bangle{cat}_2$ into a logical formula $\varphi_{\neg \bangle{cat}_2} \land \varphi_{\bangle{cat}_1}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
 Hence, the Theorem to be proven is this:
-\begin{theorem}
+\begin{theorem}\label{thm:satinc}
 If a RAT-CAT formula $\varphi_r \land \varphi_{\neg s}$ is $\mathcal{T}_\Sigma$-unsatisfiable, then there exists a proof  for $\sf r \subseteq s$
 \end{theorem}
 
 To prove this theorem, any proof $\pi$ in \cite{Gru+26} needs to have an equivalent proof $\mathcal{P}_\pi$ here.
+With the transformation of the expressions into logical formulas the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
+Grünke et al. differentiate between negated and non-negated rules which are applied to the corresponding term. Since the including term is negated, these rules are applied to it and the non-negated rules are applied to the included term. In our system, this translates to rules that are applied to the left-hand side or right-hand side of the inclusion.
+
+\begin{wrapfigure}{r}{0.6\textwidth}
+\begin{minipage}{0.3\textwidth}
+\centering
+\begin{tikzpicture}
+\node[blank] (root) {$\varphi_r \land \varphi_{\neg s}$};
+\node[blank, below of=root] (1) {\dots};
+\node[blank, below left of=1] (2) {\dots};
+\node[blank, below right of=1] (3) {\dots};
+\node[blank, below of=2] (4) {\textcolor{red}{$\bot_0$}};
+\node[blank, below of=3] (bot) {\textcolor{red}{$\bot_0$}};
+
+\draw[arrow] (root) -- (1);
+\draw[arrow] (1) -- (2);
+\draw[arrow] (1) -- (3);
+\draw[arrow] (2) -- (4);
+\draw[arrow] (3) -- (bot);
+\end{tikzpicture}
+\end{minipage}\begin{minipage}{0.3\textwidth}
+\centering
+\begin{tikzpicture}
+\node[blank] (root) {$\relr \subseteq \rels$};
+\node[blank, above of=root] (1) {\dots};
+\node[blank, above left of=1] (2) {\dots};
+\node[blank, above right of=1] (3) {\dots};
+\node[blank, above of=2] (4) {\textcolor{rfgreen}{\true}};
+\node[blank, above of=3] (5) {\textcolor{rfgreen}{\true}};
+
+\draw[arrow] (root) -- (1);
+\draw[arrow] (1) -- (2);
+\draw[arrow] (1) -- (3);
+\draw[arrow] (2) -- (4);
+\draw[arrow] (3) -- (5);
+\end{tikzpicture}
+\end{minipage}
+\caption{One difference between the proof systems is that the one in \cite{Gru+26} needs every branch to end in $\bot_0$ and ours needs every branch ending in \true .}
+\end{wrapfigure}
+
+Grünke et al. decompose their logical formulas in order to reach a contradiction which lets a branch end in \false{} or rather $\bot_0$. Since the contradiction means, that there exists no counterexample to the inclusion, this translates to all branches in our proof system to end with \true .
+With that we can reformulate \Cref{thm:satinc} to the following lemma:
+\begin{lemma}
+When a RAT-CAT-SAT proof $\pi$ has only leafs that are $\bot_0$ then the corresponding inclusion proof $\prf_\pi$ has only leafs that are \true .
+\end{lemma}
+
+The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We can mimic their behavior with our rules like this:
+\begin{itemize}
+\item ($\bot_0$): % \begin{mathpar} \inferrule*[left=($\bot_0$)]{\Gamma ,p,\neg p}{\bot_0} \end{mathpar}
+In this rule, the cube has contradicting predicates $p$ and $\neg p$. Since the predicate describes a relation and we know that negative predicates represent the including term and positive ones the included term, this is equivalent to an inclusion of the form $\relr \subseteq \relr$. In our proof system we can now apply the (\textsc{reflexivity}) rule to close the branch with \true .
+
+\item ($\neg =$):
+Here, the key to unsatisfiability is the predicate $\neg e = e$. Since it it a negated predicate it is a result of the decomposition of the including term. The predicate describes that two events should be different are the same. \todo{finish}
+
+
+\item ($\neg \emptyset$): 
+In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. It means that an event needed for the counterexample does not exist. \todo{finish}
+
+\item ($\bot_1$): A positive predicate descries that a certain relation is non-empty. In this rule, the precondition is that this relation is the empty set $\bot_1$. Since this always results in an empty relation, we can use the rule (\textsc{empty}) in our proof system to get the same result.
+\end{itemize}
+
+
+This fundamental difference also manifests itself in the branching. Grünke et al.'s branches are disjunctions while ours are conjunctions. 
+
 For finite proofs we can emulate the applied rules with rules from our proof system as follows:
 \todo{finite proofs}
-Grünke et al. transform each CAT constraint into an emptiness constraint. With the rules $(a \rightarrow i)$ and $(i \rightarrow e)$ our system has the same capabilities.
-With the transformation of the expressions into logical formulas the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
-
-In the next step, we would eliminate the constraints from our inclusion term and therefore invert the inclusion
-
 
 
 For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Similar to the completeness proof in \cite{Das+18} we construct an invariant $\mathcal{I}$ which we can use in the $(+I)$ rule that works for every occurance of a backlink in $\pi$
