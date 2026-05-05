@@ -559,13 +559,13 @@ There are still some transformations for these operators based on their definiti
 \end{rules}
 
 The following transformations may come in handy but are less straightforward. We will need to prove them. 
-\begin{mathpar}
+\begin{rules}{Extra Rules}
 %\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and nicht invertible
 \inferrule*[left=($+^+$)]{\Gamma[\relr^+]}{\Gamma[\relr^{+^+}]} \and
 \inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} \and 
 \inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
 \inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} 
-\end{mathpar}
+\end{rules}
 \begin{lemma}
 Let $\relr \subseteq (E \times E)$ be a relation. $\relr^+ = \relr^{+^+}$ holds.
 \end{lemma}
@@ -743,7 +743,7 @@ Since $\sf r=r$, obviously $\sf r \subseteq r$ always holds.
 \end{eqnarray*}
 
 \item $(\textsc{empty})$: $true \impl \0 \subseteq \relr$ \\
-\todo{}
+Given by the definition of the empty relation.
 
 \item $(\textsc{full})$: $true \impl \relr \subseteq (E \times E)$ \\
 Given by the definition of the relation \relr.
@@ -923,7 +923,8 @@ If a RAT-CAT formula $\varphi_r \land \varphi_{\neg s}$ is $\mathcal{T}_\Sigma$-
 
 To prove this theorem, any proof $\pi$ in \cite{Gru+26} needs to have an equivalent proof $\mathcal{P}_\pi$ here.
 With the transformation of the expressions into logical formulas the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
-Grünke et al. differentiate between negated and non-negated rules which are applied to the corresponding term. Since the including term is negated, these rules are applied to it and the non-negated rules are applied to the included term. In our system, this translates to rules that are applied to the left-hand side or right-hand side of the inclusion.
+To have a more intuitive way of translating the formulas into relational inclusion terms, we use a intermediate step. The inclusion $\relr \subseteq \rels$ that our system uses can be written as $\relr~ \cap \sim \rels \subseteq \0$. Note that we allow complements for this intermediate step only and use them to give a better intuition for mimicking the behavior of the RAT-CAT-SAT rules with our rules. The term $\relr~ \cap \sim \rels \subseteq \0$ is much closer syntactically to $\varphi_\relr \land \varphi_{\neg \rels}$ being unsatisfiable.
+
 
 \begin{wrapfigure}{r}{0.6\textwidth}
 \begin{minipage}{0.3\textwidth}
@@ -962,33 +963,42 @@ Grünke et al. differentiate between negated and non-negated rules which are app
 \caption{One difference between the proof systems is that the one in \cite{Gru+26} needs every branch to end in $\bot_0$ and ours needs every branch ending in \true .}
 \end{wrapfigure}
 
-Grünke et al. decompose their logical formulas in order to reach a contradiction which lets a branch end in \false{} or rather $\bot_0$. Since the contradiction means, that there exists no counterexample to the inclusion, this translates to all branches in our proof system to end with \true .
+Grünke et al. differentiate between negated and non-negated rules which are applied to the corresponding term. Since the including term is negated, these rules are applied to it and the non-negated rules are applied to the included term. In our system, this translates to rules that are applied to the left-hand side or right-hand side of the inclusion. The intermediate step makes this clear.
+Grünke et al. decompose their logical formulas in order to reach a contradiction which lets a branch end in \false{} or rather $\bot_0$. Since the contradiction means, that there exists no counterexample to the inclusion, this translates to all branches in our proof system to end with \true . 
+%This fundamental difference also manifests itself in the branching. Grünke et al.'s branches are disjunctions while ours are conjunctions. 
 With that we can reformulate \Cref{thm:satinc} to the following lemma:
 \begin{lemma}
 When a RAT-CAT-SAT proof $\pi$ has only leafs that are $\bot_0$ then the corresponding inclusion proof $\prf_\pi$ has only leafs that are \true .
 \end{lemma}
 
+\subsection{Finite Proofs}
+For proving completeness, we will first translate all finite proofs of Grünke et al. into relational inclusion proofs via an induction on the proof size. Finite proofs are those which do not use the Kleene star rules ($*L$),($*R$),($\neg *L$) and ($\neg *R$). We start with the base case of applying one rule. 
+\paragraph{Base Case:}Because a proof in \cite{Gru+26} needs to be a closed derivation tree, we only need to translate those rules that close a branch.
 The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We can mimic their behavior with our rules like this:
 \begin{itemize}
 \item ($\bot_0$): % \begin{mathpar} \inferrule*[left=($\bot_0$)]{\Gamma ,p,\neg p}{\bot_0} \end{mathpar}
 In this rule, the cube has contradicting predicates $p$ and $\neg p$. Since the predicate describes a relation and we know that negative predicates represent the including term and positive ones the included term, this is equivalent to an inclusion of the form $\relr \subseteq \relr$. In our proof system we can now apply the (\textsc{reflexivity}) rule to close the branch with \true .
 
 \item ($\neg =$):
-Here, the key to unsatisfiability is the predicate $\neg e = e$. Since it it a negated predicate it is a result of the decomposition of the including term. The predicate describes that two events should be different are the same. \todo{finish}
+Here, the key to unsatisfiability is the predicate $\neg e = e$. Since it it a negated predicate it is part of the including term. Because the formula $e = e$ is always true, this would translate into the full relation in the intermediate step. The intermediate term would be $\relr~ \cap \sim (E \times E) \subseteq \0$. Translating this term into our relational inclusions we get $\relr \subseteq (E \times E)$. On this term we can apply the (\textsc{full}) rule and close the branch in our proof system.
 
 
 \item ($\neg \emptyset$): 
-In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. It means that an event needed for the counterexample does not exist. \todo{finish}
+In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. Translating this into the intermediate step, it would mean that we have $\relr~ \cap \sim (E \times E)$. From here on, the steps are the same as for ($\neg =$).
 
-\item ($\bot_1$): A positive predicate descries that a certain relation is non-empty. In this rule, the precondition is that this relation is the empty set $\bot_1$. Since this always results in an empty relation, we can use the rule (\textsc{empty}) in our proof system to get the same result.
+\item ($\bot_1$): A positive predicate describes that a certain relation is non-empty. In this rule, the precondition is that this relation includes the empty set $\bot_1$. The empty set itself cannot be a relational term. It needs to be concatenated to or intersected with an event, set or relation. Unification is not possbible, since Grünke et al. do not apply rules on terms which are not union-free \cite{Gru+26}. Any intersection or concatenation with the empty set results in an empty relation and we can use the rule (\textsc{empty}) in our proof system to get the same result.
 \end{itemize}
+ 
+\paragraph{Inductionhypothesis:} As hypothesis for the induction we use:
+Any RAT-CAT-SAT proof $\pi$ that applies $n$ rules has an equivalent counterpart $\prf_\pi$ in our relational inclusion proof system.
+
+\paragraph{Induction step:} Now, it remains to be shown that any proof $\pi$ of length $n+1$ can be translated into a proof $\prf_\pi$.
 
 
-This fundamental difference also manifests itself in the branching. Grünke et al.'s branches are disjunctions while ours are conjunctions. 
 
-For finite proofs we can emulate the applied rules with rules from our proof system as follows:
-\todo{finite proofs}
 
+
+\subsection{Infinite Proofs}
 
 For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Similar to the completeness proof in \cite{Das+18} we construct an invariant $\mathcal{I}$ which we can use in the $(+I)$ rule that works for every occurance of a backlink in $\pi$
 
