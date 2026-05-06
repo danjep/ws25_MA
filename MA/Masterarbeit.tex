@@ -456,22 +456,22 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \vspace{-10pt}
 \begin{rules}{Unification}
 %\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
-\inferrule*[left=($\cup_{2L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
-\textcolor{red}{\inferrule*[left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
+\inferrule*[left=($\cup_{L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
+\textcolor{red}{\inferrule*[left=($\cup_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Intersection}
-\inferrule*[left=($\cap_{2L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
-\inferrule*[left=($\cap_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
+\inferrule*[left=($\cap_{L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
+\inferrule*[left=($\cap_{R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Concatenation}
 \textcolor{red}{
-\inferrule*[left=($._{1}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
-\inferrule*[left=($._{2Rl}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
-\inferrule*[left=($._{2Rr}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
-\textcolor{red}{\inferrule*[left=($._{2Lr}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
-\inferrule*[left=($._{2Ll}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}}
+\inferrule*[left=($._{trans}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
+\inferrule*[left=($._{RL}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
+\inferrule*[left=($._{RR}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
+\textcolor{red}{\inferrule*[left=($._{LR}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
+\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}}
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Transitive Closure}
@@ -488,24 +488,26 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 
-\subsubsection{Derivation of ($\cup_{3RL}$) and ($\cup_{3L}$)}
+\subsubsection{Derivation of ($\cup_{RL}$) and ($\cup_{L2}$)}
 While testing the proof system, a few rules were repeatedly needed to shorten the proofs, eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 
 \begin{mathpar}
-\inferrule*[left=($\cup_{3RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
-\inferrule*[left=($weak$),vcenter]{
-	\inferrule*[Left=($\cup_{2L}$)]{
-		\inferrule*[Left=($\cup_{3R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup r'}
+\inferrule*[left=($\cup_{RL}$),vcenter]{\sf r \subseteq s}{\sf r \cup r' \subseteq s \cup r'} = \quad
+\inferrule*[left=(weak),vcenter]{
+	\inferrule*[Left=($\cup_{L}$)]{
+		\inferrule*[Left=($\cup_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup r'}
 	}{\sf r \cup s \cup r' \subseteq s \cup r'}
 	\\
-	\inferrule*[Right=($\cup_{2R}$)]{\true}{\sf r' \subseteq s \cup r'}
+	\inferrule*[Right=($\cup_{R}$)]{
+		\inferrule*[Right=(refl.)]{\true}{\relr' \subseteq \relr'}
+	}{\sf r' \subseteq s \cup r'}
 }{\sf r \cup r' \subseteq s \cup r'}
 \end{mathpar}
 
 \begin{mathpar}
-\inferrule*[left=($\cup_{3L}$),vcenter]{\sf r \subseteq t \\ \sf s \subseteq t}{\sf r \cup s \subseteq t}$=$ \quad
-\inferrule*[right=($weak$),vcenter]{
-	\inferrule*[right=($\cup_{2L}$)]{\sf r \subseteq t}{\sf r \cup t \subseteq t}
+\inferrule*[left=($\cup_{L2}$),vcenter]{\sf r \subseteq t \\ \sf s \subseteq t}{\sf r \cup s \subseteq t}$=$ \quad
+\inferrule*[right=(weak),vcenter]{
+	\inferrule*[right=($\cup_{L}$)]{\sf r \subseteq t}{\sf r \cup t \subseteq t}
 	\\
 	\inferrule*[]{}{\sf s \subseteq t}}
 {\sf r \cup s \subseteq t}
@@ -749,7 +751,7 @@ Given by the definition of the empty relation.
 Given by the definition of the relation \relr.
 
 
-\item ($\cup_{2L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
+\item ($\cup_{L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
 \begin{eqnarray*}
 (e,e') \in \sf r \cup s &\impl & (e,e') \in \relr \lor (e,e') \in \rels \reason{\defof \cup}\\
 &\impl & (e,e') \in \rels \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
@@ -757,33 +759,33 @@ Given by the definition of the relation \relr.
 \end{eqnarray*}
 
 
-\item ($\cup_{3R}$): $\sf r \subseteq s \impl \sf r \subseteq s \cup t$
+\item ($\cup_{R}$): $\sf r \subseteq s \impl \sf r \subseteq s \cup t$
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e') \in \sf s \reason{\sf r \subseteq s}\\
 & \impl & (e,e') \in \rels \lor (e,e') \in \sf t  \\
 &\impl & (e,e') \in \sf s\cup t \reason{\defof \cup}
 \end{eqnarray*}
 
-\item ($\cap_{2L}$): $true \impl \sf r \cap s \subseteq r$
+\item ($\cap_{L}$): $true \impl \sf r \cap s \subseteq r$
 \begin{eqnarray*}
 (e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \sf s \reason{\defof \cap} \\
 &\impl & (e,e') \in \sf r 
 \end{eqnarray*}
 
-\item ($\cap_{2R}$): $\sf r \subseteq s \impl r \subseteq r \cap s$
+\item ($\cap_{R}$): $\sf r \subseteq s \impl r \subseteq r \cap s$
 \begin{eqnarray*}
 (e,e') \in \relr &\impl & (e,e') \in \relr \land (e,e') \in \sf r \\
 & \impl &  (e,e') \in \relr \land (e,e') \in \sf s \reason{ \sf r \subseteq s} \\
 &\impl & (e,e') \in \sf r \cap s \reason{\defof \cap}
 \end{eqnarray*}
 
-\item ($._1$): $\sf r \subseteq \id \impl r \subseteq r.r$
+\item ($._{trans}$): $\sf r \subseteq \id \impl r \subseteq r.r$
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\relr \subseteq \id} \\
 &\impl & (e,e).(e,e) \in \sf r.r \\
 &\impl & (e,e) \in \sf r.r
 \end{eqnarray*}
-\item ($._{2Rl}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
+\item ($._{RL}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e).(e,e') \in \id.\relr \reason{(\id_{comm})}\\
 &\impl & (e,e) \in \id \land (e,e') \in \sf r \reason{\defof .}\\
@@ -791,7 +793,7 @@ Given by the definition of the relation \relr.
 &\impl & (e,e).(e,e') \in \rels.\relr \reason{\defof .}\\
 &=& (e,e') \in \sf s.r 
 \end{eqnarray*}
-\item ($._{2Rr}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
+\item ($._{RR}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \\
 &\impl & (e,e') \in \relr \land (e',e') \in \id \\
@@ -800,7 +802,7 @@ Given by the definition of the relation \relr.
 &\impl & (e,e') \in \sf r.s
 \end{eqnarray*}
 
-\item ($._{2Ll}$): $\sf r \subseteq \id \impl s.r \subseteq s$
+\item ($._{LL}$): $\sf r \subseteq \id \impl s.r \subseteq s$
 \begin{eqnarray*}
 (e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rels \land (e_2,e_3) \in \sf r\} \\
 &\impl & (e_1,e_2) \in \rels \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
@@ -808,7 +810,7 @@ Given by the definition of the relation \relr.
 &\impl & (e_1,e_3) \in \sf s
 \end{eqnarray*}
 
-\item ($._{2Lr}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
+\item ($._{LR}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
 \begin{eqnarray*}
 (e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
 &\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
@@ -1074,40 +1076,58 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 
 \subsection{Example 1: $a^* \subseteq (aa)^* \cup a(aa)^*$}
 \begin{mathpar}
-\inferrule*[left=($*_{2L}$)]{
 \inferrule*[left=($*$)]{
-		\inferrule*[left=($\cup_{2R}$)]{true}{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}{\id \subseteq (aa)^* \cup a(aa)^*}
+	\inferrule*[left=($\cup_{L2}$)]{
+		\inferrule*[Left=($*$)]{
+			\inferrule*[left=($\cup_{R}$)]{
+				\inferrule*[Left=(refl.)]{\true
+				}{\id \subseteq \id}}
+			{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}
+		{\id \subseteq (aa)^* \cup a(aa)^*}
 		\\
 		\textcolor{teal}{a^+\subseteq (aa)^* \cup a(aa)^*}}
-		{a^* \subseteq (aa)^* \cup a(aa)^*}
+	{\id \cup a^+ \subseteq (aa*) \cup a(aa)*}}
+{a^* \subseteq (aa)^* \cup a(aa)^*}
 \end{mathpar}
 
-\begin{mathpar} \small
+The example continues here. For the induction rule ($+_L$) we use as invariant the including term $I = (aa)^* \cup a(aa)^*$.
+\begin{mathpar} \footnotesize
 	\inferrule*[right=($+_L$)]{
-		\inferrule*[left=($\cup_{3R}$)]{
-			\inferrule*[left=($._{2Rr}$)]{
-				\inferrule*[left=($*_{1R}$)]{true}{\id \subseteq (aa)^*}}
+		\inferrule*[left=($\cup_{R}$)]{
+			\inferrule*[Left=($._{RR}$)]{
+				\inferrule*[left=($*$)]{
+					\inferrule*[Left=($\cup_R$)]{
+						\inferrule*[Left=(refl.)]{true}{\id \subseteq \id}					
+					}{\id \subseteq \id \cup (aa)^+}					
+				}{\id \subseteq (aa)^*}}
 			{a \subseteq a.(aa)^*}}
-		{a \subseteq (aa)^* \cup a(aa)^*} 
+		{a \subseteq I} 
 		\\
 		\inferrule*[right=($._{\cup dist}$)]{
-			\inferrule*[right=\textcolor{red}{($\cup_{3RL}$)}]{
+			\inferrule*[Right=\textcolor{red}{($\cup_{RL}$)}]{
 				\inferrule*[right=($+$)]{
-					\inferrule*[right=($+*$)]{true}{(aa)^+ \subseteq (aa)^*}}
+					\inferrule*[right=($*$)]{
+						\inferrule*[Right=($\cup_R$)]{
+							\inferrule*[Right=(refl.)]{true}{(aa)^+ \subseteq (aa)^+}
+						}{(aa)^+ \subseteq \id \cup (aa)^+}
+					}{(aa)^+ \subseteq (aa)^*}}
 				{aa(aa)^* \subseteq (aa)^*}}
-			{a(aa)^* \cup aa(aa)^* \subseteq (aa)^* \cup a(aa)^*}}
-		{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}}
+			{a(aa)^* \cup aa(aa)^* \subseteq I}}
+		{a.I \subseteq I}
+		\\
+		\inferrule*[Right=(refl.)]{\true}{I \subseteq I}}
 	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
 \end{mathpar}
 \pagebreak
 
 \subsection{Example 2: $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$}
+\todo{Neue Induction ($+_L$) Regel einarbeiten}
 \begin{mathpar} \footnotesize
 \inferrule*[left=($+_L$)]{
 		\inferrule*[left=($?$)]{
 			\inferrule*[left=($._{\cup dist}$)]{
 				\inferrule*[left=($\id_{trans}$)]{
-					\inferrule*[left=($\cup_{2R}$)]{true
+					\inferrule*[left=($\cup_{R}$)]{true
 					}{\rf \cup \co \cup \fr \subseteq \rf \cup \co \cup \fr \cup \dots}
 				}{\rf \cup \co \cup \fr \subseteq \rf \cup \co.\id \cup \fr.\id \cup \dots}
 			}{\rf \cup \co \cup \fr \subseteq \rf \cup (\co \cup \fr).(\rf \cup \id)}
@@ -1119,16 +1139,20 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 \end{mathpar}
 
 \begin{mathpar}
-\inferrule*[left=($\cup_{.distL}$)\, ($\cup_{.distR}$)]{\rf.\rf \cup \rf.(\co \cup \fr).\rf ? \cup \co.\rf \cup \co.(\co \cup \fr).\rf ? \cup \fr.\rf \cup \fr.(\co \cup \fr).\rf ? \subseteq \Gamma}{(\rf \cup \co \cup \fr).\Gamma \subseteq \Gamma}
+\inferrule*[left=($._{\cup distL}$)\, ($._{\cup distR}$)]{\rf.\rf \cup \rf.(\co \cup \fr).\rf ? \cup \co.\rf \cup \co.(\co \cup \fr).\rf ? \cup \fr.\rf \cup \fr.(\co \cup \fr).\rf ? \subseteq \Gamma}{(\rf \cup \co \cup \fr).\Gamma \subseteq \Gamma}
 \end{mathpar}
-Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each of the terms:
+Through the ($\cup_{L2}$) rule, we can split the calculation and do it for each of the terms:
 \begin{itemize}
 \item \rf.\rf :
 \begin{mathpar}
-\inferrule*[left=($\cup_{strength}$)]{
-	\inferrule*[Left=(0)]{true}{\0 \subseteq \Gamma}
+\inferrule*[left=(strength)]{
+	\inferrule*[Left=(empty)]{true}{\0 \subseteq \Gamma}
 	\\
-	\inferrule*[Right=(RF+)]{true}{\rf.\rf \subseteq \0}
+	\inferrule*[right=(\rf)]{
+		\inferrule*[Right=(rw)]{
+			\inferrule*[Right=($\0_{conc}$)]{true}{\relW.\rf.\0.\rf.\relR \subseteq \0}
+		}{\relW.\rf.\relR.\relW.\rf.\relR \subseteq \0}
+	}{\rf.\rf \subseteq \0}
 }{\rf.\rf \subseteq \Gamma}
 \end{mathpar}
 
@@ -1140,13 +1164,13 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 		\inferrule*[Left=(?)]{
 			\inferrule*[Left=($._{\cup distR}$)]{
 				\inferrule*[Left=($\id_{trans}$)]{
-					\inferrule*[Left=(WR)]{
+					\inferrule*[Left=(wr)]{
 						\inferrule*[Left=(Def \fr)]{
-							\inferrule*[Left=($RF_{symm}$)]{ 
+							\inferrule*[Left=($\rf_{symm}$)]{ 
 								\inferrule*[Left=($\id_{trans}$)($._{\cup distL}$)]{
 									\inferrule*[Left=(?)($._{\cup distR}$)]{
 										\inferrule*[Left=($\id_{trans}$)($\cup_{comm}$)]{
-											\inferrule*[Left=($\cup_{2R}$)]{
+											\inferrule*[Left=($\cup_{R}$)(refl.)]{
 												true
 											}{\co.\rf \cup \co \subseteq \co.\rf \cup \co \cup \rf \cup \fr.\rf ?}
 										}{\co.\rf \cup \co \subseteq \rf \cup \co.\rf \cup \co.\id \cup \fr.\rf ?}
@@ -1168,7 +1192,8 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 	\inferrule*[Left=(?)]{
 		\inferrule*[Left=($._{\cup distR}$)]{
 			\inferrule*[Left=($\cup_{comm}$)]{
-				\inferrule*[Left=($\cup_{2R}$)]{ true
+				\inferrule*[Left=($\cup_{R}$)]{
+					\inferrule*[Left=(refl.)]{true}{\co.\rf \subseteq \co.\rf}
 				}{\co.\rf \subseteq \co.\rf \cup \rf \cup \co.\id \cup \fr.\rf ?}
 			}{\co.\rf \subseteq \rf  \cup \co.\rf \cup \co.\id \cup \fr.\rf ?}
 		}{\co.\rf \subseteq \rf \cup \co.(\rf \cup \id) \cup \fr.\rf ?}	
@@ -1180,22 +1205,22 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 \begin{mathpar} \footnotesize
 \inferrule*[left=($._{\cup distR}$)]{
 	\inferrule*[Left=($._{\cup distL}$)]{
-		\inferrule*[Left=($._{strengthL}$)]{
-			\inferrule*[Left=($\cup_{3RL}$)]{
-				\inferrule*[Left=\footnotesize(Def \fr)(CO)(FR)]{
-					\inferrule*[Left=($\cup_{strength}$)]{
-						\inferrule*[Left=(\0)]{ true
+		\inferrule*[Left=(strength)]{
+			\inferrule*[Left=($\cup_{RL}$)]{
+				\inferrule*[Left=\footnotesize(Def \fr)(\co)(\rf)]{
+					\inferrule*[Left=(strength)]{
+						\inferrule*[Left=(empty)]{ true
 						}{\0 \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 						\\
-						\inferrule*[Right=($WR$)]{
-							\inferrule*[Right=($.\0$)]{ true
+						\inferrule*[Right=($wr$)]{
+							\inferrule*[Right=($\0_{conc}$)]{ true
 							}{[W].\co.\0.\rf^{-1}.[W].\co.\fr \subseteq \0}
 						}{[W].\co.[W].[R].\rf^{-1}.[W].\co.\fr \subseteq \0}
 					}{[W].\co.[W].[R].\rf^{-1}.[W].\co.\fr \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 				}{\co.\fr.\fr \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 			}{\co.\rf ? \cup \co.\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 			\\
-			\inferrule*[Right=($CO_{trans}$)]{true
+			\inferrule*[Right=($\co_{trans}$)]{true
 			}{\co.\co \subseteq \co}
 		}{\co.\co.\rf ? \cup \co.\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 	}{\co.(\co.\rf ? \cup \fr.\rf ?) \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
@@ -1208,7 +1233,7 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 	\inferrule*[Left=(?)]{
 		\inferrule*[Left=($._{\cup distR}$)]{
 			\inferrule*[Left=($\cup_{comm}$)]{
-				\inferrule*[Left=($\cup_{2R}$)]{ true
+				\inferrule*[Left=($\cup_{R}$)(refl.)]{ true
 				}{\fr.\rf \subseteq \fr.\rf \cup \rf \cup \co.\rf ? \cup \fr.\id}
 			}{\fr.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.\rf \cup \fr.\id}
 		}{\fr.\rf \subseteq \rf \cup \co.\rf ? \cup \fr.(\rf \cup \id)}
@@ -1220,14 +1245,14 @@ Through the ($\cup_{3L}$) rule, we can split the calculation and do it for each 
 \begin{mathpar}
 \inferrule*[left=($._{\cup distR}$)]{
 	\inferrule*[left=(Def \fr)]{
-		\inferrule*[Left=(RF)(CO)]{
-			\inferrule*[Left=(WR)(.\0)]{
+		\inferrule*[Left=(\rf)(\co)]{
+			\inferrule*[Left=(wr)($\0_{conc}$)]{
 				\inferrule*[Left=($._{\cup distL}$)]{
 					\inferrule*[Left=(Def \fr)]{
-						\inferrule*[Left=($CO_{trans}$)]{
+						\inferrule*[Left=($\co_{trans}$)]{
 							\inferrule*[Left=(Def \fr)($._{\cup distL}$)]{
 								\inferrule*[Left=($\cup_{comm}$)]{
-									\inferrule*[Left=($\cup_{2R}$)]{ true
+									\inferrule*[Left=($\cup_{R}$)(refl.)]{ true
 									}{\fr.\rf ? \subseteq \fr.\rf ? \cup \rf \cup \co.\rf ?}
 								}{\fr.\rf ? \subseteq \rf \cup \co.\rf ? \cup \fr.\rf ?}
 							}{\rf^{-1}.\co.\rf ? \subseteq \rf \cup (\co \cup \fr).\rf ?}
