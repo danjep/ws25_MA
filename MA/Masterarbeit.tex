@@ -466,14 +466,15 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Concatenation}
-\textcolor{red}{
-\inferrule*[left=($._{trans}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
-\inferrule*[left=($._{RL}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
-\inferrule*[left=($._{RR}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
-\textcolor{red}{\inferrule*[left=($._{LR}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
-\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}}
+%\textcolor{red}{
+%\inferrule*[left=($._{trans}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
+%\inferrule*[left=($._{RL}$)]{\sf \id \subseteq s}{\sf r \subseteq s.r} \and
+%\inferrule*[left=($._{RR}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
+%\textcolor{red}{\inferrule*[left=($._{LR}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
+%\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
+\textcolor{red}{\inferrule*[left=($._{LR}$)]{\relr \subseteq \relr' \\ \rels \subseteq \rels'}{\relr.\rels \subseteq \relr'.\rels'}}
 \end{rules}
-\vspace{-10pt}
+For concatenation we can use one general rule where we can construct many special cases with the help of the \id{} relation. Using the ($\id_{conc}$) rule, we can construct cases for $\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
 \begin{rules}{Transitive Closure}
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
 \inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s}
@@ -521,7 +522,11 @@ The empty relation \0{} functions as a neutral element for unification and absor
 \inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
 \inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
-\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} 
+\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} \and
+%\inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
+%\inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
+\inferrule*[left=($\relr_{symm}$)]{\Gamma[\relr^{-1}] \\ \relr \subseteq \id}{\Gamma[\relr]} \and
+\inferrule*[left=($\relr_{trans}$)]{\Gamma[\relr] \\ \relr \subseteq \id}{\Gamma[\relr.\relr]} 
 \end{rules}
 
 The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive.
@@ -651,8 +656,7 @@ The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every 
 \inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
 \inferrule*[left=($\po_{trans}$)]{\true}{\po .\po \subseteq \po} \and
 \inferrule*[left=($\co_{trans}$)]{\true}{\co .\co \subseteq \co} \and
-\inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} \and
-\inferrule*[left=($\relr_{symm}$)]{\Gamma[\sf r^{-1}] \\ \sf r \subseteq \id}{\Gamma[\sf r]} 
+\inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} 
 \end{rules}
 Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.\todo{proof needed}
 \begin{mathpar}
@@ -779,38 +783,45 @@ Given by the definition of the relation \relr.
 &\impl & (e,e') \in \sf r \cap s \reason{\defof \cap}
 \end{eqnarray*}
 
-\item ($._{trans}$): $\sf r \subseteq \id \impl r \subseteq r.r$
-\begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\relr \subseteq \id} \\
-&\impl & (e,e).(e,e) \in \sf r.r \\
-&\impl & (e,e) \in \sf r.r
-\end{eqnarray*}
-\item ($._{RL}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
-\begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e).(e,e') \in \id.\relr \reason{(\id_{comm})}\\
-&\impl & (e,e) \in \id \land (e,e') \in \sf r \reason{\defof .}\\
-&\impl & (e,e) \in \rels \land (e,e') \in \sf r \reason{\id \subseteq s}\\
-&\impl & (e,e).(e,e') \in \rels.\relr \reason{\defof .}\\
-&=& (e,e') \in \sf s.r 
-\end{eqnarray*}
-\item ($._{RR}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
-\begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \\
-&\impl & (e,e') \in \relr \land (e',e') \in \id \\
-&\impl & (e,e') \in \relr \land (e',e') \in \rels \reason{\id \subseteq \sf s} \\
-&\impl & (e,e').(e',e') \in \sf r.s \\
-&\impl & (e,e') \in \sf r.s
-\end{eqnarray*}
-
-\item ($._{LL}$): $\sf r \subseteq \id \impl s.r \subseteq s$
-\begin{eqnarray*}
-(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rels \land (e_2,e_3) \in \sf r\} \\
-&\impl & (e_1,e_2) \in \rels \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
-&\impl & (e_1,e_3) \in \rels \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
-&\impl & (e_1,e_3) \in \sf s
-\end{eqnarray*}
-
-\item ($._{LR}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
+%\item ($._{trans}$): $\sf r \subseteq \id \impl r \subseteq r.r$
+%\begin{eqnarray*}
+%(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\relr \subseteq \id} \\
+%&\impl & (e,e).(e,e) \in \sf r.r \\
+%&\impl & (e,e) \in \sf r.r
+%\end{eqnarray*}
+%\item ($._{RL}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
+%\begin{eqnarray*}
+%(e,e') \in \sf r &\impl & (e,e).(e,e') \in \id.\relr \reason{(\id_{comm})}\\
+%&\impl & (e,e) \in \id \land (e,e') \in \relr \reason{\defof \rel.\rel}\\
+%&\impl & (e,e) \in \rels \land (e,e') \in \sf r \reason{\id \subseteq s}\\
+%&\impl & (e,e).(e,e') \in \rels.\relr \reason{\defof \rel.\rel}\\
+%&=& (e,e') \in \sf s.r 
+%\end{eqnarray*}
+%\item ($._{RR}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
+%\begin{eqnarray*}
+%(e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \reason{\defof \id}\\
+%&\impl & (e,e') \in \relr \land (e',e') \in \id \reason{\defof \rel.\rel}\\
+%&\impl & (e,e') \in \relr \land (e',e') \in \rels \reason{\id \subseteq \sf s} \\
+%&\impl & (e,e').(e',e') \in \relr.\rels \reason{\defof \rel.\rel}\\
+%&\impl & (e,e') \in \sf r.s
+%\end{eqnarray*}
+%
+%\item ($._{LL}$): $\sf r \subseteq \id \impl s.r \subseteq s$
+%\begin{eqnarray*}
+%(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rels \land (e_2,e_3) \in \relr\} \reason{\defof \rel.\rel} \\
+%&\impl & (e_1,e_2) \in \rels \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
+%&\impl & (e_1,e_3) \in \rels \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
+%&\impl & (e_1,e_3) \in \sf s
+%\end{eqnarray*}
+%
+%\item ($._{LR}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
+%\begin{eqnarray*}
+%(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
+%&\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
+%&\impl & (e_1,e_3) \in \rels \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
+%&\impl & (e_1,e_3) \in \rels
+%\end{eqnarray*}
+\item ($._{LR}$) $\relr \subseteq \relr' \land \rels \subseteq \rels' \impl \relr.\rels \subseteq \relr'.\rels'$
 \begin{eqnarray*}
 (e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
 &\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
