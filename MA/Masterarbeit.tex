@@ -258,7 +258,7 @@ Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the L
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{Gru+26}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and then a formula $ \psi_M \land \neg \psi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
+By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and then a formula $ \phi_M \land \neg \phi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. 
 
 Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
@@ -282,15 +282,18 @@ $\mathbb{E}$ denotes the set of all possible executions.
 
 \subsection{Semantics} \label{sec:semantics}
 The semantics of a MCM $M$ can be defined along the definition of the CAT language. In general, they are the set of executions that the model allows. The semantics of relations is simply the set of elements in the relation.
-\begin{definition}[Semantics] 
-Let $M$ be a memory consistency model, $\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and\\ $\bangle{rel},\bangle{rel}_1,\bangle{rel}_2 \subseteq (E \times E)$ be relations. The semantics of the CAT expressions are sets of executions and defined as follows:
+\begin{definition}[Semantics of CAT Expressions] \label{def:catsem}
+Let $M$ be a memory consistency model, $\bangle{cat}_1,\bangle{cat}_2$ be CAT expressions and\\ $\bangle{rel} \subseteq (E \times E)$ be a relation. The semantics of the CAT expressions are sets of executions and defined as follows:
 \begin{align*}
 \semsof{\bangle{cat}_1~ \bangle{cat}_2} & := \semsof{\bangle{cat}_1} \cap \semsof{\bangle{cat}_2} \\
 \semsof{\texttt{empty}~ \bangle{rel}} &:= \{X \in \E \mid \nexists (e_1,e_2) \in \semsof{\bangle{rel}}\} \\
 \semsof{\texttt{irreflexive}~ \bangle{rel}} &:= \{X \in \E \mid \forall e \in E: (e,e) \notin \semsof{\bangle{rel}} \} \\
 \semsof{\texttt{acyclic}~ \bangle{rel}} &:= \semsof{\texttt{irreflexive}~ \bangle{rel}^+}
-\end{align*}
+\end{align*} 
+\end{definition}
 For the relational subterms of the CAT expressions, the semantics differ in the regard that they are sets of edges in the execution graphs.
+\begin{definition}[Semantics of Relational Expressions] \label{def:sem}
+Let $\rel, \rel_1, \rel_2 \subseteq (E \times E)$ be relations. $\bangle{base\_rel}$ and $\bangle{base\_set}$ are as defined in \Cref{fig:cat}.
 \begin{align*}
 \semsof{\bangle{rel}_1 \subseteq \bangle{rel}_2} &:= \forall (e,e'):(e,e') \in \bangle{rel}_1 \impl (e,e') \in \bangle{rel}_2 \\
 \semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \semsof{\bangle{rel}_1} \land (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
@@ -304,19 +307,33 @@ For the relational subterms of the CAT expressions, the semantics differ in the 
 \semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}?} \cup \semsof{\bangle{rel}^+} \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
 \semsof{\bangle{base\_rel}} &:= \{ (e,e') \in \bangle{base\_rel} \}
-\end{align*}\label{def:sem}
+\end{align*}
+\end{definition}
+To give a clear understanding of what the base relations are, we give definitions that are derived from those in Alglave et al. \cite{Alg+16,Alg+14}.
+\begin{definition}[Semantics of Base Relations]
+Let $E$ be the set of all events, $R$ the set of all read operations and $W$ the set of all write operations.
+\begin{align*}
+\semsof{\0} &:= \emptyset \times \emptyset \\
+\semsof{\id} &:= \{(e,e) \mid e \in E\} \\
+\semsof{\po} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ belong to the same thread and } e \text{ happens before } e'\} \\
+\semsof{\loc} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ are on the same memory location}\} \\
+\semsof{\ext} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ belong to different threads}\} \\
+\semsof{\rf} &:= \{\edgein W \times R \mid e \text{ is the last write before } e' \text{ on the same memory location}\} \\
+\semsof{\co} &:= \{\edgein W\times W \mid e' \text{ happens after } e \text{ on the same memory location}\} \\
+\semsof{\rmw} &:= \{\edgein R \times W \mid e' \text{ is the next event after the read } e \text{ in the program order } \po\}
+\end{align*}
 \end{definition}
 For better readability, the \semsof{\cdot} symbols can be omitted when dealing with relations, since the semantics are equal to the intuitive definition of relations.
 
 
 \subsection{Notation}
-\subsubsection{Abbreviation for Concatenation}
+\paragraph{Abbreviation for Concatenation}
 Let $\relr \subseteq (E \times E)$ be a relation. For any term where \relr~ is concatenated with itself $n \in \N$ times, we can instead write $\relr^n$. In this notation, $\relr$ is equal to $\relr^1$. This notation will shorten terms and increases readability. Furthermore, it yields a definition of the semantics of $\rel^+$ that is equivalent to the one in \Cref{def:sem}:
 \begin{definition}[Alternative Definition of the Transitive Closure] \label{def:alttc}
 Let $\rel \subseteq (E\times E)$ be a relation.
 \[\semsof{\bangle{rel}^+} := \{(e,e') \mid \exists n \in \N: \edgein \bangle{rel}^n\] \end{definition}
 
-\subsubsection{Write and Read Restrictions} \label{sec:restrictions}
+\paragraph{Write and Read Restrictions} \label{sec:restrictions}
 Let $W \subseteq E$ be the set of all write operations and $R \subseteq E$ the set of all read operations in the set of events. $[W]$ and $[R]$ denote the relations $(W \times W) \cap \id$ and $(R \times R) \cap \id$. These relations can be used to restrict other relations to write and read operations.
 An example is $[W].\po .[R]$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $[W].\rf .[R]$, since it relates writes to those reads which use the written data. \\
 This notation is furthermore justified by the semantics of the CAT language, since the expression
@@ -391,13 +408,13 @@ Since not every inclusion offers the comfort of having both models use the same 
 For a relation $R$, it holds that $\semsof{\mathtt{irreflexive}~ \relr^+} = \semsof{\mathtt{acyclic}~ \sf r}$.
 \end{lemma}
 \begin{proof}
-This is given via the semantics of $\semsof{\mathtt{acyclic}~ \bangle{rel}}$ in \Cref{def:sem}.
+This is given via the semantics of $\semsof{\mathtt{acyclic}~ \bangle{rel}}$ in \Cref{def:catsem}.
 \end{proof}
 
 \begin{lemma}\label{lem:emptyirr}
 For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{irreflexive}~ \sf r.r^{-1}}$.
 \end{lemma}
-\begin{proof} This can equally be proven using \Cref{def:sem}.
+\begin{proof} This can equally be proven using \Cref{def:catsem}.
 \begin{eqnarray*}
 \semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r\} \\
@@ -461,10 +478,10 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Intersection}
-\inferrule*[left=($\cap_{L}$)]{\it true}{\sf r \cap s \subseteq r} \and 
-\inferrule*[left=($\cap_{R}$)]{\sf r \subseteq s}{\sf r \subseteq r \cap s} \and
+\inferrule*[left=($\cap_{L}$)]{\true}{\relr \cap \rels \subseteq \relr} \and 
+\inferrule*[left=($\cap_{R}$)]{\relr \subseteq \rels \\ \relr \subseteq \relt}{\sf r \subseteq s \cap t} \and
 \end{rules}
-\vspace{-10pt}
+
 \begin{rules}{Concatenation}
 %\textcolor{red}{
 %\inferrule*[left=($._{trans}$)]{\sf r \subseteq \id}{\sf r \subseteq r.r} \and 
@@ -489,7 +506,8 @@ Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an e
 \end{lemma}
 
 
-\subsubsection{Derivation of ($\cup_{RL}$) and ($\cup_{L2}$)}
+\paragraph{Derivation of ($\cup_{RL}$) and ($\cup_{L2}$)}
+\todo{evtl generalisieren zu $r \cup s \subseteq r' \cup s'$}
 While testing the proof system, a few rules were repeatedly needed to shorten the proofs, eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 
 \begin{mathpar}
@@ -517,7 +535,7 @@ While testing the proof system, a few rules were repeatedly needed to shorten th
 \subsection{Transformations}\label{sec:transformations}
 Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
 
-The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation.
+The empty relation \0{} functions as a neutral element for unification and absorbing element for concatenation and intersection, while the identity relation \id{} is a neutral element for concatenation. This means, additionally, that \id{} is symmetric and transitive. Since this holds for any subrelation of \id{}, we can give generalizations of those rules for any relation \relr.
 \begin{rules}{Neutral and Absorbing Element}
 \inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
@@ -576,8 +594,14 @@ The following transformations may come in handy but are less straightforward. We
 \begin{lemma}
 Let $\relr \subseteq (E \times E)$ be a relation. $\relr^+ = \relr^{+^+}$ holds.
 \end{lemma}
-\begin{proof}
-\todo{}
+\begin{proof} We use \Cref{def:alttc} for this proof:
+\begin{eqnarray*}
+\edgein \relr^+ &\Leftrightarrow & \exists n \in \N: \edgein \relr^n \\
+&\Leftrightarrow & \exists k \in \N: \exists m_1,\dots m_k \in \N: \sum_{i=1}^k m_k = n \land \edgein \relr^{m_1}.\dots.\relr^{m_k}\\
+&\Leftrightarrow & \exists k \in \N: \edgein \relr^{+^k} \\
+&\Leftrightarrow & \edgein \relr^{+^+}
+\end{eqnarray*}
+
 \end{proof}
 
 \begin{lemma}
@@ -648,12 +672,10 @@ As mentioned in the previous section in \Cref{lem:inversion}, it is possible to 
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
 Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. In \cite{Gru+26} this concept is called \textit{Hypotheses}. \\
-The base relations \id, \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \id, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. Furthermore, any relation might be symmetric if it is included in \id. Hence, it is a generalization of the ($\id_{symm}$) rule.
+The base relations \loc{} and \ext{} are symmetric, meaning that for every $(e,e')$ in the relation, $(e',e)$ is in the relation too. For \po, \co{} and \loc{} it holds that they are transitive, meaning for every $(e,e'),(e',e'') \in R: (e,e'') \in R$. 
 \begin{rules}{Base Relation Properties}
-\inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
 \inferrule*[left=($\loc_{symm}$)]{\it true}{\loc^{-1} \subseteq \loc} \and
 \inferrule*[left=($\ext_{symm}$)]{\it true}{\ext^{-1} \subseteq \ext} \and
-\inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
 \inferrule*[left=($\po_{trans}$)]{\true}{\po .\po \subseteq \po} \and
 \inferrule*[left=($\co_{trans}$)]{\true}{\co .\co \subseteq \co} \and
 \inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} 
@@ -664,7 +686,7 @@ Since inversion is only applied to base relations, the $(-1_{elim})$ rule is pla
 \end{mathpar}
 
 As we have described in \Cref{sec:restrictions}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
-Besides this we use some rules to handle \relW~ and \relR~ themselves. \todo{Ist $[W]\cap [R]$ besser?}
+Besides this we use some rules to handle \relW~ and \relR~ themselves. \todo{Ist $[W]\cap [R]$ besser? Ist vermutlich anwendungsferner}
 \begin{rules}{Write and Read Events}
 \inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
 \inferrule*[left=(R)]{\true}{\sf [R] \subseteq \id} \and
@@ -705,23 +727,23 @@ We use definitions like \texttt{let r = s} as a rule
 \end{mathpar}
 
 
-\subsection{Handling Recursion}
-With the keywords \texttt{let rec} CAT lets it's users define relations recursively. In order to handle this recursion we need to construct appropriate rules. \\
-Let $R$ be a derived relation that uses recursion in it's definition and let $\Upsilon$ be a term that does not feature $R$ at all. If the definition of $R$ consists only of $R$ itself and $\Upsilon$ the recursion can be replaced by a transitive closure, i.e. $R = R.\Upsilon$ can be $R=\Upsilon^+$.
-\todo{Nur Regeln für Rekursionsfreie Terme}
-\begin{rules}{Separated Recursion}
-\inferrule*[left=($rec_{L.L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \relr.\Upsilon \sf \subseteq t} \and
-\inferrule*[left=($rec_{L.R}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon.\sf r \subseteq t} \and
-\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr.\Upsilon =\sf r} \and
-\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \Upsilon.\sf r = r} \and
-\inferrule*[left=($rec_{\cup L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon \sf \cup r \subseteq t} \and
-\inferrule*[left=($rec_{\cup R}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr = \Upsilon \cup \relr} \and
-\inferrule*[left=($rec_{\cap L}$)]{\Upsilon \subseteq \sf t}{{\sf r = r} \cap \Upsilon \subseteq \sf t} \and
-\inferrule*[left=($rec_{\cap R}$)]{\relt \subseteq \Upsilon}{{\sf t \subseteq r = r} \cap \Upsilon}
-\end{rules}
-\todo{was tun bei allen anderen Termen?}
-For terms where the recursion is not isolated, i.e. $\Upsilon$ is not recursion-free, it is more difficult to find rules. Here we need to use cyclic proofs with a progression rule.
-The progression rule is the following:
+%\subsection{Handling Recursion}
+%With the keywords \texttt{let rec} CAT lets it's users define relations recursively. In order to handle this recursion we need to construct appropriate rules. \\
+%Let $R$ be a derived relation that uses recursion in it's definition and let $\Upsilon$ be a term that does not feature $R$ at all. If the definition of $R$ consists only of $R$ itself and $\Upsilon$ the recursion can be replaced by a transitive closure, i.e. $R = R.\Upsilon$ can be $R=\Upsilon^+$.
+%\todo{Nur Regeln für Rekursionsfreie Terme}
+%\begin{rules}{Separated Recursion}
+%\inferrule*[left=($rec_{L.L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \relr.\Upsilon \sf \subseteq t} \and
+%\inferrule*[left=($rec_{L.R}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon.\sf r \subseteq t} \and
+%\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr.\Upsilon =\sf r} \and
+%\inferrule*[left=($rec_{R.L}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \Upsilon.\sf r = r} \and
+%\inferrule*[left=($rec_{\cup L}$)]{\Upsilon^+ \subseteq \sf t}{\relr = \Upsilon \sf \cup r \subseteq t} \and
+%\inferrule*[left=($rec_{\cup R}$)]{\relt \subseteq \Upsilon^+}{\relt \subseteq \relr = \Upsilon \cup \relr} \and
+%\inferrule*[left=($rec_{\cap L}$)]{\Upsilon \subseteq \sf t}{{\sf r = r} \cap \Upsilon \subseteq \sf t} \and
+%\inferrule*[left=($rec_{\cap R}$)]{\relt \subseteq \Upsilon}{{\sf t \subseteq r = r} \cap \Upsilon}
+%\end{rules}
+%\todo{was tun bei allen anderen Termen?}
+%For terms where the recursion is not isolated, i.e. $\Upsilon$ is not recursion-free, it is more difficult to find rules. Here we need to use cyclic proofs with a progression rule.
+%The progression rule is the following:
 
 \section{Soundness}\label{sec:soundness}
 \begin{theorem}[Soundness]
@@ -757,7 +779,7 @@ Given by the definition of the relation \relr.
 
 \item ($\cup_{L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
 \begin{eqnarray*}
-(e,e') \in \sf r \cup s &\impl & (e,e') \in \relr \lor (e,e') \in \rels \reason{\defof \cup}\\
+(e,e') \in \sf r \cup s &\impl & (e,e') \in \relr \lor (e,e') \in \rels \reason{\defof \rel \cup \rel}\\
 &\impl & (e,e') \in \rels \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
 &\impl & (e,e') \in \rels 
 \end{eqnarray*}
@@ -767,20 +789,21 @@ Given by the definition of the relation \relr.
 \begin{eqnarray*}
 (e,e') \in \sf r &\impl & (e,e') \in \sf s \reason{\sf r \subseteq s}\\
 & \impl & (e,e') \in \rels \lor (e,e') \in \sf t  \\
-&\impl & (e,e') \in \sf s\cup t \reason{\defof \cup}
-\end{eqnarray*}
+&\impl & (e,e') \in \rels \cup \relt \reason{\defof \rel \cup \rel}
+\end{eqnarray*} 
 
 \item ($\cap_{L}$): $true \impl \sf r \cap s \subseteq r$
 \begin{eqnarray*}
-(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \sf s \reason{\defof \cap} \\
+(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \rels \reason{\defof \rel \cap \rel} \\
 &\impl & (e,e') \in \sf r 
 \end{eqnarray*}
 
-\item ($\cap_{R}$): $\sf r \subseteq s \impl r \subseteq r \cap s$
+\item ($\cap_{R}$): $\sf r \subseteq s \land \relr \subseteq \relt \impl r \subseteq s \cap t$
 \begin{eqnarray*}
 (e,e') \in \relr &\impl & (e,e') \in \relr \land (e,e') \in \sf r \\
-& \impl &  (e,e') \in \relr \land (e,e') \in \sf s \reason{ \sf r \subseteq s} \\
-&\impl & (e,e') \in \sf r \cap s \reason{\defof \cap}
+& \impl &  (e,e') \in \rels \land (e,e') \in \sf r \reason{ \sf r \subseteq s} \\
+&\impl & \edgein \rels \land \edgein \relt \reason{\relt \subseteq \relt} \\
+&\impl & (e,e') \in \rels \cap \relt \reason{\defof \rel \cap \rel}
 \end{eqnarray*}
 
 %\item ($._{trans}$): $\sf r \subseteq \id \impl r \subseteq r.r$
@@ -823,10 +846,10 @@ Given by the definition of the relation \relr.
 %\end{eqnarray*}
 \item ($._{LR}$) $\relr \subseteq \relr' \land \rels \subseteq \rels' \impl \relr.\rels \subseteq \relr'.\rels'$
 \begin{eqnarray*}
-(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
-&\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
-&\impl & (e_1,e_3) \in \rels \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
-&\impl & (e_1,e_3) \in \rels
+\edgein \relr.\rels &\impl & \exists e,e',\hat{e} \in E: (e,\hat{e}) \in \relr \land (\hat{e},e') \in \rels \reason{\defof \rel.\rel}\\
+&\impl & \exists e,e',\hat{e} \in E: (e,\hat{e})  \in \relr' \land (\hat{e},e') \in \rels \reason{\relr \subseteq \relr'} \\
+&\impl & \exists e,e',\hat{e} \in E: (e,\hat{e})  \in \relr' \land (\hat{e},e') \in \rels' \reason{\rels \subseteq \rels'} \\
+&\impl & \edgein \relr'.\rels' \reason{\defof \rel.\rel}
 \end{eqnarray*}
 
 \item ($+_{LR}$): $\sf r \subseteq s^+ \impl r^+ \subseteq s^+$
@@ -834,13 +857,13 @@ Given by the definition of the relation \relr.
 (e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
 & \impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels^+ \reason{\sf r \subseteq s^+}\\
 & \impl & (e,e') \in \rels^{+^+} \reason{\defof \rel^+}\\
-& \impl & (e,e') \in \sf s^+
+& \impl & (e,e') \in \sf s^+ \reason{(+^+)}
 \end{eqnarray*}
 
 \item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$ \\
 For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier.
 \begin{eqnarray*}
-(e,e') \in \relr^+ &\impl & \exists n\in \N: (e,e') \in \relr^n \\
+(e,e') \in \relr^+ &\impl & \exists n\in \N: (e,e') \in \relr^n \reason{\defof \rel^+} \\
 &\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
 &\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relI \reason{\relr \subseteq \relI} \\
 &\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relr.\relI \\
@@ -862,26 +885,26 @@ To prove the weakening and strengthening rules, we need to prove monotinicity fo
 For proving monotonicity, the lemma needs to be shown for every binary operator in rational CAT.
 We will start with the unification operator:
 \begin{eqnarray*}
-(e,e') \in \sf t \cup r &\impl & (e,e') \in \relt \lor (e,e') \in \sf r \\
+(e,e') \in \sf t \cup r &\impl & (e,e') \in \relt \lor (e,e') \in \relr \reason{\defof \rel_1 \cup \rel_2} \\
 & \impl & (e,e') \in \relt \lor (e,e') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e') \in \sf t \cup s
+&\impl & (e,e') \in \relt \cup \rels \reason{\defof \rel_1 \cup \rel_2}
 \end{eqnarray*}
 Just as simple as for unification is the proof for intersection:
 \begin{eqnarray*}
-(e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \sf r \\
+(e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \relr \reason{\defof \rel_1 \cap \rel_2}\\
 & \impl & (e,e') \in \relt \land (e,e') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e') \in \sf t \cap s
+&\impl & (e,e') \in \relt \cap \rels \reason{\defof \rel_1 \cap \rel_2}
 \end{eqnarray*}
 Since the first two operators were commutative, the order of the relations was not important. As this is not the case for concatenation, there needs to be a distinction between $\sf t.r$ and $\sf r.t$
 \begin{eqnarray*}
-(e,e'') \in \sf t.r &\impl & (e,e') \in \relt \land (e',e'') \in \sf r \\
+(e,e'') \in \sf t.r &\impl & (e,e') \in \relt \land (e',e'') \in \relr \reason{\defof \rel_1.\rel_2}\\
 & \impl & (e,e') \in \relt \land (e',e'') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e'') \in \sf t.s
+&\impl & (e,e'') \in \relt.\rels \reason{\defof \rel_1.\rel_2}
 \end{eqnarray*}
 \begin{eqnarray*}
-(e,e'') \in \sf r.t &\impl & (e,e') \in \relr \land (e',e'') \in \sf t \\
+(e,e'') \in \sf r.t &\impl & (e,e') \in \relr \land (e',e'') \in \relt \reason{\defof \rel_1.\rel_2} \\
 & \impl & (e,e') \in \rels \land (e',e'') \in \sf t \reason{r \subseteq s} \\
-&\impl & (e,e'') \in \sf s.t
+&\impl & (e,e'') \in \rels.\relt \reason{\defof \rel_1.\rel_2}
 \end{eqnarray*}
 This proves monotonicity for every binary operator of rational CAT.
 \end{proof}
@@ -897,9 +920,9 @@ The first unary operator of rational CAT will be inversion:
 \end{eqnarray*}
 Next up is the transitive closure:
 \begin{eqnarray*}
-(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \\
+(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
 &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels \reason{\sf r \subseteq s} \\
-&\impl & (e,e') \in \sf s^+
+&\impl & (e,e') \in \rels^+ \reason{\defof \rel^+}
 \end{eqnarray*}
 For the unary operators reflexive closure the monotonicity is given through its definition and \Cref{lem:bmono}:
 \[\relr? = \relr \cup \id \subseteq \rels \cup \id = \rels?\]
@@ -920,30 +943,38 @@ With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and stre
 \end{eqnarray*}
 \end{itemize}
 
+\subsection{Soundness for MCM Inclusion Proofs}
+\todo{Soundness auf MCMs erweitern}
+
+
 \pagebreak
 \section{Completeness}\label{sec:completeness}
 
 \begin{theorem}[Completeness]
-For every true inclusion $\semsof{M} \subseteq \semsof{M'}$ of two CAT expressions there exists a proof $\mathcal{P}$.
+For every true inclusion $\relr \subseteq \rels$ of two relational expressions there exists a proof $\mathcal{P}$.
 \end{theorem}
 
-To prove the completeness on the rational CAT fragment of this proof system we will transform every proof from \cite{Gru+26}, where completeness was proven, into one of ours.  
-The approach of \cite{Gru+26} transforms an inclusion of the form $\bangle{cat}_1 \subseteq \bangle{cat}_2$ into a logical formula $\varphi_{\neg \bangle{cat}_2} \land \varphi_{\bangle{cat}_1}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
+To prove the completeness on the rational CAT fragment of this proof system we will transform any proof by Grünke et al. \cite{Gru+26}, where completeness was proven, into one of ours.  
+The approach of \cite{Gru+26} transforms an inclusion of the form $\relr \subseteq \rels$ into a logical formula $\phi_{\relr} \land \neg \phi_{\rels}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
 Hence, the Theorem to be proven is this:
 \begin{theorem}\label{thm:satinc}
-If a RAT-CAT formula $\varphi_r \land \varphi_{\neg s}$ is $\mathcal{T}_\Sigma$-unsatisfiable, then there exists a proof  for $\sf r \subseteq s$
+If a RAT-CAT formula $\phi_\relr \land \neg \phi_{\rels}$ is $\mathcal{T}_\Sigma$-unsatisfiable and it exists a RAT-CAT-SAT proof $\pi$, then there exists a relational inclusion proof $\prf_\pi$ for $\sf r \subseteq s$
 \end{theorem}
+The proof system of Grünke et al. starts with the formula $\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels$ and transforms it via a tableau until the tableau is \textit{closed}. 
+The tableau is closed if every branch in it is closed, meaning that every branch is either infinite or contains $\bot_0$. Here, $\bot_0$ means \textit{false} and it appears in a branch if there has been a contradiction. \\ 
+The decomposition of the $\phi_\relr$ in \cite{Gru+26} results in a number of properties that events need to fulfill to form an edge in \relr. The negated rules decompose the the negative part of the formula $\neg \varphi_\rels$ to give predicates that describe the complement of \rels. If there exist events that fulfill all of the predicates, then there exists a counterexample to the inclusion.
+Hence, unsatisfiability of the formula is equivalent to the inclusion being true. 
 
-To prove this theorem, any proof $\pi$ in \cite{Gru+26} needs to have an equivalent proof $\mathcal{P}_\pi$ here.
-With the transformation of the expressions into logical formulas the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
-To have a more intuitive way of translating the formulas into relational inclusion terms, we use a intermediate step. The inclusion $\relr \subseteq \rels$ that our system uses can be written as $\relr~ \cap \sim \rels \subseteq \0$. Note that we allow complements for this intermediate step only and use them to give a better intuition for mimicking the behavior of the RAT-CAT-SAT rules with our rules. The term $\relr~ \cap \sim \rels \subseteq \0$ is much closer syntactically to $\varphi_\relr \land \varphi_{\neg \rels}$ being unsatisfiable.
+%To prove \Cref{thm:satinc}, for any proof $\pi$ in \cite{Gru+26} we need to construct an equivalent proof $\mathcal{P}_\pi$.
+%With the transformation of the expressions into logical formulas, the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
+%To have a more intuitive way of translating the formulas into relational inclusion terms, we use a intermediate step. The inclusion $\relr \subseteq \rels$ that our system uses can be written as $\relr~ \cap \sim \rels \subseteq \0$. Note that we allow complements for this intermediate step only and use them to give a better intuition for how the behavior of the RAT-CAT-SAT rules corresponds to our rules. The term $\relr~ \cap \sim \rels \subseteq \0$ is much closer syntactically to $\varphi_\relr \land \neg \varphi_{\rels}$ being unsatisfiable.
 
 
-\begin{wrapfigure}{r}{0.6\textwidth}
-\begin{minipage}{0.3\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
+\begin{minipage}{0.25\textwidth}
 \centering
 \begin{tikzpicture}
-\node[blank] (root) {$\varphi_r \land \varphi_{\neg s}$};
+\node[blank] (root) {$\phi_\relr \land \neg \phi_{\rels}$};
 \node[blank, below of=root] (1) {\dots};
 \node[blank, below left of=1] (2) {\dots};
 \node[blank, below right of=1] (3) {\dots};
@@ -956,7 +987,7 @@ To have a more intuitive way of translating the formulas into relational inclusi
 \draw[arrow] (2) -- (4);
 \draw[arrow] (3) -- (bot);
 \end{tikzpicture}
-\end{minipage}\begin{minipage}{0.3\textwidth}
+\end{minipage}\begin{minipage}{0.25\textwidth}
 \centering
 \begin{tikzpicture}
 \node[blank] (root) {$\relr \subseteq \rels$};
@@ -976,17 +1007,58 @@ To have a more intuitive way of translating the formulas into relational inclusi
 \caption{One difference between the proof systems is that the one in \cite{Gru+26} needs every branch to end in $\bot_0$ and ours needs every branch ending in \true .}
 \end{wrapfigure}
 
-Grünke et al. differentiate between negated and non-negated rules which are applied to the corresponding term. Since the including term is negated, these rules are applied to it and the non-negated rules are applied to the included term. In our system, this translates to rules that are applied to the left-hand side or right-hand side of the inclusion. The intermediate step makes this clear.
-Grünke et al. decompose their logical formulas in order to reach a contradiction which lets a branch end in \false{} or rather $\bot_0$. Since the contradiction means, that there exists no counterexample to the inclusion, this translates to all branches in our proof system to end with \true . 
+Since RAT-CAT-SAT argues directly about events and we do not, we lose some expressiveness in comparison to Grünke et al.. Therefore, we reduce the number of proofs that RAT-CAT-SAT can express to only those that show inclusions between relations.
+These inclusions have a standard form as a RAT-CAT formula: An inclusion $\relr \subseteq \rels$ is
+\[\phi_{\relr \subseteq \rels} = (e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
+We call this the \textit{Relational Inclusion Standard Form (RISF)}.
+We prove completeness by showing that every decomposition of $\phi_{\relr \subseteq \rels}$ that results in a proof $\pi$ has an equivalent proof $\prf_\pi$ in our system.
+
+
+To that end, we put down some properties that $\prf_\pi$ will fulfill:
+First, $\prf_\pi$ has the same structure as $\pi$, meaning that whenever $\pi$ uses a branching rule, $\prf_\pi$ also uses one. Secondly, Every branch in $\pi$ that is closed (ending in $\bot_0$ or infinite) has an equivalent branch in $\prf_\pi$ that is closed (ending in \true). The third property is that whenever $\pi$ eliminates a relation from the formula, the same must be justified by a rule in $\prf_\pi$.
+
+
+
+%Grünke et al. differentiate between negated and non-negated rules which are applied to the corresponding term. Since the including term is negated, these rules are applied to it and the non-negated rules are applied to the included term. In our system, this translates to rules that are applied to the left-hand side or right-hand side of the inclusion. The intermediate step makes this clear.
+%Grünke et al. decompose their logical formulas in order to reach a contradiction which lets a branch end in \false{} or rather $\bot_0$. Since the contradiction means, that there exists no counterexample to the inclusion, this translates to all branches in our proof system to end with \true . 
 %This fundamental difference also manifests itself in the branching. Grünke et al.'s branches are disjunctions while ours are conjunctions. 
-With that we can reformulate \Cref{thm:satinc} to the following lemma:
-\begin{lemma}
-When a RAT-CAT-SAT proof $\pi$ has only leafs that are $\bot_0$ then the corresponding inclusion proof $\prf_\pi$ has only leafs that are \true .
-\end{lemma}
 
 \subsection{Finite Proofs}
-For proving completeness, we will first translate all finite proofs of Grünke et al. into relational inclusion proofs via an induction on the proof size. Finite proofs are those which do not use the Kleene star rules ($*L$),($*R$),($\neg *L$) and ($\neg *R$). We start with the base case of applying one rule. 
-\paragraph{Base Case:}Because a proof in \cite{Gru+26} needs to be a closed derivation tree, we only need to translate those rules that close a branch.
+For proving completeness, we will first translate all finite proofs of Grünke et al. into relational inclusion proofs. Finite proofs are those which do not use the Kleene star rules ($*L$),($*R$),($\neg *L$) and ($\neg *R$). \\
+Looking at the rules of Grünke et al., we can observe that any positive literal in RISF will be decomposed by applying rules to the $e_1.\relr$ term. The goal of the decomposition is to get an event $f_1$ for which $(e_1,f_1) \in \relr$ holds. If that point is reached, the ($eL$) rule can be applied, yielding $f=e_2 \land f_1 \neq \emptyset$. \\
+For the negative literals in RISF the same holds for $e_1.\rels$. At the end, the decomposition yields an event $f_2$ with $(e_1,f_2) \in \rels \land \neg (f \cap e_2 \neq \emptyset)$ and after applying ($\neg \cap_e$) we get $(e,f_2) \in \rels \land \neg f_2=e_2$, which would mean that there is no $e_2$ with $(e_1,e_2) \in \rels$. \\
+Putting both together, we get
+\[(e_1,f_1) \in \relr \land f_1 = e_2 \land f_1 \neq \emptyset \land (e_1,f_2) \in \rels \land \neg (f_2 =e_2) \Leftrightarrow (e_1,e_2) \in \relr \land (e_1,e_2) \notin \rels\]
+Because both formulas use the same events, we can get
+
+\[\exists e_1,f_1: (e_1,f_1) \in \relr \land (e_1,f_1) \notin \rels\]
+
+put together would give us $\semsof{\relr~ \cap~\sim \rels} \neq \0$. \todo{Überprüfen}
+ 
+ 
+Any positive formula $\phi_\relr$ that originates from a formula in the standard form for relational inclusions can be transformed into a logical formula that corresponds to the semantics of the relations using only ($aL$) and ($eL$).
+
+\paragraph{($._{2,2}L$)}
+If $\relr = \relr_1.\relr_2$, the ($._{2,2}L$) rule is applied and the result is
+\[((e_1.\relr_1).\relr_2 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset\]
+Here, the decomposition would continue with $e_1.\relr_1$ before it continues at some point in the future with $e_n.\relr_2$. \\
+Using the ($aL$) and ($eL$) rules, we get 
+\[(e,f) \in \relr_1.\relr_2 \land f = e_2 \land f \neq \emptyset \Leftrightarrow \exists e,f: (e,f) \in \relr_1.\relr_2 \Leftrightarrow \semsof{(\relr_1.\relr_2)} \neq \emptyset\]
+for the premise of the rule and
+\[(e,f_1) \in \relr_1 \land (f_1,f_2) \in \relr_2 \land e_2 = f_2 \land f_2 \neq \emptyset \Leftrightarrow \semsof{r_1.r_2} \neq \emptyset\]
+for the conclusion
+
+
+\paragraph{Branching:}
+\todo{($\cup_2L$), ($\neg \times L$), ($\cup_1$), ($\neg eL$),...}
+
+\paragraph{Elimination:}
+\todo{id und co}
+
+\paragraph{Other Rules:}
+Zeigen, dass die alle nichts wirklich machen
+
+\paragraph{Closing the Branch:}Because a proof in \cite{Gru+26} needs to be a closed tableau, we only need to translate those rules that close a branch.
 The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We can mimic their behavior with our rules like this:
 \begin{itemize}
 \item ($\bot_0$): % \begin{mathpar} \inferrule*[left=($\bot_0$)]{\Gamma ,p,\neg p}{\bot_0} \end{mathpar}
@@ -1002,18 +1074,49 @@ In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. Transla
 \item ($\bot_1$): A positive predicate describes that a certain relation is non-empty. In this rule, the precondition is that this relation includes the empty set $\bot_1$. The empty set itself cannot be a relational term. It needs to be concatenated to or intersected with an event, set or relation. Unification is not possbible, since Grünke et al. do not apply rules on terms which are not union-free \cite{Gru+26}. Any intersection or concatenation with the empty set results in an empty relation and we can use the rule (\textsc{empty}) in our proof system to get the same result.
 \end{itemize}
  
-\paragraph{Inductionhypothesis:} As hypothesis for the induction we use:
-Any RAT-CAT-SAT proof $\pi$ that applies $n$ rules has an equivalent counterpart $\prf_\pi$ in our relational inclusion proof system.
+\paragraph{Inductionhypothesis:} 
+Any RAT-CAT-SAT proof $\pi$ that applies $(n-1) \in \N$ rules has an equivalent counterpart $\prf_\pi$ in our relational inclusion proof system.
 
-\paragraph{Induction step:} Now, it remains to be shown that any proof $\pi$ of length $n+1$ can be translated into a proof $\prf_\pi$.
+\paragraph{Induction step:} Now, it remains to be shown that any proof $\pi$ of length $n$ can be translated into a proof $\prf_\pi$. Since the last rule is always going to be one of those we handled in the base case, we look at the first applied rule in any proof of lenth $n$. This could be any of the remaining rules from \cite{Gru+26}. Hence, we need to translate the effects of all of those into our proof system.
 
 
+Any relational inclusion in \cite{Gru+26} of the form $\relr \subseteq \rels$ can be transformed into the RAT-CAT-SAT formula \[(e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
+Grünke et al. decompose the positive term $(e_1.\relr~ \cap e_2) \neq \emptyset$ with the positive rules into the predicates $s \neq \emptyset$, $e_i = e_j$, $e \in A$ and $(e_i,e_j) \in \relr$. Which rules are applied depends on the form of $\relr$. \\
 
+\begin{lemma}[Positive Decomposition Lemma] \todo{gut formulieren}
+For any literal $l=(e_1.\relr~ \cap~ e_2) \neq \emptyset$, the decomposition of Grünke et al. \cite{Gru+26} only yields literals of the form $(e',f') \in \relr'$ and $e' = f'$ and one new literal $l'=f \cap e_2 \neq \emptyset$ where the event $f$ replaces $e_1.\relr$ in the predicate. 
+\end{lemma}
+
+To prove this lemma, we observe that every term $p[e.\relr]$ will be decomposed into either a term that again includes $e'.\relr'$ or into $(e,f) \in \relr \land p[f]$, depending on whether \relr{} can be decomposed or not. \\ 
+%-------------------------------- r_1 \cup r_2
+If $\relr = \relr_1 \cup \relr_2$ then Grünke et al. will apply ($\cup_2L$) and branch the tableau. The result are these two terms:
+\[(e_1.\relr_1 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset) \qquad \mid \qquad (e_1.\relr_2 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+The resulting terms preserve the form of the predecessor and the decomposition can continue in both branches. Translated into our proof system we can do the following derivation which also uses branching:
+\begin{mathpar} 
+\inferrule*[left=($\cup_{L2}$)]{\relr_1 \subseteq \rels \\ \relr_2 \subseteq \rels}{\relr_1 \cup \relr_2 \subseteq \rels}
+\end{mathpar}
+In the case that $\relr_1$ or $\relr_2$ cannot be decomposed further, Grünke et al. would apply ($aL$) and ($eL$) resulting in the term
+\[(e_1,f_1) \in \relr_i \land f_1 = e_2 \land e_2 \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+Assuming that \rels~ cannot be decomposed further than using ($\neg aL$) and ($\neg \cap_e$) too, this term can be written as 
+\[\exists e_2 \in E: (e_1,e_2) \in r_i \land (e_1,e_2) \notin \rels\] 
+which is simply equivalent to the definition of $\relr \subseteq \rels$. The same holds for other rules from \cite{Gru+26}.
+%------------------------------ r_1 \cap r_2
+If $\relr = \relr_1 \cap \relr_2$, they apply the ($\cap_2L$) rule resulting in 
+\[((e_1.\relr_1) \cap (e_1.\relr_2) \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset\]
+The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$.\\
+%------------------------------ r_1.r_2
+If $\relr = \relr_1.\relr_2$, the ($._{2,2}L$) rule is applied and the result is
+\[((e_1.\relr_1).\relr_2 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset\]
+Here, the decomposition would continue with $e_1.\relr_1$ before it continues at some point in the future with $e_n.\relr_2$. \\
+%------------------------------- r'.A
+If $\relr = e_2 \times A$ with $A \subseteq E$, Grünke et al. would apply the ($\times L$) rule followed by the ($A$) rule which produces $e_1 = e_2, f\in A, p[f]$. \\
+%------------------------------- id
+If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
 
 
 \subsection{Infinite Proofs}
 
-For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Similar to the completeness proof in \cite{Das+18} we construct an invariant $\mathcal{I}$ which we can use in the $(+I)$ rule that works for every occurance of a backlink in $\pi$
+For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Similar to the completeness proof in \cite{Das+18} we construct an invariant $\mathcal{I}$ which we can use in the $(+_L)$ rule that works for every occurance of a backlink in $\pi$
 
 
 \section{Conclusion}\label{sec:conclusion}
@@ -1105,7 +1208,7 @@ The example continues here. For the induction rule ($+_L$) we use as invariant t
 \begin{mathpar} \footnotesize
 	\inferrule*[right=($+_L$)]{
 		\inferrule*[left=($\cup_{R}$)]{
-			\inferrule*[Left=($._{RR}$)]{
+			\inferrule*[Left=($._{LR}$)]{
 				\inferrule*[left=($*$)]{
 					\inferrule*[Left=($\cup_R$)]{
 						\inferrule*[Left=(refl.)]{true}{\id \subseteq \id}					
