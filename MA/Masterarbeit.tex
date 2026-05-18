@@ -502,7 +502,7 @@ We can ignore the \textit{inversion} operator in the implications since accordin
 
 
 \begin{lemma}[Inversion Lemma]\label{lem:inversion}
-Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
+Let $\relr$ be a relational term that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to relations that cannot be decomposed further (in CAT: base relations) with $\semsof{\relr'} = \semsof{\relr}$. The proof can be found in the appendix (\Cref{sec:inversionproof}).
 \end{lemma}
 
 
@@ -1030,29 +1030,37 @@ Looking at the rules of Grünke et al., we can observe that any positive literal
 For the negative literals in RISF the same holds for $e_1.\rels$. At the end, the decomposition yields an event $f_2$ with $(e_1,f_2) \in \rels \land \neg (f \cap e_2 \neq \emptyset)$ and after applying ($\neg \cap_e$) we get $(e,f_2) \in \rels \land \neg f_2=e_2$, which would mean that there is no $e_2$ with $(e_1,e_2) \in \rels$. \\
 Putting both together, we get
 \[(e_1,f_1) \in \relr \land f_1 = e_2 \land f_1 \neq \emptyset \land (e_1,f_2) \in \rels \land \neg (f_2 =e_2)\]
-Because both formulas use the same events, we can get
+Because both formulas use the same events, we get
 
 \[\exists e_1,f_1: (e_1,f_1) \in \relr \land (e_1,f_1) \notin \rels\]
 
-put together would give us $\semsof{\relr~ \cap~\sim \rels} \neq \0$ which is equivalent to $\semsof{\relr} \nsubseteq \semsof{\rels}$. \\
+which is equivalent to the definition of $\semsof{\relr~ \cap~\sim \rels} \neq \0$ which in turn is equivalent to $\semsof{\relr} \nsubseteq \semsof{\rels}$. \\
 We will see that any formula $\phi'$ that originates from a formula in RISF can be transformed into a cube that corresponds to the semantics of the relations using only ($aL$) and ($eL$).
 We go through all the rules and start with the non-negated ones.
 
-\todo{Erhalten wir immer $e.\relr$? Brauchen wir das Decomposition Lemma?}
+
+\begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
+For any term $e_1.\relt$ in a literal of RAT-CAT-SAT, the decomposition of Grünke et al. \cite{Gru+26} applies only rules which result in either an event constant $f$ which replaces $e_1.\relt$ or a new term $e_1'.\relt'$.
+Since this holds in turn for $e_1'.\relt'$, the decomposition will eventually return an event $f$.
+\end{lemma}
+
+To prove the decomposition lemma, we will examine the effect of all rules that can be applied to a RAT-CAT formula in RISF. We will start with the positive reasoning i.e. the rules that can be applied to positive literals like $(e_1.\relr \cap e_2) \neq \emptyset$. 
+
+\todo{Unterschied literals und predicates}
 
 \todo{Wir nehmen an, dass wir immer die äußerste Operation betrachten}
 
-\paragraph{Positive Reasoning} If $\relr$ cannot be decomposed any further (for example, if it is a CAT base relation), only the ($aL$) rule can be applied. This turns $p[e_1.\relr]$ into $(e,f) \in \relr \land p[f]$.
+\subsubsection{Positive Reasoning} If $\relr$ cannot be decomposed any further (for example, if it is a CAT base relation), only the ($aL$) rule can be applied. This turns $p[e_1.\relr]$ into $(e,f) \in \relr \land p[f]$.
 Since this rule only introduces a new event and does not change the structure of the term, the relational inclusion would remain unchanged.
 The same goes for the subsequent application of the ($eL$) rule.  
 
-\noindent If $\relr = \relr_1.\relr_2$, the ($._{2,2}L$) rule is applied and the result is
+\paragraph{Concatenation} If $\relr = \relr_1.\relr_2$, the ($._{2,2}L$) rule is applied and the result is
 \[((e_1.\relr_1).\relr_2 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset\]
-Here, the decomposition would continue with $e_1.\relr_1$ before it continues at some point in the future with $e_n.\relr_2$ \todo{hier könnte das Lemma wichtig sein}. \\
-This rule sets the order in which the decomposition continues. It changes nothing of the structure of the term.
+Here, the decomposition would continue with $e_1.\relr_1$ before it continues at some point in the future with $f.\relr_2$. \\
+This rule sets the order in which the decomposition continues. It changes nothing of the structure of the term. \\
 
 %-------------------------------- r_1 \cup r_2
-\noindent If $\relr = \relr_1 \cup \relr_2$ then Grünke et al. will apply ($\cup_2L$) and branch the tableau. The result are these two terms:
+\paragraph{Unification} If $\relr = \relr_1 \cup \relr_2$ then Grünke et al. will apply ($\cup_2L$) and branch the tableau. The result are these two terms:
 \[(e_1.\relr_1 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset) \qquad \mid \qquad (e_1.\relr_2 \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
 The resulting terms preserve the form of the predecessor and the decomposition can continue in both branches. Translated into our proof system we can do the following derivation which also uses branching:
 \begin{mathpar} 
@@ -1063,41 +1071,64 @@ The resulting terms preserve the form of the predecessor and the decomposition c
 Since we need the union to be the outermost operator for the branching, we may need to use the ($._{\cup dist}$) or ($\cap_{\cup dist}$) rules. This is how we can take the context with us into the branches. \\
 
 %------------------------------ r_1 \cap r_2
-\noindent If $\relr = \relr_1 \cap \relr_2$, Grünke et al. apply the ($\cap_2L$) rule resulting in 
+\paragraph{Intersection} If $\relr = \relr_1 \cap \relr_2$, Grünke et al. apply the ($\cap_2L$) rule resulting in 
 \[((e_1.\relr_1) \cap (e_1.\relr_2) \cap e_2) \neq \emptyset \land \neg ((e_1.\rels \cap e_2) \neq \emptyset\]
 The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$. At the end of either decomposition a new event takes the place of each of these terms and the ($eL$) rule can be applied, resulting in one of these events being passed on to the surrounding term. \todo{wieder das Lemma?}
 Again, this term does not change the structure of the term and needs no translation.\\
 
 %------------------------------- e x A
-\noindent If $\relr = e_3 \times A$ with $A \subseteq E$, Grünke et al. would apply the ($\times L$) rule followed by the ($A$) rule which produces $e_1 = e_3, f\in A, p[f]$, again passing a new event onto the surrounding term. Again, this would not change the relational term and therefore no action is needed in our system. \\
+\paragraph{Cross Product} If $\relr = e_3 \times A$ with $A \subseteq E$, Grünke et al. would apply the ($\times L$) rule followed by the ($A$) rule which produces $e_1 = e_3, f\in A, p[f]$, again passing a new event onto the surrounding term. Again, this would not change the relational term and therefore no action is needed in our system. \\
 However, if $A = A_1 \cup A_2$, then the ($\cup_1$) rule would branch the tableau before applying the ($A$) rule.
 To do this in our proof system, we need to \todo{Set Rules?} transform $e_3 \times (A_1 \cup A_2)$ into $(e_3 \times A_1) \cup (e_3 \times A_2)$. After that we can simply use the ($\cup_L$) rule to split our tableau. \\
 
 %------------------------------- id
-If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend very much on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
+\paragraph{Identity} If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend very much on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
 If the context is $\relr' \cap \id$, the rule preserves \id{} by decomposing it not into a new event but into $e_1$. In this case, we do not apply a rule in our system.
-If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule would have been applied before.
+If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule would have been applied before. \\
 
 %------------------------------- \bot2
-\noindent If $\relr = \bot_2$ ($= \0$) and the ($\bot_2L$) rule is applied, the result is $\bot_1$ which is the empty set $\emptyset$. Since any positive predicate that includes $\bot_1$ will be turned into $\bot_0$ via the ($\bot_1$) rule, this would close the branch. 
+\paragraph{Empty Relation} If $\relr = \bot_2$ ($= \0$) and the ($\bot_2L$) rule is applied, the result is $\bot_1$ which is the empty set $\emptyset$. Since any positive predicate that includes $\bot_1$ will be turned into $\bot_0$ via the ($\bot_1$) rule, this would close the branch. 
 Since we write \0{} instead of $\bot_2$, we can use the ($\0_\cup$),($\0_\cap$) and ($\0_{conc}$) rules depending on the context. \\
 Because we can assume that any unification would have been branched before, ($\0_\cup$) is not needed. Instead we would find a branch that consists only of \0{} and can apply the (\textsc{empty}) rule to close the branch. \\
 For intersection and concatenation our rules result in the elimination of the context, leaving only \0. Again, we can use the (\textsc{empty}) rule and close the branch. \\
 
 %------------------------------ \top2
-\noindent If $\relr = \top_2$ ($= (E \times E)$) and Grünke et al. apply the ($\top_2L$) rule, the term $e_1.\top_2$ is replaced by $\top_1$ which is the full set of events $E$. In positive reasoning, Grünke et al. would apply the ($\top_1$) rule next and with that create a fresh event $f$ that is not constricted to being part of any relation.
+\paragraph{Full Relation} If $\relr = \top_2$ ($= (E \times E)$) and Grünke et al. apply the ($\top_2L$) rule, the term $e_1.\top_2$ is replaced by $\top_1$ which is the full set of events $E$. In positive reasoning, Grünke et al. would apply the ($\top_1$) rule next and with that create a fresh event $f$ that is not constricted to being part of any relation.
 In our system, we need to be more aware of the context. For an intersection $(E\times E) \cap \relr'$ this equates to the ($\textsc{full}_\cap$) rule, which eliminates the full relation.
 For a concatenation, the full relation would stay and we would not apply any rule.
 
+\paragraph{Inversion} If $\relr = \relr'^{-1}$ then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, only the ($aR$) rule can be applied, yielding a fresh event $f$ as demanded by the decomposition lemma.
+Since the inversion is still in the term as an inverted edge $(f,e)$, we do not need to apply any rule in the corresponding relational inclusion proof.
 
-\paragraph{Branching:}
-\todo{($\cup_2L$), ($\neg \times L$), ($\cup_1$), ($\neg eL$),...}
+\subsubsection{Negative Reasoning}
+For \rels{} the rules that Grünke et al. apply are mostly different. If \rels{} cannot be decomposed further, they would apply ($\neg aL$), producing $\neg p[e_1.\rels] \land (e_1,e_3) \in \rels \land \neg p[e_3]$ and if the context is still $(\dots \cap e_2) \neq \emptyset$ then afterwards they use the ($\neg \cap_e$) rule to produce $\neg e_3 = e_2$. These rules do not change the semantics of the formula and therefore we do not need to apply rules in our system. 
 
-\paragraph{Elimination:}
-\todo{id und co}
+\paragraph{Concatenation} If $\rels = \rels_1.\rels_2$, Grünke et al. would again apply the ($._{2,2}L$) rule resulting in $\neg (e_1.\rels_1).\rels_2$. If the decomposition lemma holds for all other rules, then at some point in the future $e_1.\rels_1$ will have been decomposed into a fresh event $f$ and the decomposition continues with $f.\rels_2$.
 
-\paragraph{Other Rules:}
-Zeigen, dass die alle nichts wirklich machen
+\paragraph{Unification} If $\rels = \rels_1 \cup \rels_2$, the ($\neg \cup_2 L$) rule would be applied, resulting in $\neg p[e_1.\rels_1] \land \neg p[e_1.\rels_2]$. The form required by the decomposition lemma remains. The intuition for the conjunction is that any counterexample must not be in $\rels_1$ and $\rels_2$. Translated into the relational inclusion this corresponds to $\relr$ being a subrelation to $\rels_1$ or $\rels_2$. Since we do not use explicit disjunction but only the unification operator, this equates to distributing the context to both parts of the union. We could therefore use the ($\cap_{\cup dist}$) and ($._{\cup dist}$) rules to make the union the outermost operator.
+
+\paragraph{Intersection} If $\rels=\rels_1 \cap \rels_2$, the ($\cap_2L$) rule can be applied. It creates the term $(e_1.\rels_1) \cap (e_1.\rels_2)$ where the decomposition can continue for both parts of the intersection, since the required form is retained. 
+For the relational inclusion we do not need to apply any rule for the same reason as in the positive reasoning.
+
+\paragraph{Identity} If $\rels=\id$, the next rule in $\pi$ is ($\id L$) which eliminates the \id{} relation, leaving only the event $e_1$ behind. This satisfies the demands of the decomposition lemma.
+In $\prf_\pi$, this is the same case as in the positive reasoning. Accordingly we can use ($\id_{conc}$) or no rule at all depending on the context.
+
+\paragraph{Empty Relation} If $\rels=\bot_2$, Grünke et al. would apply ($\bot_2 L$) as in positive reasoning. This results in $\bot_1$ where the application of the ($\bot_1$) is not possible.
+In fact, in the system of Grünke et al. no rule can be applied and the decomposition of that predicate ends. The decomposition of the branch can only continue in positive reasoning or in a different negated predicate. When looking at what this term means for the relational inclusion it becomes clear why: \\
+Consider a relational term that includes the empty relation $\0$ aka $\bot_2$. As we have stated in the paragraph about the unification, this operator would be made the outermost in the relational term and creates separate predicates in the RAT-CAT formula. Therefore we can assume the term that corresponds to the predicate with $\bot_2$ to be union-free.
+For a concatenation or intersection with $\0$ the result would always be the empty relation.
+This makes the relational inclusion look like this:
+\[\relr \subseteq \rels' \cup \0 \cup \rels''\]
+Hence, in $\prf_\pi$ we can use ($\0_{conc}$) and ($\0_\cap$) until we reach the term $\0$.
+
+\paragraph{Full Relation} If $\rels= \top_2$, ($\top_2L$) can be invoked. This yields $\top_1$ to which Grünke et al. apply the ($\neg\top_1$) rule. This produces $\neg p[e]$ where is an event which appears positively in $\Gamma$. Depending on the context, the decomposition can now continue. In the case that there is no context, choosing $e_2$ for the event will construct a contradiction. The ($\neg \cap_e$) rule derives $\neg e_2 = e_2$ and from that ($\neg =$) infers $\bot_0$ and closes the branch.
+In our system this equates to using the (\textsc{Full}) rule, which closes the branch if the including term is the full relation.
+
+\paragraph{Inversion} If $\rels = \rels'^{-1}$, we can assume according to \cref{lem:inversion} that $\rels'$ cannot be decomposed any further. Therefore $\pi$ uses ($\cdot^{-1}L$) before applying ($\neg aL$) and deriving $\neg p[\rels'.e_1], (f,e_1) \in \rels', \neg p[f]$ where the decomposition yields a fresh event $f$ as required by \cref{lem:decomposition}.
+As we stated in the paragraph for inversions in positive reasoning, the inversion remains in the term with the edge $(f,e_1)$ and we do not need to apply any rule in our system.
+
+\todo{$\times$ und Branch closing}
+
 
 \paragraph{Closing the Branch:}Because a proof in \cite{Gru+26} needs to be a closed tableau, we only need to translate those rules that close a branch.
 The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We can mimic their behavior with our rules like this:
@@ -1115,8 +1146,7 @@ In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. Transla
 \item ($\bot_1$): A positive predicate describes that a certain relation is non-empty. In this rule, the precondition is that this relation includes the empty set $\bot_1$. The empty set itself cannot be a relational term. It needs to be concatenated to or intersected with an event, set or relation. Unification is not possbible, since Grünke et al. do not apply rules on terms which are not union-free \cite{Gru+26}. Any intersection or concatenation with the empty set results in an empty relation and we can use the rule (\textsc{empty}) in our proof system to get the same result.
 \end{itemize}
  
-\paragraph{Inductionhypothesis:} 
-Any RAT-CAT-SAT proof $\pi$ that applies $(n-1) \in \N$ rules has an equivalent counterpart $\prf_\pi$ in our relational inclusion proof system.
+
 
 \paragraph{Induction step:} Now, it remains to be shown that any proof $\pi$ of length $n$ can be translated into a proof $\prf_\pi$. Since the last rule is always going to be one of those we handled in the base case, we look at the first applied rule in any proof of lenth $n$. This could be any of the remaining rules from \cite{Gru+26}. Hence, we need to translate the effects of all of those into our proof system.
 
@@ -1124,11 +1154,7 @@ Any RAT-CAT-SAT proof $\pi$ that applies $(n-1) \in \N$ rules has an equivalent 
 Any relational inclusion in \cite{Gru+26} of the form $\relr \subseteq \rels$ can be transformed into the RAT-CAT-SAT formula \[(e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
 Grünke et al. decompose the positive term $(e_1.\relr~ \cap e_2) \neq \emptyset$ with the positive rules into the predicates $s \neq \emptyset$, $e_i = e_j$, $e \in A$ and $(e_i,e_j) \in \relr$. Which rules are applied depends on the form of $\relr$. \\
 
-\begin{lemma}[Positive Decomposition Lemma] \todo{gut formulieren}
-For any literal $l=(e_1.\relr~ \cap~ e_2) \neq \emptyset$, the decomposition of Grünke et al. \cite{Gru+26} only yields literals of the form $(e',f') \in \relr'$ and $e' = f'$ and one new literal $l'=f \cap e_2 \neq \emptyset$ where the event $f$ replaces $e_1.\relr$ in the predicate. 
-\end{lemma}
 
-To prove this lemma, we observe that every term $p[e.\relr]$ will be decomposed into either a term that again includes $e'.\relr'$ or into $(e,f) \in \relr \land p[f]$, depending on whether \relr{} can be decomposed or not. \\ 
 
 
 
@@ -1149,7 +1175,7 @@ For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Simi
 \begin{appendix}
 \addcontentsline{toc}{part}{Appendix}
 \section{Proof of the Inversion lemma}\label{sec:inversionproof}
-\Cref{lem:inversion}:
+\Cref{lem:inversion}: \todo{nach neuer Aussage umformulieren}
 Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. \\
 \begin{proof}
 When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation. \todo{Die richtigen Definitionen aus \Cref{def:sem} einfügen}
