@@ -1212,56 +1212,62 @@ For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. Simi
 \begin{appendix}
 \addcontentsline{toc}{part}{Appendix}
 \section{Proof of the Inversion lemma}\label{sec:inversionproof}
-\Cref{lem:inversion}: \todo{nach neuer Aussage umformulieren}
-Let $\bangle{cat}$ be a CAT expression that features an inversion. There is an expression $\bangle{cat} '$ that only features inversions that are applied to base relations with $\semsof{\bangle{cat}} = \semsof{\bangle{cat} '}$. \\
+\Cref{lem:inversion}:
+Let $\relr$ be a relational expression that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to base relations with $\semsof{\relr} = \semsof{\relr'}$. 
 \begin{proof}
-When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation. \todo{Die richtigen Definitionen aus \Cref{def:sem} einfügen}
+When it can be shown for each operation in CAT that the inversion of the whole expression can be passed on to the individual terms, any CAT expression has this property. Therefore we show the property for each operation.
+\begin{description}
+\item[Case $(\relr \cup \rels)^\inv$:] 
 \begin{eqnarray*}
-\semsof{(\relr \cup \rels)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr \cup \rels\} \\
-&=& \{(e,e') \mid (e',e) \in \relr\} \cup \{(e,e') \mid (e',e) \in \relr\} \\
-&=& \semsof{\relr^{-1}} \cup \semsof{\rels^{-1}} \\
-&=& \semsof{\relr^{-1} \cup \rels^{-1}}
+\semsof{(\relr \cup \rels)^{-1}} &= &\{(e,e') \mid (e',e) \in \relr \cup \rels\} \reason{\defof \rel^{-1}} \\
+&= &\{(e,e') \mid (e',e) \in \relr \lor (e',e) \in \rels\} \reason{\defof \rel_1 \cup \rel_2} \\
+&= &\{(e,e') \mid \edgein \relr^{-1} \lor \edgein \rels^\inv\} \reason{\defof \rel^\inv} \\
+%= &\semsof{\relr^{-1}} \cup \semsof{\rels^{-1}} \reason{\defof \rel_1 \cup \rel_2} \\
+&= &\semsof{\relr^{-1} \cup \rels^{-1}} \reason{\defof \rel_1 \cup \rel_2}
 \end{eqnarray*}
+\item[Case $(\relr \cap \rels)^\inv$:] 
 \begin{eqnarray*}
-\semsof{(\relr \cap \rels)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr\cap \rels\} \\
-&=& \{(e,e') \mid (e',e) \in \relr\} \cap \{(e,e')\mid (e',e) \in \rels\} \\
-&=& \semsof{\relr^{-1}} \cap \semsof{\rels^{-1}} \\
-&=& \semsof{\relr^{-1} \cap \rels^{-1}}
+\semsof{(\relr \cap \rels)^{-1}} &= &\{(e,e') \mid (e',e) \in \relr\cap \rels\} \reason{\defof \rel^\inv}\\
+&= &\{(e,e') \mid (e',e) \in \relr \land (e',e) \in \rels\} \reason{\defof \rel_1 \cap \rel_2} \\
+&= &\{(e,e') \mid \edgein \relr^\inv \land \edgein \rels^\inv\} \reason{\defof \rel^\inv}\\
+&= &\semsof{\relr^{-1} \cap \rels^{-1}} \reason{\defof \rel_1 \cap \rel_2}
 \end{eqnarray*}
+\item[Case $(\relr.\rels)^\inv$:] 
 \begin{eqnarray*}
-\semsof{(\relr.\rels)^{-1}} &=& \{(e,e'') \mid (e'',e) \in (\relr.\rels)\} \\
-&=& \{(e,e'') \mid \exists e': (e'',e') \in \relr, (e',e) \in \rels \} \\
-&=& \{(e,e'') \mid \exists e': (e',e'') \in \relr^{-1}, (e,e') \in \rels^{-1}\} \\
-&=& \semsof{\relr^{-1}.\rels^{-1}}
+\semsof{(\relr.\rels)^{-1}} &=& \{(e,e') \mid (e',e) \in (\relr.\rels)\} \reason{\defof \rel^\inv}\\
+&=& \{(e,e') \mid \exists e'': (e',e'') \in \relr, (e'',e) \in \rels \} \reason{\defof \rel_1.\rel_2}\\
+&=& \{(e,e') \mid \exists e'': (e'',e') \in \relr^{-1}, (e,e'') \in \rels^{-1}\} \reason{\defof \rel^\inv} \\
+&=& \semsof{\relr^{-1}.\rels^{-1}} \reason{\defof \rel_1.\rel_2}
 \end{eqnarray*}
+\item[Case $(\sim \relr)^\inv$:]
 \begin{eqnarray*}
-\semsof{(\sim \relr)^{-1}} &=& \{(e,e') \mid (e',e) \in~ \sim \relr\} \\
-&=& \{(e,e') \mid (e',e) \notin \relr\} \\
-&=& \{(e,e') \notin \relr^{-1}\} \\
-&=& \semsof{\sim (\relr^{-1})}
+\semsof{(\sim \relr)^{-1}} &=& \{(e,e') \mid (e',e) \in~ \sim \relr\} \reason{\defof \rel^\inv} \\
+&=& \{(e,e') \mid (e',e) \notin \relr\} \reason{\defof \sim \rel}\\
+&=& \{(e,e') \notin \relr^{-1}\} \reason{\defof \rel^\inv}\\
+&=& \semsof{\sim (\relr^{-1})} \reason{\defof \sim \rel}
 \end{eqnarray*}
-\begin{eqnarray*}
-\semsof{(\relr^+)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr^+\} \\
-&=& \{(e,e') \mid \exists n \in \N: (e',e_1),\dots ,(e_n,e) \in \relr\} \\
-&=& \{(e,e') \mid \exists n \in \N: (e,e_n),\dots ,(e_1,e') \in \relr^{-1}\} \\
-&=& \semsof{(\relr^{-1})^+}
+\item[Case $(\relr^+)^\inv$:]\begin{eqnarray*}
+\semsof{(\relr^+)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr^+\} \reason{\defof \rel^\inv} \\
+&=& \{(e,e') \mid \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]:(e_i,e_{i+1}) \in \relr\} \reason{ \rel^+}\\
+&=& \{(e,e') \mid \exists n \in \N: e'=e_1 \land e=e_n \land \forall i \in [1,n]:(e_i,e_{i+1}) \in \relr^\inv\} \reason{ \rel^\inv} \\
+&=& \semsof{(\relr^{-1})^+} \reason{\defof \rel^+}
 \end{eqnarray*}
-\begin{eqnarray*}
-\semsof{(\relr?)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr?\} \\
-&=& \{(e,e') \mid (e',e) \in \relr \cup \id \} \\
-&=& \{(e,e') \in \relr^{-1} \cup \id^{-1}\} \\
-&=& \{(e,e') \in \relr^{-1} \cup \id\} \\
-&=& \{(e,e') \in (\relr^{-1})?\} \\
-&=& \semsof{(\relr^{-1})?}
+\item[Case $(\relr?)^\inv$:]\begin{eqnarray*}
+\semsof{(\relr?)^{-1}} &=& \{(e,e') \mid (e',e) \in \relr?\} \reason{\defof \rel^\inv} \\
+&=& \{(e,e') \mid (e',e) \in \relr \cup \id \} \reason{\defof \rel ?} \\
+&=& \{(e,e') \mid \edgein \relr^{-1} \cup \id^{-1}\} \reason{\defof \rel^\inv} \\
+&=& \{(e,e') \mid \edgein \relr^{-1} \cup \id\} \reason{\defof \id} \\
+&=& \semsof{(\relr^{-1})?} \reason{\defof \rel?}
 \end{eqnarray*}
-\begin{eqnarray*}
-\semsof{(\relr^*)^{-1}} &=& \{(e,e') \mid (e',e) \in \id \cup \relr^+\} \\
-&=& \{(e,e') \mid (e',e) \in \id\} \cup \{(e,e') \mid (e',e) \in \relr^+\} \\
-&=& \{(e,e') \in \id^{-1}\} \cup \{(e,e') \in (\relr^+)^{-1}\} \\
-&=& \{(e,e') \in \id \cup (\relr^{-1})^+ \} \\
-&=& \{(e,e') \in (\relr^{-1})^*\} \\
-&=& \semsof{(\relr^{-1})^*}
+\item[Case $(\relr^*)^\inv$:]\begin{eqnarray*}
+\semsof{(\relr^*)^{-1}} &=& \{(e,e') \mid (e',e) \in \id \cup \relr^+\} \reason{\defof \rel^\inv \text{ and } \defof \rel^*}\\
+&=& \{(e,e') \mid (e',e) \in \id \lor (e',e) \in \relr^+\} \reason{\defof \rel_1 \cup \rel_2}\\
+&=& \{(e,e') \mid \edgein \id^{-1} \lor \edgein (\relr^+)^{-1}\} \reason{\defof \rel^\inv} \\
+&=& \{(e,e') \mid \edgein \id \lor \edgein (\relr^{-1})^+ \} \reason{\defof \id \text{ and Case } (\relr^+)^\inv} \\
+&=& \{(e,e') \mid \edgein \id \cup (\relr^{-1})^+ \} \reason{\defof \rel_1 \cup \rel_2} \\
+&=& \semsof{(\relr^{-1})^*} \reason{\defof \rel^*}
 \end{eqnarray*}
+\end{description}
 \end{proof}
 
 
