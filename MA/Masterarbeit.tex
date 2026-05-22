@@ -1019,7 +1019,7 @@ First, $\prf_\pi$ has the same structure as $\pi$, meaning that whenever $\pi$ u
 
 
 
-\begin{lemma}[Branching Lemma]
+\begin{lemma}[Branching Lemma]\label{lem:branching}
 Whenever $\pi$ creates new branches where the first cubes are $\C^\pi_1, \C^\pi_2$, $\prf_\pi$ can create new branches $\B_1, \B_2$ where when $\C_1$ and $\C_2$ describe counterexamples to the inclusions $\relr_1 \subseteq \rels_1$ and $\relr_2 \subseteq \rels_2$, the terms in $\B_1$ and $\B_2$ need to be exactly those inclusions.
 \end{lemma}
 \begin{proof}
@@ -1035,12 +1035,12 @@ For the cross product, the ($\neg \times L$) rule creates two branches where eac
 Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep the semantics the same. 
 \end{proof}
 
-\begin{lemma}[Splitting Lemma]
+\begin{lemma}[Splitting Lemma]\label{lem:splitting}
 Whenever $\pi$ splits a literal $l$ into the non-atomic literals $l_1, l_2$ (there are only rules that split into two literals), $\prf_\pi$ can justify the separate decomposition of both literals.
 \end{lemma}
 \begin{proof}
 In $\pi$ many rules split a literal into multiple ones. The atomic literals $e_1 = e_2, e \in A, (e,e') \in \relr, e \neq \emptyset$ and their negated counterparts keep information about the relational term that has already been decomposed and are not of concern for this lemma.
-We only look at the non-atomic literals where one literals turns into two and takes the context of the predicate with it.
+We only look at the non-atomic literals where one literal turns into two new ones that take the context of the predicate with it.
 Since this only appears in negative reasoning, we can assume that the literal in the premise has the form $\neg p[\dots]$. Furthermore, this gives us the knowledge that only the including term $\rels$ is concerned in $\prf_\pi$. \\
 Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
 Each term of the unification can be decomposed on it's own.
@@ -1107,13 +1107,14 @@ The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$. At the end of e
 Again, this term does not change the structure of the term and needs no translation.\\
 
 \paragraph{Kleene-star}
-In the case that $\relr = \relr'^*$, Grünke et al.'s proof would use the ($*L$) rule which branches the tableau into one branch pursuing a counterexample where $r=\id$ and one branch where $r = r^+$.
+In the case that $\relr = \relr_1^*$, Grünke et al.'s proof would use the ($*L$) rule which branches the tableau into one branch pursuing a counterexample where $r=\id$ and one branch where $r = r^+$.
 By using the ($*$) transformation, letting the unification become the outermost operator and using the ($\cup_{L2}$) rule we can branch with the same effect in $\prf_\pi$.
 
 %------------------------------- e x A
-\paragraph{Cross Product} If $\relr = e_3 \times A$ with $A \subseteq E$, Grünke et al. would apply the ($\times L$) rule followed by the ($A$) rule which produces $e_1 = e_3, f\in A, p[f]$, again passing a new event onto the surrounding term. Again, this would not change the relational term and therefore no action is needed in our system. \\
+\paragraph{Cross Product} If $\relr = (e_3 \times A)$ with $A \subseteq E$, Grünke et al. would apply the ($\times L$) rule followed by the ($A$) rule which produces $e_1 = e_3, f\in A, p[f]$, again passing a new event onto the surrounding term. Again, this would not change the relational term and therefore no action is needed in our system. \\
 However, if $A = A_1 \cup A_2$, then the ($\cup_1$) rule would branch the tableau before applying the ($A$) rule.
-To do this in our proof system, we need to \todo{Set Rules?} transform $e_3 \times (A_1 \cup A_2)$ into $(e_3 \times A_1) \cup (e_3 \times A_2)$. After that we can simply use the ($\cup_L$) rule to split our tableau. \\ \todo{A x e}
+To do this in our proof system, we need to \todo{Set Rules?} transform $e_3 \times (A_1 \cup A_2)$ into $(e_3 \times A_1) \cup (e_3 \times A_2)$. After that we can simply use the ($\cup_L$) rule to split our tableau. \\
+In the case that $\relr= (B \times A)$, the ($A$) rule can be applied, yielding the demanded form of $(e_3 \times A)$. In the case that $\relr = (A \times e_3)$, $\pi$ would again first use the ($A$) rule and then continue as described above.
 
 %------------------------------- id
 \paragraph{Identity} If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend very much on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
@@ -1144,7 +1145,7 @@ For \rels{} the rules that Grünke et al. apply are mostly different. If \rels{}
 \paragraph{Intersection} If $\rels=\rels_1 \cap \rels_2$, the ($\cap_2L$) rule can be applied. It creates the term $(e_1.\rels_1) \cap (e_1.\rels_2)$ where the decomposition can continue for both parts of the intersection, since the required form is retained. 
 For the relational inclusion we do not need to apply any rule for the same reason as in the positive reasoning.
 
-\paragraph{Kleene-star} \todo{}
+\paragraph{Kleene-star} If $\rels = \rels_1^*$, the next rule in $\pi$ would be ($\neg *L$). This splits the predicate $\neg p[e_1.\relr^*]$ into two new predicates $\neg p[e_1], \neg p[(e_1.\relr).\relr^*]$, letting the decomposition continue as demanded in \Cref{lem:decomposition}. In $\prf_\pi$ the corresponding action would be to use the ($*$) transformation on $\relr^*$ and then make the new unification the outermost operator. According to \Cref{lem:splitting} this is equivalent to the new predicates in $\pi$.
 
 \paragraph{Identity} If $\rels=\id$, the next rule in $\pi$ is ($\id L$) which eliminates the \id{} relation, leaving only the event $e_1$ behind. This satisfies the demands of the decomposition lemma.
 In $\prf_\pi$, this is the same case as in the positive reasoning. Accordingly we can use ($\id_{conc}$) or no rule at all depending on the context.
