@@ -366,8 +366,8 @@ Since this proof system is designed to handle CAT expressions and not just arbit
 \subsection{Eliminating the Constraints}\label{sec:constraints}
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
-\begin{lemma}
-For any $\relr_1 \subseteq \relr_2$ it applies that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
+\begin{lemma}\label{lem:elimination}
+Let $\relr_1, \relr_2 \subseteq (E \times E)$ be two relational terms. For any inclusion $\relr_1 \subseteq \relr_2$ it applies that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
 \end{lemma}
 \begin{proof}
 We can prove this for each of the constraints. 
@@ -745,10 +745,10 @@ We use definitions like \texttt{let r = s} as a rule
 %\todo{was tun bei allen anderen Termen?}
 %For terms where the recursion is not isolated, i.e. $\Upsilon$ is not recursion-free, it is more difficult to find rules. Here we need to use cyclic proofs with a progression rule.
 %The progression rule is the following:
-
+\pagebreak
 \section{Soundness}\label{sec:soundness}
-\begin{theorem}[Soundness]
-If there is a proof $\mathcal{P}$ for an inclusion $\relr \subseteq \rels$, then the inclusion holds.
+\begin{theorem}[Soundness]\label{thm:soundness}
+Let $\relr, \rels \subseteq (E\times E)$ be two relational terms. If there is a proof $\prf$ for the inclusion $\relr \subseteq \rels$, then the inclusion holds.
 \end{theorem}
 
 \noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
@@ -945,7 +945,16 @@ With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and stre
 \end{itemize}
 
 \subsection{Soundness for MCM Inclusion Proofs}
-\todo{Soundness auf MCMs erweitern}
+We have proven soundness of our proof system for arbitrary relations $\relr \subseteq \rels$.
+To fulfill the goal of this thesis, we still need to prove soundness for memory consistency models.
+\begin{theorem}[MCM Soundness]
+Let $M_1 = \bangle{constraint}~ \relr_1$, $M_2 = \bangle{constraint}~ \relr_2$ be two memory consistency models characterized by CAT expressions. If there is a CAT inclusion proof $\prf^{CAT}$ for the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ then the inclusion holds.
+\end{theorem}
+\begin{proof}
+We have a CAT inclusion proof $\catprf$ for the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ that uses a relational inclusion proof $\prf$. 
+From \Cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} we know that any two CAT expressions can be transformed to use the same constraint. The constraint transformation rules thus yield $M_1' = \bangle{constraint}~ \relr_1', M_2' = \bangle{constraint}~ \relr_2'$ with $\semsof{M_1} = \semsof{M_1'}$ and $\semsof{M_2} = \semsof{M_2'}$ where the constraints are the same. \\
+With \Cref{lem:elimination} we know that if $\relr_2' \subseteq \relr_1'$ holds, then the CAT inclusion holds as well. Since any CAT inclusion proof $\catprf$ contains a relational inclusion proof $\prf$ and we know from \Cref{thm:soundness} that these are sound, the inclusion $\relr_2' \subseteq \relr_1'$ holds. Together with \Cref{lem:elimination} it is clear that $\semsof{M_1} = \semsof{M_1'} \subseteq \semsof{M_2'} = \semsof{M_2}$ holds and hence the CAT inclusion proof $\catprf$ is sound.
+\end{proof}
 
 
 \pagebreak
