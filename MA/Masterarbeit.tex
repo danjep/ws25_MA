@@ -1032,32 +1032,6 @@ Assuming $\pi$ to be the shortest proof will give us the information that every 
 \todo{Anders formulieren?} To that end, we put down some properties that $\prf_\pi$ will fulfill:
 First, $\prf_\pi$ has the same structure as $\pi$, meaning that whenever $\pi$ uses a branching rule, $\prf_\pi$ also uses one. Secondly, Every branch in $\pi$ that is closed (ending in $\bot_0$ or infinite) has an equivalent branch in $\prf_\pi$ that is closed (ending in \true). The third property is that whenever $\pi$ splits a predicate into two non-atomic predicates, this needs to be reflected in $\prf_\pi$. Finally, if $\pi$ eliminates a relation from the formula, the same must be justified by a rule in $\prf_\pi$.
 
-
-\begin{lemma}[Positive Branching Lemma]\label{lem:branching}
-Whenever $\pi$ creates new branches via positive reasoning where the first cubes are $\C^\pi_1$ and $\C^\pi_2$, $\prf_\pi$ can create new branches $\B_1, \B_2$ where when $\C_1$ and $\C_2$ describe counterexamples to the inclusions $\relr_1 \subseteq \rels_1$ and $\relr_2 \subseteq \rels_2$, the terms in $\B_1$ and $\B_2$ are exactly those inclusions.
-\end{lemma}
-\begin{proof}
-For unions and Kleene-stars the positive rules create new \textit{branches}. To prove the lemma and emulate the behavior of $\pi$, the branching in $\prf_\pi$ needs to have the same effect on the semantics.
-A union in the positive term essentially means, that a counterexample to the inclusion needs to be in both of the unified relations and to prove the inclusion true it has to be shown that there cannot be a counterexample in either.
-This corresponds closely to branching a union in the included term with ($\cup_{L2}$), because it argues that both subrelations need to be included, i.e. there is no counterexample to the induction in either.
-For the Kleene-star rule ($*L$) the branching is based on a union too, since $\relr^* = \id \cup \relr^+$. \\
-
-\begin{lemma}[Negative Branching Lemma]
-Whenever $\pi$ creates new branches via negative reasoning where the first cubes are $\C^\pi_1$ and $\C^\pi_2$, then $\prf_\pi$ captures the semantics of both cubes in it's inclusion term.
-\end{lemma}
-In negative reasoning, branching occurs whenever there is an intersection or a cross product.
-For intersections, the ($\cap_2L$) rule parts the decomposition inside of the literal into two terms that can return the events $f_1,f_2$. Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}R$) or the ($\neg eL$) rule can be applied. The intuition for the former case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. This would mean, that it is no counterexample. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
-In the relational proof, this equates to a term $\relr \subseteq \rels \cap \relt$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \relt$. \\
-For the cross product, the ($\neg {\times} L$) rule creates two branches where each only retains one set. The premise was that the counterexample must not have an edge where the events belong to these sets. The conclusion of the rule is that the first event cannot be in $s_1$ and the second one cannot be in $s_2$. In relational inclusion proofs, we can use the (${\times}_R$) rule which branches $\relr \subseteq \Delta[(A \times B)]$ into $\relr \subseteq \Delta[(A \times E)]$ and $\relr \subseteq \Delta[(E \times B)]$. The same goes for ($\neg_1 {\times} L$) and ($\neg {\times}_1L$).
-Even though only one branch seems to retain the predicate $p[]$, this is only really the case, when 
-$e$ is not a fresh event originating from the decomposition. If it is a fresh event, one of the following rules must have been applied: ($\neg aL$), ($\neg {\equiv}  L$), ($\neg A$), ($\neg \top_1$).
-These are the only rules that introduce fresh events or events from the positive reasoning into the negated predicate. Furthermore, all of the mentioned rules duplicate the predicate, meaning that the context of $\neg p[]$ is still in the cube.
-In the case, that $e$ in the rule is not fresh, it has to be the $e_1$ from the RISF. \todo{Grund?}
-Then, there is no context that could be taken into the branches
-
-Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep the semantics the same. 
-\end{proof}
-
 \begin{lemma}[Splitting Lemma]\label{lem:splitting}
 Whenever $\pi$ splits a literal $l$ into the non-atomic literals $l_1, l_2$ (there are only rules that split into two literals), $\prf_\pi$ can justify the separate decomposition of both literals.
 \end{lemma}
@@ -1068,6 +1042,34 @@ Since this only appears in negative reasoning, we can assume that the literal in
 Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
 Each term of the unification can be decomposed on it's own.
 The rules that split literals all use the unification operator (see (${\neg}*L$), ($\neg {\cup_2}L$), ($\neg\cup_1$)) or duplicate a literal for an equivalent event (see ($\neg A$), ($\neg {\equiv} L$), ($\neg \top_1$)).  \todo{Das nochmal genauer anschauen}{In the latter case, this would correspond to a unification with the same term $\rels \cup \rels$.}
+\end{proof}
+
+
+\begin{lemma}[Branching Lemma]\label{lem:branching}
+Whenever $\pi$ creates new branches where the first cubes are $\C^\pi_1$ and $\C^\pi_2$, $\prf_\pi$ can create new branches $\B_1, \B_2$ where when $\C_1$ and $\C_2$ describe counterexamples to the inclusions $\relr_1 \subseteq \rels_1$ and $\relr_2 \subseteq \rels_2$, the terms in $\B_1$ and $\B_2$ are exactly those inclusions.
+\end{lemma}
+\begin{proof}
+For unions and Kleene-stars the positive rules create new \textit{branches}. To prove the lemma and emulate the behavior of $\pi$, the branching in $\prf_\pi$ needs to have the same effect on the semantics.
+A union in the positive term essentially means, that a counterexample to the inclusion needs to be in both of the unified relations and to prove the inclusion true it has to be shown that there cannot be a counterexample in either.
+This corresponds closely to branching a union in the included term with ($\cup_{L2}$), because it argues that both subrelations need to be included, i.e. there is no counterexample to the induction in either.
+For the Kleene-star rule ($*L$) the branching is based on a union too, since $\relr^* = \id \cup \relr^+$. \\
+
+In negative reasoning, branching occurs whenever there is an intersection or a cross product.
+For intersections, the ($\cap_2L$) rule parts the decomposition inside of the literal into two terms that will return the events $f_1,f_2$. This is only possible, if either relation is the full relation or if they exist at the same position in the included term.
+Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}R$) or the ($\neg eL$) rule can be applied. The intuition for the former case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. This would mean, that it is no counterexample. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
+In the relational proof, this equates to a term $\relr \subseteq (\rels \cap \rels')$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \rels'$. \\
+In the case of the latter rule, the intersection can be anywhere in the including term. But the order in which rules are applied in $\pi$ let's us know that this side of the inclusion is eliminated from left to right. Therefore we know that if the rule is applied, all terms that are concatenated on the left side have already been eliminated and we only have terms concatenated to the right side. Furthermore, we know from \Cref{lem:splitting} that the predicate will be union-free and we can assume that there is no intersection around this one, since in that case $\pi$ would have created a new branch via ($\neg eL$) before where the ($\neg \cap_1 L$) rule would be applicable. \\
+Hence, we know the term to be of the form $\neg p[(\rels \cap \Rels').\relt]$.
+As both branches will be closed in the future and could not be closed before, the terms both have the potential for a contradiction.
+We have already stated that $\rels, \rels'$ have to appear in the included term at the same position as in the including term. The branch with $\neg f_1 \cap f_2 \neq \emptyset$ (resulting in $\neg f_1 = f_2$) can only induce a contradiction if the predicate $f_1 = f_2$ already exists. This means that the intersection as a whole needs to exist in the included term at the exact same position. \\
+Therefore we can apply the ($._{LR}$) rule in our system, branching the inclusion term $(\rels \cap \rels').\relr' \subseteq (\rels \cap \rels').\relt$ into $\rels \cap \rels' \subseteq \rels \cap \rels'$ and $\relr' \subseteq \relt$. 
+
+If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
+The latter predicate retains the context and after applying ($\neg A$) to it, yields a positive event $f_2$ for the decomposition as demanded by \Cref{lem:decomposition}. Once more, this requires a predicate $f_2 \in A_2$ originating from the positive reasoning. \\
+A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be applied using all concatenated relations as $\relr$ (\textcolor{red}{\Relr{}} in the context of the rule from \cite{Gru+26}) and $e_2$ as the intersected event $e$. Either way, the set would have to be decomposed into an event and therefore we assume the first rule to be applicable. \\
+Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and another with the remaining term. \\
+
+Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep the semantics the same. 
 \end{proof}
 
 
@@ -1211,10 +1213,7 @@ Hence, in our system we will apply a variation of the ($._{LR}$) rule called ($.
 }{\relr.\rels \subseteq \relr.\rels'}
 \end{mathpar}
 
-\paragraph{Cross Product} If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
-The latter predicate retains the context and after applying ($\neg A$) to it, yields a positive event $f_2$ for the decomposition as demanded by \Cref{lem:decomposition}. Once more, this requires a predicate $f_2 \in A_2$ originating from the positive reasoning. \\
-A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be applied using all concatenated relations as $\relr$ (\textcolor{red}{\Relr{}} in the context of the rule from \cite{Gru+26}) and $e_2$ as the intersected event $e$. Either way, the set would have to be decomposed into an event and therefore we assume the first rule to be applicable. \\
-Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and another with the remaining term. \\
+\paragraph{Cross Product} If the ($\neg {\times}L$) rule is used on a cross product we use the ($._{LR}$) rule as stated in the proof for \Cref{lem:branching}.
 If $(A_1 \times A_2)$ was part of an intersection, we would refer to the paragraph on intersections.
 If any of the sets are the empty or full sets, we refer to the corresponding paragraphs.
 
