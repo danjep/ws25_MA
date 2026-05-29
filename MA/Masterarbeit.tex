@@ -1090,10 +1090,13 @@ We will see that any formula $\phi'$ that is a decomposition from a RISF formula
 
 
 \begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
-For any term $e_1.\relt$ in a literal of RAT-CAT-SAT, the decomposition of Grünke et al. \cite{Gru+26} applies only rules which result in either an event constant $f$ which replaces $e_1.\relt$ or a new term $e_1'.\relt'$.
-Since this holds in turn for $e_1'.\relt'$, the decomposition will eventually return an event $f$.
-\todo{$\bot_1$ als special case einfügen. Evtl umformulieren zu decomposition regeln und regeln an denen die decomp nicht weiter geht.}{} \end{lemma} 
+Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $e_1.\relt$ yields either a new term $e_1'.\relt'$ or an event $f_1$.
+Since this lemma can be applied repeatedly on the resulting term $e_1'.\relt'$, any decomposition of the term $e_1.\relt$ will eventually yield an event $f_1$.
+\end{lemma} 
 
+\begin{proof}
+\todo{Alle Regeln einmal Syntaktisch durchgehen und den Kram aus den Paragraphen rausstreichen}{}
+\end{proof}
 \todo{den folgenden Abschnitt komplett überarbeiten:}{ \\
 To prove the decomposition lemma, we will examine the effect of all rules that can be applied to a RAT-CAT formula in RISF. It is important to distinguish the rules of Grünke et al. into those that are applied to the non-negated term and those applied to the negated term. The positive reasoning consists of all rules withour a $\neg$ in their name. The negative reasoning uses the rules with a $\neg$ in the name and those positive rules which are applied to literals, i.e. where the context is $l[\dots]$. 
 Furthermore, Grünke et al. assume each term to be union-free and Kleene-star-free. This can be achieved in their proof system by branching the tableau every time a union or Kleene-star occurs in positive reasoning and splitting the predicate into multiple ones in negative reasoning.
@@ -1178,7 +1181,6 @@ In $\prf_\pi$ we apply at this point the ($._{LR}$) rule, branching the tableau 
 For the case with $\top_2$ we refer to the according paragraph.
 This branch can then be closed using the (\textsc{reflexivity}) rule. \Cref{lem:branching} justifies this.  
 
-\todo{bis hier sind die Regeln überarbeitet}{}
 
 \paragraph{Kleene-star} If $\rels = \rels_1^*$, the next rule in $\pi$ would be ($\neg *L$). This splits the predicate $\neg p[e_1.\relr^*]$ into two new predicates $\neg p[e_1], \neg p[(e_1.\relr).\relr^*]$, letting the decomposition continue as demanded in \Cref{lem:decomposition}. In $\prf_\pi$ the corresponding action would be to use the ($*$) transformation on $\relr^*$ and then make the new unification the outermost operator. According to \Cref{lem:splitting} this is equivalent to the new predicates in $\pi$.
 
@@ -1194,18 +1196,13 @@ This makes the relational inclusion look like this:
 Hence, in $\prf_\pi$ we can use ($\0_{conc}$) and ($\0_\cap$) until we reach the term $\0$ which we can then eliminate with ($\0_\cup$). \\
 One could argue that since $\pi$ is the shortest possible proof, the ($\bot_2L$) rule would only be used in the case that the included term is \0. In that case the branch would have been closed already with the decomposition of the positive predicate and the ($\bot_0$) rule (see paragraph on the empty relation in positive reasoning). Therefore this rule would never be used in $\pi$.
 
-\paragraph{Full Relation} If $\rels= \top_2$, ($\top_2L$) can be invoked. This yields $\top_1$ to which Grünke et al. apply the ($\neg\top_1$) rule. This produces $\neg p[e]$ where is an event which appears positively in $\Gamma$. Depending on the context, the decomposition can now continue. In the case that there is no context, choosing $e_2$ for the event will construct a contradiction. The ($\neg \cap_e$) rule derives $\neg e_2 = e_2$ and from that ($\neg =$) infers $\bot_0$ and closes the branch. 
-In our system this equates to using the (\textsc{Full}) rule, which closes the branch if the including term is the full relation.
-For other contexts, Grünke et al. choose other events. The behavior meanwhile is consistent with how our rules work. For the context of an intersection, the full relation can be eliminated. For this case we use the ($\textsc{FULL}_\cap$) rule. In the context of a concatenation, we leave the full relation untouched and don't apply any rule.
+\paragraph{Full Relation} If $\rels= \top_2$, ($\top_2L$) can be invoked. This yields $\top_1$ to which Grünke et al. apply the ($\neg\top_1$) rule. This produces $\neg p[e]$ where $e$ is an event which appears positively in $\Gamma$, meaning it is an event that appears in the positive reasoning. Depending on the context, the decomposition can now continue. In the case that there is no context, choosing $e_2$ for the event will construct a contradiction. The ($\neg \cap_e$) rule derives $\neg e_2 = e_2$ and from that ($\neg =$) infers $\bot_0$ and closes the branch. 
+In our system this equates to using the (\textsc{full}) rule, which closes the branch if the including term is the full relation.
+For other contexts, Grünke et al. choose other events. The behavior meanwhile is consistent with how our rules work. For the context of an intersection, the full relation can be eliminated. For this case we use the ($\textsc{full}_\cap$) rule. In the context of a concatenation, we leave the full relation untouched and don't apply any rule.
 
-\paragraph{Inversion} If $\rels = \rels'^{-1}$, we can assume according to \cref{lem:inversion} that $\rels'$ cannot be decomposed any further. Therefore $\pi$ uses ($\cdot^{-1}L$) before applying ($\neg aL$) and deriving $\neg p[\rels'.e_1], (f,e_1) \in \rels', \neg p[f]$ where the decomposition yields a fresh event $f$ as required by \cref{lem:decomposition}.
-As we stated in the paragraph for inversions in positive reasoning, the inversion remains in the term with the edge $(f,e_1)$ and we do not need to apply any rule in our system.
-
-\paragraph{Cross Product} If $\rels = (A_1 \times A_2)$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can be transformed with ($A$) and ($\neg\cap_e$) into atomic predicates, ending the decomposition. The latter one retains the context and after applying ($A$) to it, yields a fresh event for the decomposition as demanded by \Cref{lem:decomposition}.\\
-Equivalently, in $\prf_\pi$ we can apply the ($\times_R$) rule, branching our tableau too. As we have already argued in the proof for \Cref{lem:branching}, this has the same effect on the inclusion.
-\todo{$\times$ und Branch closing}{}
-
-If the decomposition of \rels{} is finished, they would want to apply ($\neg aL$). This is only possible if $\rels = \relr$, since this rule needs $(e_1,e_3) \in \rels$ as a premise. The rule produces $\neg p[e_1.\relr] \land (e_1,e_3) \in \relr \land \neg p[e_3]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use a variation of the ($._{LR}$) rule which we call ($._{elim}$):
+\paragraph{Inversion} If $\rels = \rels'^{-1}$, we can assume according to \cref{lem:inversion} that $\rels'$ cannot be decomposed any further. Therefore $\pi$ uses ($\cdot^{-1}L$) before applying ($\neg aL$) and deriving $\neg p[\rels'.e_1], (f,e_1) \in \rels', \neg p[f]$ where the decomposition yields an event from positive reasoning $f$ as required by \cref{lem:decomposition}.
+Contrary to positive reasoning, here the inversion is eliminated from the term with the application of the ($\neg aR$) rule. Since ($\cdot^\inv L$) would only be invoked in the shortest proof if the relation can be eliminated, $\rels^\inv$ must appear at the same position in the included term.
+Hence, in our system we will apply a variation of the ($._{LR}$) rule called ($._{elim}$):
 \begin{mathpar}
 \inferrule*[left=($._{elim}$),vcenter]{\rels \subseteq \rels'}{\relr.\rels \subseteq \relr.\rels'} \quad = \quad \inferrule*[right=($._{LR}$),vcenter]{
 	\inferrule*[Left=(refl.)]{\true}{\relr \subseteq \relr} 
@@ -1213,26 +1210,25 @@ If the decomposition of \rels{} is finished, they would want to apply ($\neg aL$
 	\rels \subseteq \rels'
 }{\relr.\rels \subseteq \relr.\rels'}
 \end{mathpar}
+
+\paragraph{Cross Product} If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
+The latter predicate retains the context and after applying ($\neg A$) to it, yields a positive event $f_2$ for the decomposition as demanded by \Cref{lem:decomposition}. Once more, this requires a predicate $f_2 \in A_2$ originating from the positive reasoning. \\
+A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be applied using all concatenated relations as $\relr$ (\textcolor{red}{\Relr{}} in the context of the rule from \cite{Gru+26}) and $e_2$ as the intersected event $e$. Either way, the set would have to be decomposed into an event and therefore we assume the first rule to be applicable. \\
+Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and another with the remaining term. \\
+If $(A_1 \times A_2)$ was part of an intersection, we would refer to the paragraph on intersections.
+If any of the sets are the empty or full sets, we refer to the corresponding paragraphs.
+
+\paragraph{End of Decomposition} If \rels{} is simply a base relation, Grünke et al. would want to apply ($\neg aL$). This is only possible if $\rels$ is equal to the relation at the same position in the included term, since this rule needs $(e_1,f_1) \in \rels$ as a premise. The rule produces $\neg p[e_1.\rels] \land (e_1,f_1) \in \rels \land \neg p[e_3]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use again the ($._{elim}$) rule.\\
 If the remaining relations are empty, meaning that there is a predicate $e_3 = e_2$ from positive reasoning and the predicate $\neg e_3 \cap e_2$ from negative reasoning, $\pi$ would apply the ($\neg \cap_e$) rule to produce $\neg e_3 = e_2$ resulting in a contradiction, captured by the ($\bot_0$) rule in $\pi$ and in $\prf_\pi$ this results in an inclusion $\0 \subseteq \0$ where the (\textsc{reflexivity}) rule gives us \true. \\
 In the case that ($\neg aL$) cannot be used, $\pi$ will continue the decomposition of another predicate, since this one will not yield a contradiction.
 
 
-\paragraph{Closing the Branch:}\todo{diesen Abschnitt nochmal überarbeiten und besser in den vorherigen einbinden}{}Because a proof in \cite{Gru+26} needs to be a closed tableau, we only need to translate those rules that close a branch.
-The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We can mimic their behavior with our rules like this:
-\begin{itemize}
-\item ($\bot_0$): % \begin{mathpar} \inferrule*[left=($\bot_0$)]{\Gamma ,p,\neg p}{\bot_0} \end{mathpar}
-In this rule, the cube has contradicting predicates $p$ and $\neg p$. Since the predicate describes a relation and we know that negative predicates represent the including term and positive ones the included term, this is equivalent to an inclusion of the form $\relr \subseteq \relr$. In our proof system we can now apply the (\textsc{reflexivity}) rule to close the branch with \true .
+\paragraph{Closing the Branch:}
+The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We have seen in the preceding paragraphs how these rules might be applied and what their counterparts in our proof system are. \\
+The ($\neg \emptyset$) does not occur, since the decomposition of a term in RISF never yields the premise $\neg e \neq \emptyset$. \\
+For the other rules we can broadly say that ($\bot_0$) corresponds to (\textsc{reflexivity}), ($bot_1$) corresponds to (\textsc{empty}) and ($\neg =$) corresponds to (\textsc{full}). 
 
-\item ($\neg =$):
-Here, the key to unsatisfiability is the predicate $\neg e = e$. Since it it a negated predicate it is part of the including term. Because the formula $e = e$ is always true, this would translate into the full relation in the intermediate step. The intermediate term would be $\relr~ \cap \sim (E \times E) \subseteq \0$. Translating this term into our relational inclusions we get $\relr \subseteq (E \times E)$. On this term we can apply the (\textsc{full}) rule and close the branch in our proof system.
-
-
-\item ($\neg \emptyset$): 
-In this rule, the predicate $\neg e \neq \emptyset$ is part of the cube. Translating this into the intermediate step, it would mean that we have $\relr~ \cap \sim (E \times E)$. From here on, the steps are the same as for ($\neg =$).
-
-\item ($\bot_1$): A positive predicate describes that a certain relation is non-empty. In this rule, the precondition is that this relation includes the empty set $\bot_1$. The empty set itself cannot be a relational term. It needs to be concatenated to or intersected with an event, set or relation. Unification is not possbible, since Grünke et al. do not apply rules on terms which are not union-free \cite{Gru+26}. Any intersection or concatenation with the empty set results in an empty relation and we can use the rule (\textsc{empty}) in our proof system to get the same result.
-\end{itemize}
-
+\todo{gibt es noch einen Nutzen für}{($\neg \equiv L$) oder eine andere Regel?}
 
 
 \subsection{Infinite Proofs}
