@@ -1092,11 +1092,18 @@ We will see that any formula $\phi'$ that is a decomposition from a RISF formula
 
 
 \begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
-Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $e_1.\relt$ yields either a new term $e_1'.\relt'$ or an event $f_1$.
-Since this lemma can be applied repeatedly on the resulting term $e_1'.\relt'$, any decomposition of the term $e_1.\relt$ will eventually yield an event $f_1$.
+Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $e_1.\relt$ always yields either a new term $e_1'.\relt'$, an event $f_1$ or closes the branch with $\bot_0$.
+Since this lemma can be applied repeatedly on the resulting term $e_1'.\relt'$, any decomposition of the term $e_1.\relt$ will eventually yield an event $f_1$ or close the branch.
 \end{lemma} 
 
 \begin{proof}
+The lemma holds obviously for ($aL$), ($\id L$),($\neg aL$), ($\cap_2 L$), ($*L$), ($\neg * L$) and ($\cdot_{2,2} L$).
+For ($\top_2 L$) the lemma holds considering that the resulting $\top_1$ will be decomposed to an event via ($\top_1$) or ($\neg \top_1$). For ($\bot_2 L$) we consider that in positive reasoning the following rule ($\bot_1$) will close the branch and in negative reasoning, the rule would never be used. \\
+The reason for this is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. \\
+For the (${\times}L$) rule the lemma holds, considering that the ($A$) rule will be applied to the resulting set. \\
+For the ($\neg {\times}L$) rule we use the same argument with the ($\neg A$) rule. The precondition of $e \in A$ will always be met. \todo{why?}{} \\
+For ($\cdot^\inv L$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation is a base relation and the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met \todo{again, why?}{}
+
 \todo{Alle Regeln einmal Syntaktisch durchgehen und den Kram aus den Paragraphen rausstreichen}{}
 \end{proof}
 \todo{den folgenden Abschnitt komplett überarbeiten:}{ \\
