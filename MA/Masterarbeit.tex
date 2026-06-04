@@ -71,12 +71,8 @@ Essentially, the MCMs  determine which update to the shared memory is seen by wh
 
 As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behavior. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
-Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \todo{hier kommt noch hin was diese MA so machen will.} The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language. \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis. The proof system consists of several sets of rules that each have their own purpose.
-\todo{Einzelne Regelkapitel}
-In \Cref{sec:soundness} we show the soundness of the proof system by proving each rule to be a valid implication or equality.
-The Completeness in \Cref{sec:completeness} is shown via \todo{rausfinden wie man Completeness macht}
- \todo{weitere Themen einfügen}. 
-
+Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \\
+The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language, before we explain what the contribution of this master's thesis will be.
 
 
 \subsection{Memory Consistency Models}\label{sec:MCM}
@@ -244,6 +240,13 @@ The Memory Models from the last section can be formalized according to \cite{Gru
 &\text{(SC per Location)} \hfill &\texttt{acyclic } (\po \cap \loc) \cup (\rf \cup \co \cup \fr)
 \end{align*}  
 
+\subsection{Contribution}
+This master's thesis will present a new proof-system for comparing memory consistency models that directly handles relations and uses invariants to handle potentially infinite decompositions.
+At the center of this proof system is a set of rules that transform relational inclusion terms like $\Relr \subseteq \Rels$ and produce the implication $\true \impl \relr \subseteq \rels$.
+By adding relation-specific rules, assumptions and definitions of derived relations (in the literature usually hypotheses) and handling the constraints to the relations that CAT expression use, we expand the results to memory consistency models defined in the CAT language.
+\Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis. The proof system consists of several sets of rules that each have their own purpose. In \Cref{sec:constraints} we will see how any inclusion between CAT expressions for MCMs can be transformed into a relational inclusion. Following in \Cref{sec:implications,sec:transformations} are the rules that can proof any relational inclusion term that is confined to the syntax of rational CAT. The transformations and axioms in \Cref{sec:relationspecific,sec:assumptions} expand the capabilities of the proof system to include knowledge about the base relations and base sets of CAT.  \\
+In \Cref{sec:soundness} we show the soundness of the proof system by proving each rule to be a valid implication or equality. \\
+The Completeness in \Cref{sec:completeness} is shown via a translation of a cyclic proof system \cite{Gru+26} into ours. This includes translating every rule that is needed into a rule or a sequence of rules in our system and transforming the infinite cyclic proofs into finite ones using invariants. 
 
 \section{Related Work}\label{sec:kontext}
 \todo{mehr ausführen was in den verschiedenen Bereichen gemacht wird} \\
@@ -375,7 +378,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2} \impl \nexists (e_1,e_2) \in {\sf r_1}) \\
-& \impl &(X \in \semsof{\texttt{empty}~ \relr_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{empty}~ \relr_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \reason{\defof \semsof{\texttt{empty}}}\\
 & \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
 \end{eqnarray*}
 
@@ -383,7 +386,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\forall e \in E: \nexists(e,e) \in {\sf r_2} \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}) \\
-& \impl &(X \in \semsof{\texttt{irreflexive}~ \relr_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{irreflexive}~ \relr_2} \impl X \in \semsof{\texttt{irreflexive}~ \sf r_1}) \reason{\defof \semsof{\texttt{irreflexive}}} \\
 & \impl & \semsof{\texttt{irreflexive}~ \sf r_2} \subseteq \semsof{\texttt{irreflexive}~ \sf r_1}
 \end{eqnarray*}
 
@@ -391,7 +394,7 @@ Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
 & \impl &\forall X \in \E : (\forall e \in E: \nexists(e,e) \in {\sf r_2}^+ \impl \forall e \in E_X: \nexists (e,e) \in {\sf r_1}^+) \\
-& \impl &(X \in \semsof{\texttt{acyclic}~ \relr_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \\
+& \impl &(X \in \semsof{\texttt{acyclic}~ \relr_2} \impl X \in \semsof{\texttt{acyclic}~ \sf r_1}) \reason{\defof \semsof{\texttt{acyclic}}} \\
 & \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
 \end{eqnarray*}
 \end{proof}
@@ -405,18 +408,18 @@ Let the constraint be \texttt{empty}:
 Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
 
 \begin{lemma}\label{lem:irracy}
-For a relation $R$, it holds that $\semsof{\mathtt{irreflexive}~ \relr^+} = \semsof{\mathtt{acyclic}~ \sf r}$.
+For any relational term $\relr$, it holds that $\semsof{\mathtt{irreflexive}~ \relr^+} = \semsof{\mathtt{acyclic}~ \relr}$.
 \end{lemma}
 \begin{proof}
 This is given via the semantics of $\semsof{\mathtt{acyclic}~ \bangle{rel}}$ in \Cref{def:catsem}.
 \end{proof}
 
 \begin{lemma}\label{lem:emptyirr}
-For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{irreflexive}~ \sf r.r^{-1}}$.
+For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{irreflexive}~ \sf r.r^{-1}}$.
 \end{lemma}
 \begin{proof} This can equally be proven using \Cref{def:catsem}.
 \begin{eqnarray*}
-\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \\
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r\} \\
 &= & \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r.r^{-1} \} \\
 &=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}
@@ -424,7 +427,7 @@ For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof
 \end{proof}
 
 \begin{lemma}\label{lem:irrempty}
-For any relation \relr it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \semsof{\mathtt{empty}~ \relr \cap \id}$.
+For any relational term \relr{} it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \semsof{\mathtt{empty}~ \relr \cap \id}$.
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
@@ -436,11 +439,11 @@ For any relation \relr it holds that $\semsof{\mathtt{irreflexive}~ \sf r} = \se
 \end{proof}
 
 \begin{lemma}\label{lem:emptyacy}
-For any relation $\sf r$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{acyclic}~ \sf r \cup r^{-1}}$.
+For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = \semsof{\mathtt{acyclic}~ \sf r \cup r^{-1}}$.
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
-\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \\
+\semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r \} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r \cup r^{-1} \} \\
 &=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \\
@@ -507,7 +510,6 @@ Let $\relr$ be a relational term that features an inversion. There is an express
 
 
 \paragraph{Derivation of ($\cup_{RL}$) and ($\cup_{L2}$)}
-\todo{evtl generalisieren zu $r \cup s \subseteq r' \cup s'$}
 While testing the proof system, a few rules were repeatedly needed to shorten the proofs, eventhough they are not part of the rules in this section. In order to use them, we define them here by showing their construction through the other rules.
 
 \begin{mathpar}
@@ -535,17 +537,17 @@ While testing the proof system, a few rules were repeatedly needed to shorten th
 \subsection{Transformations}\label{sec:transformations}
 Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
 
-The empty relation \0{} functions as a neutral element for union and absorbing element for concatenation and intersection, while the the full relation $(E \times E)$ is the neutral element for the intersection and the identity relation \id{} the neutral element for concatenation. This means, additionally, that \id{} is symmetric and transitive. Since this holds for any subrelation of \id{}, we can give generalizations of those rules for any relation \relr.
+The empty relation \0{} functions as a neutral element for union and absorbing element for concatenation and intersection, while the the full relation $(E \times E)$ is the neutral element for the intersection and the identity relation \id{} the neutral element for concatenation. This means, additionally, that \id{} is symmetric and transitive. Since this holds for any subrelation of \id{}, we can give generalizations of those rules for any relation \relr. For the following rules, let $\Omega[\dots]$ be a relational inclusion term.
 \begin{rules}{Neutral and Absorbing Element}
-\inferrule*[left=($\0_{\cup}$)]{\Gamma[\sf r]}{\Gamma[\sf \0 \cup r]} \and
-\inferrule*[left=($\0_{\cap}$)]{\Gamma[\0]}{\Gamma[\sf r \cap \0]} \and
-\inferrule*[left=($\0_{conc}$)]{\Gamma[\0]}{\Gamma[\sf r.\0.s]} \and
-\inferrule*[left=($\textsc{full}_\cap$)]{\Gamma[\relr]}{\Gamma[(E \times E) \cap \relr]} \and
-\inferrule*[left=($\id_{conc}$)]{\Gamma[\sf r.s]}{\Gamma[\sf r.\id .s]} \and
+\inferrule*[left=($\0_{\cup}$)]{\Omega[\sf r]}{\Omega[\sf \0 \cup r]} \and
+\inferrule*[left=($\0_{\cap}$)]{\Omega[\0]}{\Omega[\sf r \cap \0]} \and
+\inferrule*[left=($\0_{conc}$)]{\Omega[\0]}{\Omega[\sf r.\0.s]} \and
+\inferrule*[left=($\textsc{full}_\cap$)]{\Omega[\relr]}{\Omega[(E \times E) \cap \relr]} \and
+\inferrule*[left=($\id_{conc}$)]{\Omega[\sf r.s]}{\Omega[\sf r.\id .s]} \and
 %\inferrule*[left=($\id_{symm}$)]{\it true}{\id^{-1} \subseteq \id} \and
 %\inferrule*[left=($\id_{trans}$)]{\true}{\id .\id \subseteq \id} \and
-\inferrule*[left=($\relr_{symm}$)]{\Gamma[\relr^{-1}] \\ \relr \subseteq \id}{\Gamma[\relr]} \and
-\inferrule*[left=($\relr_{trans}$)]{\Gamma[\relr] \\ \relr \subseteq \id}{\Gamma[\relr.\relr]} 
+\inferrule*[left=($\relr_{symm}$)]{\Omega[\relr^{-1}] \\ \relr \subseteq \id}{\Omega[\relr]} \and
+\inferrule*[left=($\relr_{trans}$)]{\Omega[\relr] \\ \relr \subseteq \id}{\Omega[\relr.\relr]} 
 \end{rules}
 
 The set theoretic operators $\cup$ and $\cap$ have the properties of distributivity, associativity and commutativity. Concatenation is associative and distributive.
@@ -558,43 +560,43 @@ Let $\circ$ and $\star$ be two operations on a set $S$ and $r,s \in S$.
 \end{eqnarray*}
 \end{definition}
 
-To incorporate the capabilities these properties offer, they will be added to the set of rules here. For that purpose, let $\Gamma[t]$ be an inclusion term that contains the subterm $t$.
+To incorporate the capabilities these properties offer, they will be added to the set of rules here. For that purpose, let $\Omega[t]$ be an inclusion term that contains the subterm $t$.
 
 \begin{rules}{Operator Properties}
-\inferrule*[left=($\cup_{comm}$)]{\Gamma[\sf r\cup s]}{\Gamma[\sf s \cup r]} \and
-\inferrule*[left=($\cap_{comm}$)]{\Gamma[\sf r \cap s]}{\Gamma[\sf s \cap r]} \and
-\inferrule*[left=($\cup_{ass}$)]{\Gamma[\sf (r \cup s) \cup t]}{\Gamma[\sf r \cup (s \cup t)]} \and
-\inferrule*[left=($\cap_{ass}$)]{\Gamma[\sf (r \cap s) \cap t]}{\Gamma[\sf r \cap (s \cap t)]} \and
-\inferrule*[left=($\cup_{dist}$)]{\Gamma[\sf r \cup s \cup s']}{\Gamma[\sf r \cup (s \cup s')]} \and
-\inferrule*[left=($\cap_{dist}$)]{\Gamma[\sf r \cap s \cap s']}{\Gamma[\sf r \cap (s \cap s')]} \and
-\inferrule*[left=($\cup_{\cap dist}$)]{\Gamma[\sf r \cup (s \cap s')]}{\Gamma[\sf (r \cup s) \cap (r \cup s')]} \and
-\inferrule*[left=($\times_{\cup distL}$)]{\Gamma[(A_1 \times A_2) \cup (A_1 \times A_3)]}{\Gamma[A_1 \times (A_2 \cup A_3)]} \and
-\inferrule*[left=($\times_{\cup distR}$)]{\Gamma[(A_1 \times A_3) \cup (A_2 \times A_3)]}{\Gamma[(A_1 \cup A_2) \times A_3]} \and
-\inferrule*[left=($\cap_{\cup dist}$)]{\Gamma[\sf r \cap (s \cup s')]}{\Gamma[\sf (r \cap s) \cup (r \cap s')]} \and
-\inferrule*[left=($\times_{\cap distL}$)]{\Gamma[(A_1 \times A_2) \cap (A_1 \times A_3)]}{\Gamma[A_1 \times (A_2 \cap A_3)]} \and
-\inferrule*[left=($\times_{\cap distR}$)]{\Gamma[(A_1 \times A_3) \cap (A_2 \times A_3)]}{\Gamma[(A_1 \cap A_2) \times A_3]} \and
-\inferrule*[left=($._{ass}$)]{\Gamma[\sf (r.s).t]}{\Gamma[\sf r.(s.t)]} \and
-\inferrule*[left=($._{\cup distL}$)]{\Gamma[\sf r.s \cup r.s']}{\Gamma[\sf r.(s \cup s')]} \and
-\inferrule*[left=($._{\cup distR}$)]{\Gamma[\sf s.r \cup s'.r]}{\Gamma[\sf(s \cup s').r]} 
-%\inferrule*[left=($._{\cap distR}$)]{\Gamma[\sf r.s \cap r.s']}{\Gamma[\sf r.(s \cap s')]} \and
-%\inferrule*[left=($._{\cap distL}$)]{\Gamma[\sf s.r \cap s'.r]}{\Gamma[\sf(s \cap s').r]} 
+\inferrule*[left=($\cup_{comm}$)]{\Omega[\sf r\cup s]}{\Omega[\sf s \cup r]} \and
+\inferrule*[left=($\cap_{comm}$)]{\Omega[\sf r \cap s]}{\Omega[\sf s \cap r]} \and
+\inferrule*[left=($\cup_{ass}$)]{\Omega[\sf (r \cup s) \cup t]}{\Omega[\sf r \cup (s \cup t)]} \and
+\inferrule*[left=($\cap_{ass}$)]{\Omega[\sf (r \cap s) \cap t]}{\Omega[\sf r \cap (s \cap t)]} \and
+\inferrule*[left=($\cup_{dist}$)]{\Omega[\sf r \cup s \cup s']}{\Omega[\sf r \cup (s \cup s')]} \and
+\inferrule*[left=($\cap_{dist}$)]{\Omega[\sf r \cap s \cap s']}{\Omega[\sf r \cap (s \cap s')]} \and
+\inferrule*[left=($\cup_{\cap dist}$)]{\Omega[\sf r \cup (s \cap s')]}{\Omega[\sf (r \cup s) \cap (r \cup s')]} \and
+\inferrule*[left=($\times_{\cup distL}$)]{\Omega[(A_1 \times A_2) \cup (A_1 \times A_3)]}{\Omega[A_1 \times (A_2 \cup A_3)]} \and
+\inferrule*[left=($\times_{\cup distR}$)]{\Omega[(A_1 \times A_3) \cup (A_2 \times A_3)]}{\Omega[(A_1 \cup A_2) \times A_3]} \and
+\inferrule*[left=($\cap_{\cup dist}$)]{\Omega[\sf r \cap (s \cup s')]}{\Omega[\sf (r \cap s) \cup (r \cap s')]} \and
+\inferrule*[left=($\times_{\cap distL}$)]{\Omega[(A_1 \times A_2) \cap (A_1 \times A_3)]}{\Omega[A_1 \times (A_2 \cap A_3)]} \and
+\inferrule*[left=($\times_{\cap distR}$)]{\Omega[(A_1 \times A_3) \cap (A_2 \times A_3)]}{\Omega[(A_1 \cap A_2) \times A_3]} \and
+\inferrule*[left=($._{ass}$)]{\Omega[\sf (r.s).t]}{\Omega[\sf r.(s.t)]} \and
+\inferrule*[left=($._{\cup distL}$)]{\Omega[\sf r.s \cup r.s']}{\Omega[\sf r.(s \cup s')]} \and
+\inferrule*[left=($._{\cup distR}$)]{\Omega[\sf s.r \cup s'.r]}{\Omega[\sf(s \cup s').r]} 
+%\inferrule*[left=($._{\cap distR}$)]{\Omega[\sf r.s \cap r.s']}{\Omega[\sf r.(s \cap s')]} \and
+%\inferrule*[left=($._{\cap distL}$)]{\Omega[\sf s.r \cap s'.r]}{\Omega[\sf(s \cap s').r]} 
 \end{rules}
 
 The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a union operator. Therefore we do not need explicit rules for these operators, but can rely on the rules for union. 
 There are still some transformations for these operators based on their definition:
 \begin{rules}{Operator Definitions}
-\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
-\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
-\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+\inferrule*[left=($+$)]{\Omega[\sf r.r^*]}{\Omega[\sf r^+]} \and
+\inferrule*[left=($?$)]{\Omega[\sf r \cup \id]}{\Omega[\sf r?]} \and
+\inferrule*[left=($*$)]{\Omega[\sf \id \cup r^+]}{\Omega[\sf r^*]} \and
 \end{rules}
 
 The following transformations may come in handy but are less straightforward. We will need to prove them. 
 \begin{rules}{Extra Rules}
-%\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and nicht invertible
-\inferrule*[left=($+^+$)]{\Gamma[\relr^+]}{\Gamma[\relr^{+^+}]} \and
-\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} \and 
-\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
-\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} 
+%\inferrule*[left=($+_{\cup}$)]{\Omega[\sf r^+ \cup s^+]}{\Omega[\sf (r^+ \cup s^+)^+]} \and nicht invertible
+\inferrule*[left=($+^+$)]{\Omega[\relr^+]}{\Omega[\relr^{+^+}]} \and
+\inferrule*[left=($+_{\cap}$)]{\Omega[\sf r^+ \cap s^+]}{\Omega[\sf (r^+ \cap s^+)^+]} \and 
+\inferrule*[left=($*_{\cup elim}$)]{\Omega[\sf (r^*.s^*)^*]}{\Omega[\sf (r \cup s)^*]} \and
+\inferrule*[left=($*_{double}$)]{\Omega[\sf r^*.r^*]}{\Omega[\sf r^*]} 
 \end{rules}
 \begin{lemma}
 Let $\relr \subseteq (E \times E)$ be a relation. $\relr^+ = \relr^{+^+}$ holds.
@@ -664,13 +666,13 @@ Accordingly, $(e_1,e_h)$ is in $\sf (r \cup s)^h$ and thus $(e_1,e_h) \in \sf (r
 As mentioned in the previous section in \Cref{lem:inversion}, it is possible to transform any inclusion term into one that uses inversion only on base relations. The proof in \Cref{sec:inversionproof} for this lemma therefore provides some useful transformations:
 \begin{rules}{Inversiontransformations}\label{rule:inversion}
 %\begin{mathpar}
-\inferrule*[left=($-1_{\cup}$)]{\Gamma[\sf r^{-1} \cup s^{-1}]}{\Gamma[\sf (r \cup s)^{-1}]} \and
-\inferrule*[left=($-1_{\cap}$)]{\Gamma[\sf r^{-1} \cap s^{-1}]}{\Gamma[\sf (r \cap s)^{-1}]} \and
-\inferrule*[left=($-1_{.}$)]{\Gamma[\sf s^{-1}.r^{-1}]}{\Gamma[\sf (r.s)^{-1}]} \and
-%\inferrule*[left=($-1_{\sim}$)]{\Gamma[\sf \sim (r^{-1})]}{\Gamma[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
-\inferrule*[left=($-1_{+}$)]{\Gamma[\sf (r^{-1})^+]}{\Gamma[\sf (r^+)^{-1}]} \and
-\inferrule*[left=($-1_{*}$)]{\Gamma[\sf (r^{-1})^*]}{\Gamma[\sf (r^*)^{-1}]} \and
-\inferrule*[left=($-1_{?}$)]{\Gamma[\sf (r^{-1})?]}{\Gamma[\sf (r?)^{-1}]}
+\inferrule*[left=($-1_{\cup}$)]{\Omega[\sf r^{-1} \cup s^{-1}]}{\Omega[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Omega[\sf r^{-1} \cap s^{-1}]}{\Omega[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Omega[\sf s^{-1}.r^{-1}]}{\Omega[\sf (r.s)^{-1}]} \and
+%\inferrule*[left=($-1_{\sim}$)]{\Omega[\sf \sim (r^{-1})]}{\Omega[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
+\inferrule*[left=($-1_{+}$)]{\Omega[\sf (r^{-1})^+]}{\Omega[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Omega[\sf (r^{-1})^*]}{\Omega[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Omega[\sf (r^{-1})?]}{\Omega[\sf (r?)^{-1}]}
 %\end{mathpar}
 \end{rules}
 
@@ -685,12 +687,12 @@ The base relations \loc{} and \ext{} are symmetric, meaning that for every $(e,e
 \inferrule*[left=($\co_{trans}$)]{\true}{\co .\co \subseteq \co} \and
 \inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} 
 \end{rules}
-Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.\todo{proof needed}{}
+Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.\todo{proof needed}{
 \begin{mathpar}
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} 
-\end{mathpar}
+\end{mathpar}}
 
-As we have described in \Cref{sec:restrictions}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
+As we have described in \Cref{sec:notation}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
 Besides this we use some rules to handle \relW~ and \relR~ themselves.
 \begin{rules}{Write and Read Events}
 \inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
@@ -728,7 +730,7 @@ For an assumption \texttt{assume r <= s} we construct the rule
 
 We use definitions like \texttt{let r = s} as a rule
 \begin{mathpar}
-\inferrule*[left=(def)]{\Gamma[\sf s]}{\Gamma[\sf r]}
+\inferrule*[left=(def)]{\Omega[\sf s]}{\Omega[\sf r]}
 \end{mathpar}
 
 
@@ -966,17 +968,17 @@ With \Cref{lem:elimination} we know that if $\relr_2' \subseteq \relr_1'$ holds,
 
 \begin{theorem}[Completeness]
 Let $M_1 = \bangle{constraint}~ \Rels, M_2 = \bangle{constraint}~ \relr$ be two memory consistency models, defined as CAT expressions. 
-If the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ holds, there exists a proof $\mathcal{P}$ for it.
+If the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ holds, there exists a proof $\mathcal{P}^{CAT}$ for it.
 \end{theorem}
 
 To prove the completeness of this proof system on the rational CAT fragment we will transform any proof of a relational inclusion by Grünke et al. \cite{Gru+26}, where completeness was proven, into one of ours.  
 Since RAT-CAT-SAT argues directly about events and we do not, we lose some expressiveness in comparison to Grünke et al.. Therefore, we reduce the number of proofs that RAT-CAT-SAT can express to only those that show inclusions between relations. \\
 We can justify this with the Lemmata in \Cref{sec:constraints}. Any inclusion between CAT expressions can be transformed into an inclusion between two relations where the CAT inclusion is true if and only if the relational inclusion holds.
-Since the procedure of Grünke et al. \cite{Gru+26} is complete for any unsatisfiable cube, a proof $\pi$ has to exist and if any proof of a relational inclusion that is confined to the syntax of rational CAT can be translated into a proof in our system, then we can construct a proof for any CAT inclusion. \\
-The approach of \cite{Gru+26} transforms an inclusion of the form $\relr \subseteq \rels$ into a logical formula $\phi_{\relr} \land \neg \phi_{\rels}$ where the unsatisfiability of the formula corresponds to the inclusion term being true.
+Since the procedure of Grünke et al. \cite{Gru+26} is complete for any unsatisfiable cube, a proof $\pi$ has to exist and if any proof of a relational inclusion that is confined to the syntax of rational CAT can be translated into a relational inclusion proof $\prf_\pi$ in our system, then we can construct a proof for any CAT inclusion. \\
+The approach of Grünke et al. transforms an inclusion of the form $\relr \subseteq \rels$ into a logical formula $\phi_{\relr \subseteq \rels} = \phi_{\relr} \land \neg \phi_{\rels}$ where the unsatisfiability of the formula corresponds to the inclusion term being true. Unsatisfiability in \cite{Gru+26} is defined with the help of $\Sigma$-structures, which are basically the domain of events and an interpretation of the sets, functions and relations. Furthermore, $\mathcal{T}_\Sigma$ is the set of all $\Sigma$-structures and $\mathcal{T}_\Sigma$-unsatisfiability is defined as there being no $\Sigma$-structure that satisfies the formula.
 Hence, the Theorem to be proven is this:
 \begin{theorem}\label{thm:satinc}
-If a RAT-CAT formula $\phi_\relr \land \neg \phi_{\rels}$ is $\mathcal{T}_\Sigma$-unsatisfiable and it exists a RAT-CAT-SAT proof tableau $\pi$, then there exists a relational inclusion proof $\prf_\pi$ for $\sf r \subseteq s$
+If a RAT-CAT formula $\phi_{\relr \subseteq \rels}$ is $\mathcal{T}_\Sigma$-unsatisfiable and it exists a RAT-CAT proof tableau $\pi$, then there exists a relational inclusion proof $\prf_\pi$ for $\sf r \subseteq s$
 \end{theorem}
 
 
@@ -984,6 +986,19 @@ If a RAT-CAT formula $\phi_\relr \land \neg \phi_{\rels}$ is $\mathcal{T}_\Sigma
 %With the transformation of the expressions into logical formulas, the inclusion turns into an implication and then into a conjunction where the formula for the right-hand side of the inclusion is negated. Since we want to preserve the form of the inclusion in our system, we cannot follow this step, but need to keep in mind that we still need to distinguish the terms of the inclusion.
 %To have a more intuitive way of translating the formulas into relational inclusion terms, we use a intermediate step. The inclusion $\relr \subseteq \rels$ that our system uses can be written as $\relr~ \cap \sim \rels \subseteq \0$. Note that we allow complements for this intermediate step only and use them to give a better intuition for how the behavior of the RAT-CAT-SAT rules corresponds to our rules. The term $\relr~ \cap \sim \rels \subseteq \0$ is much closer syntactically to $\varphi_\relr \land \neg \varphi_{\rels}$ being unsatisfiable.
 
+
+The proof system of Grünke et al. starts with the formula $\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels$ and transforms it until the tableau is \textit{closed} with a set of rules. 
+A closed tableau is one where every branch in it is closed, meaning that every branch is either infinite or contains $\bot_0$. Here, $\bot_0$ functions as a symbol representing a contradiction and essentially meaning \textit{false}. \\ 
+The decomposition of the formula $\phi_\relr$ in \cite{Gru+26} results in a number of atomic predicates ($e \in A, \edgein \relr, e = e', e \neq \emptyset$) that events need to fulfill to form an edge in \relr. The negated rules only decompose the the negative part of the formula $\neg \varphi_\rels$ to give predicates that describe the complement of \rels. If there exist events that fulfill all of these properties, then there exists a counterexample to the inclusion.
+Hence, unsatisfiability of the formula is equivalent to the inclusion being true. \\
+Furthermore, these inclusions have a standard form as a RAT-CAT formula: An inclusion $\relr \subseteq \rels$ is
+\[\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels = (e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
+We call this the \textit{Relational Inclusion Standard Form (RISF)}.
+We prove completeness by showing that for every formula $\phi_{\relr \subseteq \rels}$ in RISF that has a proof $\pi$, $\relr \subseteq \Rels$ can be proven by $\prf_\pi$ in our system. \\
+Besides the RISF we can also assume that $\pi$ is the shortest proof for unsatisfiability of $\phi_{\relr \subseteq \rels}$. In Grünke et al.'s system, rules can be applied unnecessarily for example when for $\relr \subseteq \relr \cup \rels$ the term $\rels$ is decomposed.
+Assuming $\pi$ to be the shortest proof will give us the information that every applied rule makes progress towards a contradiction and restricts the number of cases we need to cover for our translation. It also means, that whenever a rule is applied to a certain predicate, the decomposition of that predicate will yield the contradiction to close the branch. \\
+Furthermore, we can assume that sets will only be used in cross products to form relations.
+The notation from \cref{sec:notation} can be written as $[A].\relr.[B] = \relr \cap (A \times B)$.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 \begin{minipage}{0.25\textwidth}
@@ -1018,25 +1033,17 @@ If a RAT-CAT formula $\phi_\relr \land \neg \phi_{\rels}$ is $\mathcal{T}_\Sigma
 \draw[arrow] (2) -- (4);
 \draw[arrow] (3) -- (5);
 \end{tikzpicture}
-\end{minipage}
-\caption{One difference between the proof systems is that the one in \cite{Gru+26} needs every branch to end in $\bot_0$ and ours needs every branch ending in \true .}
+\end{minipage}\caption{One difference between the proof systems is that the one in \cite{Gru+26} needs every branch to end in $\bot_0$ and ours needs every branch ending in \true .}
 \end{wrapfigure}
 
-The proof system of Grünke et al. starts with the formula $\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels$ and transforms it until the tableau is \textit{closed} with a set of rules. 
-A closed tableau is one where every branch in it is closed, meaning that every branch is either infinite or contains $\bot_0$. Here, $\bot_0$ functions as a symbol representing a contradiction and essentially meaning \textit{false}. \\ 
-The decomposition of the $\phi_\relr$ in \cite{Gru+26} results in a number of properties that events need to fulfill to form an edge in \relr. The negated rules only decompose the the negative part of the formula $\neg \varphi_\rels$ to give predicates that describe the complement of \rels. If there exist events that fulfill all of the predicates, then there exists a counterexample to the inclusion.
-Hence, unsatisfiability of the formula is equivalent to the inclusion being true. \\
-Furthermore, these inclusions have a standard form as a RAT-CAT formula: An inclusion $\relr \subseteq \rels$ is
-\[\phi_{\relr \subseteq \rels} = (e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
-We call this the \textit{Relational Inclusion Standard Form (RISF)}.
-We prove completeness by showing that every formula $\phi_{\relr \subseteq \rels}$ that has a proof $\pi$ can be proven with $\prf_\pi$ in our system. \\
-Besides the RISF we can also assume that $\pi$ is the shortest proof for unsatisfiability of $\phi_{\relr \subseteq \rels}$. In Grünke et al.'s system, rules can be applied unnecessarily for example when for $\relr \subseteq \relr \cup \rels$ the term $\rels$ is decomposed.
-Assuming $\pi$ to be the shortest proof will give us the information that every applied rule makes progress towards a contradiction and restricts the number of cases we need to cover for our translation. \\
-Furthermore, we can assume that sets will only be used in cross products to form relations.
-The notation from \cref{sec:notation} can be written as $[A].\relr.[B] = \relr \cap (A \times B)$.
-
-\todo{Anders formulieren?}{To that end, we put down some properties that $\prf_\pi$ will fulfill:
-First, $\prf_\pi$ has the same structure as $\pi$, meaning that whenever $\pi$ uses a branching rule, $\prf_\pi$ also uses one. Secondly, Every branch in $\pi$ that is closed (ending in $\bot_0$ or infinite) has an equivalent branch in $\prf_\pi$ that is closed (ending in \true). The third property is that whenever $\pi$ splits a predicate into two non-atomic predicates, this needs to be reflected in $\prf_\pi$. Finally, if $\pi$ eliminates a relation from the formula, the same must be justified by a rule in $\prf_\pi$.}
+To translate $\pi$ into $\prf_\pi$, we will translate each rule of Grünke et al. that can be applied to a formula in RISF. Moreover, we will show that every branch in $\pi$ will have an equivalent branch in $\prf_\pi$ and that whenever $\pi$ splits a predicate, $\prf_\pi$ can take equivalent action.
+Splitting predicates refers to rules that have a literal $l[\dots]$ in the premise and two terms $l[\dots], l[\dots]$ in the conclusion. The context of $l$ can be taken into both predicates. 
+An example for splitting predicates is the ($\neg {\cup_2}L$) rule:
+\begin{mathpar} \inferrule*[left=($\neg {\cup_2}L$)]{\Gamma, \neg p[e.(\relr_1 \cup \relr_2)]}{\Gamma, \neg p[e.\relr_1], \neg p[e.\relr_2]}
+\end{mathpar}
+This only refers to non-atomic predicates, since atomic predicates fulfill a very different role. In positive reasoning, atomic predicates describe the structure of the term even after it has been decomposed. In negative reasoning, the atomic predicates will in most cases yield a contradiction.
+As they cannot be decomposed any further, they are not important in negative reasoning when they don't imply a contradiction yet. Then, the contradiction will come from a predicate that still has to be decomposed. \\
+The splitting and branching in \cite{Gru+26} is furthermore important to provide an assumption that the authors make. They assume their predicates to be union-free and Kleene-star-free. As we will see, this is reached by applying rules that split predicates and branch the proof.
 
 \begin{figure}\label{fig:rules}
 \includegraphics[scale=1]{includes/JansRegeln.jpg}
@@ -1045,10 +1052,10 @@ First, $\prf_\pi$ has the same structure as $\pi$, meaning that whenever $\pi$ u
 
 
 \begin{lemma}[Splitting Lemma]\label{lem:splitting}
-Whenever $\pi$ splits a literal $l$ into the non-atomic literals $l_1, l_2$ (there are only rules that split into two literals), $\prf_\pi$ can justify the separate decomposition of both literals.
+Whenever $\pi$ splits a non-atomic literal $l$ into the non-atomic literals $l_1, l_2$ (there are only rules that split into two non-atomic literals), $\prf_\pi$ can justify the separate decomposition of both literals.
 \end{lemma}
 \begin{proof}
-In $\pi$ many rules split a literal into multiple ones. The atomic literals $e_1 = e_2, e \in A, (e,e') \in \relr, e \neq \emptyset$ and their negated counterparts keep information about the relational term that has already been decomposed and are not of concern for this lemma.
+In $\pi$ many rules split a literal into multiple ones. The atomic literals $(\neg) e_1 = e_2, e \in A, (e,e') \in \relr$ and $e \neq \emptyset$ keep information about the relational term that has already been decomposed and are not of concern for this lemma.
 We only look at the non-atomic literals where one literal turns into two new ones that take the context of the predicate with it.
 Since this only appears in negative reasoning, we can assume that the literal in the premise has the form $\neg p[\dots]$. Furthermore, this gives us the knowledge that only the including term $\rels$ is concerned in $\prf_\pi$. \\
 Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
@@ -1061,14 +1068,14 @@ The rules that split literals all use the union operator (see (${\neg}{*}L$), ($
 Whenever $\pi$ creates new branches like this:
 \begin{mathpar} \inferrule*[left=$\pi$:]{\pi_1}{\C_1 \\ \mid \\ \C_2}
 \end{mathpar}
-where the first cubes are $\C_1$ and $\C_2$, $\prf_\pi$ can create new branches $\B_1, \B_2$ where when $\C_1$ and $\C_2$ describe counterexamples to the inclusions $\relr_1 \subseteq \rels_1$ and $\relr_2 \subseteq \rels_2$, the terms in $\B_1$ and $\B_2$ are exactly those inclusions.
+where $\pi_1$ is the preceding proof of a branching rule and $\C_1$ and $\C_2$ are the first cubes after it, $\prf_\pi$ can create new branches for the inclusion terms $\Omega_1, \Omega_2$ where $\C_1$ and $\C_2$ describe counterexamples to exactly those inclusions.
 \end{lemma}
+
 \begin{proof}
 For unions and Kleene-stars the positive rules create new \textit{branches}. To prove the lemma and emulate the behavior of $\pi$, the branching in $\prf_\pi$ needs to have the same effect on the semantics.
 A union in the positive term essentially means, that a counterexample to the inclusion needs to be in both of the unified relations and to prove the inclusion true it has to be shown that there cannot be a counterexample in either.
 This corresponds closely to branching a union in the included term with ($\cup_{L2}$), because it argues that both subrelations need to be included, i.e. there is no counterexample to the induction in either.
 For the Kleene-star rule ($*L$) the branching is based on a union too, since $\relr^* = \id \cup \relr^+$. \\
-
 In negative reasoning, branching occurs whenever there is an intersection or a cross product.
 For intersections, the ($\cap_2L$) rule parts the decomposition inside of the literal into two terms that will return the events $f_1,f_2$. This is only possible, if either relation is the full relation or if they exist at the same position in the included term.
 Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}R$) or the ($\neg eL$) rule can be applied. The intuition for the former case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. This would mean, that it is no counterexample. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
@@ -1105,9 +1112,8 @@ Because both formulas use the same events, this equates to
 which is equivalent to the definition of $\semsof{\relr~ \cap \sim \rels} \neq \0$ which in turn is equivalent to $\semsof{\relr} \nsubseteq \semsof{\rels}$. \\
 We will see that any formula $\phi'$ that is a decomposition from a RISF formula is equivalent to such an inclusion.
 
-\todo{Einbauen}{dass auch atomics erzeugt werden?}
 \begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
-Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $e_1.\relt$ always yields either a new term $e_1'.\relt'$, an event $f_1$ or closes the branch with $\bot_0$.
+Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $e_1.\relt$, besides atomic predicates, only yields either a new term $e_1'.\relt'$ or an event $f_1$ inside the context of the predicate or closes the branch with $\bot_0$.
 Since this lemma can be applied repeatedly on the resulting term $e_1'.\relt'$, any decomposition of the term $e_1.\relt$ will eventually yield an event $f_1$ or close the branch.
 \end{lemma} 
 
@@ -1132,15 +1138,15 @@ Besides the rules that are applied to $p[e_1.\relr]$ or $\neg p[e_1.\rels]$ resp
 
 The rules ($\neg_{\cdot_{1,2}}L$), ($\neg_{\cdot_{2,1}}L$), ($\neg \cap_1 L$), ($\neg_2 {\times}L$), ($\neg_2 {\times}L$), ($\neg {\times}^\inv L$), ($\neg_\cap {\times}L$), ($\neg {\times}_\cap L$), ($\neg_1 {\times}L$), ($\neg {\times}_1L$) and ($\neg \emptyset$) are never used, either because the predicate never reaches the form for the rule or because they can be replaced by other rules.
 
+For the remaining rules of Grünke et al., we will now give translations into our rules.
+We will start with the positive reasoning and explain what our proof system needs to provide in order to mimic the behavior of Grünke et al.'s. 
 
-\todo{den folgenden Abschnitt komplett überarbeiten:}{ \\
-To prove the decomposition lemma, we will examine the effect of all rules that can be applied to a RAT-CAT formula in RISF. It is important to distinguish the rules of Grünke et al. into those that are applied to the non-negated term and those applied to the negated term. The positive reasoning consists of all rules without a $\neg$ in their name. The negative reasoning uses the rules with a $\neg$ in the name and those positive rules which are applied to literals, i.e. where the context is $l[\dots]$. 
-Furthermore, Grünke et al. assume each term to be union-free and Kleene-star-free. This can be achieved in their proof system by branching the tableau every time a union or Kleene-star occurs in positive reasoning and splitting the predicate into multiple ones in negative reasoning.
-We will start with the positive reasoning and explain what our proof system needs to provide in order to mimic the behavior of Grünke et al.'s. }
+According to \Cref{lem:decomposition} we will always assume the term to which a rule is applied to be $p[e_1.\relr]$ for positive reasoning or $\neg p[e_1.\rels]$ for negative reasoning or a term that is the result of a preceding rule. Any rule application that might follow automatically will be mentioned in the same paragraph.  
 
-According to \Cref{lem:decomposition} we will always assume the term to which a rule is applied to be $p[e_1.\relr]$ for positive reasoning or $\neg p[e_1.\rels]$ for negative reasoning. Any rule application that might follow automatically will be mentioned in the same paragraph.  
+\subsubsection{Positive Reasoning} 
+In positive reasoning, only the branching rules have a real effect on the translated proof $\prf_\pi$. All the others only produce atomic predicates that will be used for contradictions in negative reasoning.
 
-\subsubsection{Positive Reasoning} If $\relr$ cannot be decomposed any further (for example, if it is a CAT base relation), only the ($aL$) rule can be applied. This turns $p[e_1.\relr]$ into $(e,f) \in \relr \land p[f]$.
+\paragraph{Elimination} If $\relr$ cannot be decomposed any further (for example, if it is a CAT base relation), only the ($aL$) rule can be applied. This turns $p[e_1.\relr]$ into $(e,f) \in \relr \land p[f]$.
 Since this rule only introduces a new event and does not change the structure of the term, the relational inclusion would remain unchanged.
 The same goes for the subsequent application of the ($eL$) rule.  
 
@@ -1151,42 +1157,55 @@ This rule sets the order in which the decomposition continues. It changes nothin
 
 %-------------------------------- r_1 \cup r_2
 \paragraph{Union} If $\relr = \relr_1 \cup \relr_2$ then Grünke et al. will apply ($\cup_2L$) and branch the tableau. The result are these two terms:
-\[p[e_1.\relr_1] \qquad \mid \qquad p[e_1.\relr_2]\]
+\begin{mathpar}
+\inferrule*[left=($\cup_2 L$)]{\Gamma, p[e_1.(\relr_1 \cup \relr_2)]}{\Gamma, p[e_1.\relr_1] \\\mid \\ \Gamma, p[e_1.\relr_2]}
+\end{mathpar}
+%\[p[e_1.\relr_1] \qquad \mid \qquad p[e_1.\relr_2]\]
 The resulting terms preserve the form of the predecessor and the decomposition can continue in both branches. Translated into our proof system we can do the following derivation which also uses branching:
 \begin{mathpar} 
 \inferrule*[left=($\cup_{L2}$)]{\relr_1 \subseteq \rels \\ \relr_2 \subseteq \rels}{\relr_1 \cup \relr_2 \subseteq \rels}
 \end{mathpar}
 
-\noindent In both systems, the reasoning continues for the two relational terms that were unified before. The correctness of this translation originates from the fact that for Grünke et al. the branching is a disjunction, meaning that for the formula to be unsatisfiable, there cannot be a counterexample in either of the terms and for us, the branching is a conjunction, meaning that both relations have to be included in $\rels$. \\
+\noindent In both systems, the reasoning continues for the two relational terms that were unified before. The correctness of this translation originates from \Cref{lem:branching}. \\
 Since we need the union to be the outermost operator for the branching, we may need to use the ($._{\cup dist}$) or ($\cap_{\cup dist}$) rules. This is how we can take the context with us into the branches. \\
 
 %------------------------------ r_1 \cap r_2
 \paragraph{Intersection} If $\relr = \relr_1 \cap \relr_2$, Grünke et al. apply the ($\cap_2L$) rule resulting in 
 \[p[(e_1.\relr_1) \cap (e_1.\relr_2)]\]
-The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$. At the end of either decomposition new events $f_1,f_2$ take the places of each of these terms and the ($eL$) rule can be applied, resulting in one of these events being passed on to the surrounding term and producing $f_1 = f_2$. \todo{Bezug auf das decomposition lemma nehmen?}{}
+The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$. At the end of either decomposition new events $f_1,f_2$ take the places of each of these terms according to \Cref{lem:decomposition} and the ($eL$) rule can be applied, resulting in one of these events being passed on to the surrounding term and producing $f_1 = f_2$.
 Again, this term does not change the structure of the term and needs no translation.\\
 
 \paragraph{Kleene-star}
 In the case that $\relr = \relr_1^*$, Grünke et al.'s proof would use the ($*L$) rule which branches the tableau into one branch pursuing a counterexample where $r=\id$ and one branch where $r = r^+$.
-By using the ($*$) transformation, letting the union become the outermost operator and using the ($\cup_{L2}$) rule we can branch with the same effect in $\prf_\pi$.
+By using the ($*$) transformation, letting the union become the outermost operator and using the ($\cup_{L2}$) rule we can branch with the same effect in $\prf_\pi$:
+\begin{mathpar}
+\inferrule*[left=($*$)]{
+	\inferrule*[Left=($\cap_{\cup dist}$)($._{\cup distL}$)($._{\cup distR}$)]{
+		\inferrule*[Left=($\cap_{\cup dist}$)($._{\cup distL}$)($._{\cup distR}$)]{					\inferrule*[Left=($\cup_{L2}$)]{\Delta[\relr^+] \subseteq \rels 
+			\\ 
+			\Delta[\id] \subseteq \rels}{\Delta[\relr^+] \cup \Delta[\id]}		
+		}{\dots}	
+	}{\Delta[\relr^+ \cup \id] \subseteq \rels}
+}{\Delta[\relr^*] \subseteq \rels}
+\end{mathpar}
 
 %------------------------------- e x A
-\paragraph{Cross Product} If $\relr = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$, Grünke et al. would apply the (${\times} L$) rule preceded by the ($A$) rule which produces $f_1 \in A_1, e_1 = f_1, f_2 \in A, p[f_2]$, again passing a new event onto the surrounding term. Once more, this would not change the relational term and therefore no action is needed in our system. \\
+\paragraph{Cross Product} If $\relr = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$, Grünke et al. would apply the (${\times} L$) rule preceded by the ($A$) rule which produces $f_1 \in A_1, e_1 = f_1, f_2 \in A, p[f_2]$, again passing a new event onto the surrounding term. Once more, this would not change the relational term and therefore no action is needed in our system. However, if one of the sets is a union of multiple sets the situation is different: \\
 
 %In the case that $\relr= (B \times A)$, the ($A$) rule can be applied, yielding the demanded form of $(e_3 \times A)$. In the case that $\relr = (A \times e_3)$, $\pi$ would again first use the ($A$) rule and then continue as described above.
 %Since in rational CAT the use of union is restricted to relations, there cannot be a set $A_1 = A_1' \cup A_1''$ and the rule ($\cup_1$) will never be applied in $\pi$.
-\paragraph{Set union} However, if $A_1 = A_1' \cup A_1''$, then the ($\cup_1$) rule would branch the tableau before applying the ($A$) rule.
-To do this in our proof system, we need to transform $(A_1' \cup A_1'') \times A_2$ into $(A_1' \times A_2) \cup (A_1'' \times A_2)$ via ($\times_{\cup distR}$) or ($\times_{\cup distL}$), when the union concerns $A_2$. After that we can simply use the ($\cup_L$) rule to split our tableau. \\
+\paragraph{Set union} If $A_1 = A_1' \cup A_1''$, then the ($\cup_1$) rule would branch the tableau before applying the ($A$) rule.
+To do this in our proof system, we need to transform $(A_1' \cup A_1'') \times A_2$ into $(A_1' \times A_2) \cup (A_1'' \times A_2)$ via ($\times_{\cup distR}$) or ($\times_{\cup distL}$), if the union concerns $A_2$. After that we can simply use the procedure for translating the ($\cup_2L$) rule to split our tableau. \\
 
 %------------------------------- id
 \paragraph{Identity} If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend very much on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
 If the context is $\relr' \cap \id$, the rule preserves \id{} by decomposing it not into a new event but into $e_1$. In this case, we do not apply a rule in our system.
-If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule would have been applied before and in our system the ($\cup_{L2}$) rule. \\
+If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule in $\pi$ would have been applied before and in our system the ($\cup_{L2}$) rule. \\
 
 %------------------------------- \bot2
-\paragraph{Empty Relation} If $\relr = \bot_2$ ($= \0$) and the ($\bot_2L$) rule is applied, the result is $\bot_1$ which is the empty set $\emptyset$. Since any positive predicate that includes $\bot_1$ will be turned into $\bot_0$ via the ($\bot_1$) rule, this would close the branch. 
-Since we write \0{} instead of $\bot_2$, we can use the ($\0_\cup$),($\0_\cap$) and ($\0_{conc}$) rules depending on the context. \\
-Because we can assume that any union would have been branched before, ($\0_\cup$) is not needed. Instead we would have a branch where the included term consists only of \0{} and can apply the (\textsc{empty}) rule to close the branch. \\
+\paragraph{Empty Relation} If $\relr = \bot_2$ ($= \0$) and the ($\bot_2L$) rule is applied, the result is $\bot_1$ which is the empty set $\emptyset$. As any positive predicate that includes $\bot_1$ will be turned into $\bot_0$ via the ($\bot_1$) rule, this would close the branch. 
+We would write \0{} instead of $\bot_2$ and use the ($\0_\cap$) and ($\0_{conc}$) rules depending on the context. \\
+Because we can assume that any union would have been branched before, ($\0_\cup$) is not needed. Instead we would have a branch where the included term consists only of \0{} and we can apply the (\textsc{empty}) rule to close the branch. \\
 For intersection and concatenation our rules result in the elimination of the context, leaving only \0. Again, we can use the (\textsc{empty}) rule and close the branch. \\
 
 %------------------------------ \top2
@@ -1194,7 +1213,7 @@ For intersection and concatenation our rules result in the elimination of the co
 In our system, we need to be more aware of the context. For an intersection $(E\times E) \cap \relr'$ this equates to the ($\textsc{full}_\cap$) rule, which eliminates the full relation.
 For a concatenation, the full relation would stay and we would not apply any rule.
 
-\paragraph{Inversion} If $\relr = \relr'^{-1}$ then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, only the ($aR$) rule can be used, yielding a fresh event $f$ as demanded by the decomposition lemma.
+\paragraph{Inversion} If $\relr = \relr'^{-1}$ then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, the ($aR$) rule can be used, yielding a fresh event $f$ as demanded by the decomposition lemma.
 Since the inversion is still in the term as an inverted edge $(f,e)$, we do not need to apply any rule in the corresponding relational inclusion proof.
 
 \subsubsection{Negative Reasoning}
@@ -1202,36 +1221,32 @@ For \rels{} the rules that Grünke et al. apply are mostly different. First, the
 
 \paragraph{Concatenation} If $\rels = \rels_1.\rels_2$, Grünke et al. would again apply the ($._{2,2}L$) rule resulting in $\neg (e_1.\rels_1).\rels_2$. According to the decomposition lemma, at some point in the future $e_1.\rels_1$ will have been decomposed into an event $f$ and the decomposition continues with $f.\rels_2$.
 
-\paragraph{union} If $\rels = \rels_1 \cup \rels_2$, the ($\neg {\cup_2} L$) rule would be applied, resulting in $\neg p[e_1.\rels_1] \land \neg p[e_1.\rels_2]$. The form required by the decomposition lemma remains. The intuition for the conjunction is that any counterexample must not be in $\rels_1$ and $\rels_2$. Translated into the relational inclusion this corresponds to $\relr$ being a subrelation to $\rels_1$ or $\rels_2$. Since we do not use explicit disjunction but only the union operator, this equates to distributing the context to both parts of the union. We could therefore use the ($\cap_{\cup dist}$) and ($._{\cup dist}$) rules to make the union the outermost operator.
+\paragraph{Union} If $\rels = \rels_1 \cup \rels_2$, the ($\neg {\cup_2} L$) rule would be applied, resulting in $\neg p[e_1.\rels_1] \land \neg p[e_1.\rels_2]$. The form required by the decomposition lemma remains. The intuition for the conjunction is that any counterexample must not be in $\rels_1$ and $\rels_2$. Translated into the relational inclusion this corresponds to $\relr$ being a subrelation to $\rels_1$ or $\rels_2$. As we argued in \Cref{lem:branching}, the splitting of the predicates coincides with a union of the according relational terms. We could therefore use the ($\cap_{\cup dist}$) and ($._{\cup dist}$) rules to make the union the outermost operator and continue the decomposition inside the individual terms of the union.
 
 \paragraph{Intersection} If $\rels=(\rels_1 \cap{} \rels_2 \cap{} \dots).\rels'$, the ($\cap_2L$) rule can be applied. It creates the term $(e_1.\rels_1) \cap (e_1.\rels_2) \cap \dots$ where the decomposition can continue for all parts of the intersection, since the required form is retained.
 Since the rule can be applied to each intersection consecutively, it is sufficient to inspect only one. 
 For the relational inclusion we do not need to apply any rule for the same reason as in the positive reasoning. \\
 At some point in the future, the decomposition of both terms will be finished and returns events $f_1,f_2$ for a term $\neg p[f_1 \cap f_2]$.
-In that case, $\pi$ would apply the ($\neg eL$) rule, branching the tableau and essentially eliminating the intersection from the term. The condition for this rule is that the same intersection appears at the same place in the term in \relr{}. \\
+In that case, $\pi$ would apply the ($\neg eL$) rule, branching the tableau and essentially eliminating the intersection from the term. The condition for this rule is that an included intersection appears at the same place in the term in \relr{}. \\
 This can be seen in the fact that $f_1,f_2$ need to originate in positive reasoning and because one branch uses the predicate $\neg (f_1 \cap f_2 = \emptyset)$ which has to result in $\neg f_1 = f_2$.
 Since no further decomposition is possible and there was no contradiction before, this predicate has to produce it. Hence, there must be a predicate $f_1 = f_2$ in positive reasoning, meaning that the intersection is part of the included term. \\
 The only exception for this is when one relation in the intersection is the full relation $\top_2$. In this case $\pi$ would have applied the ($\top_2L$) and ($\neg \top_1$) rules where an event would have been chosen accordingly. \\
-In $\prf_\pi$ we apply at this point the ($._{LR}$) rule, branching the tableau too and using one branch to show $\rels_1 \cap \rels_2 \subseteq \rels_1 \cap \rels_2$.
-\begin{mathpar} \inferrule*[left=($._{LR}$)]{\rels_1 \cap \rels_2 \subseteq \rels_1 \cap \rels_2 \\ \relr' \subseteq \rels'}{(\rels_1\cap \rels_2).\relr' \subseteq (\rels_1 \cap \Rels_2).\rels'}
+In $\prf_\pi$ we apply at this point the ($._{LR}$) rule, branching the tableau too and using one branch to show $\relr_1 \subseteq \rels_1 \cap \rels_2$. \Cref{lem:branching} justifies this. \\
+\begin{mathpar} \inferrule*[left=($._{LR}$)]{\relr_1 \subseteq \rels_1 \cap \rels_2 \\ \relr' \subseteq \rels'}{\relr_1.\relr' \subseteq (\rels_1 \cap \rels_2).\rels'}
 \end{mathpar}
+The key difference between $\pi$ and $\prf_\pi$ is that $\pi$ will decompose the intersection before it branches it off and only shows that the whole term includes whatever is in the included term at that position afterwards. $\prf_\pi$ simply branches off the intersection and the term in $\relr$ and then shows the inclusion between the two. \\
 For the case with $\top_2$ we refer to the according paragraph.
-This branch can then be closed using the (\textsc{reflexivity}) rule or the ($\cap_L$) rule if the included term features more intersections. \Cref{lem:branching} justifies this.  
+This branch can then be closed using the (\textsc{reflexivity}) rule or the ($\cap_L$) rule if the included term features more intersections.  
 
 
 \paragraph{Kleene-star} If $\rels = \rels_1^*$, the next rule in $\pi$ would be ($\neg *L$). This splits the predicate $\neg p[e_1.\relr^*]$ into two new predicates $\neg p[e_1], \neg p[(e_1.\relr).\relr^*]$, letting the decomposition continue as demanded in \Cref{lem:decomposition}. In $\prf_\pi$ the corresponding action would be to use the ($*$) transformation on $\relr^*$ and then make the new union the outermost operator. According to \Cref{lem:splitting} this is equivalent to the new predicates in $\pi$.
 
-\paragraph{Identity} If $\rels=\id$, the next rule in $\pi$ is ($\id L$) which eliminates the \id{} relation, leaving only the event $e_1$ behind. This satisfies the demands of the decomposition lemma.
+\paragraph{Identity} If $\rels=\id$, the next rule in $\pi$ is ($\id L$) which eliminates the \id{} relation, leaving only the event $e_1$ behind.
 In $\prf_\pi$, this is the same case as in the positive reasoning. Accordingly we can use ($\id_{conc}$) or no rule at all depending on the context.
 
-\paragraph{Empty Relation} If $\rels=\bot_2$, Grünke et al. would apply ($\bot_2 L$) as in positive reasoning. This results in $\bot_1$ where the application of the ($\bot_1$) is not possible.
-In fact, in the system of Grünke et al. no rule can be applied and the decomposition of that predicate ends. The decomposition of the branch can only continue in positive reasoning or in a different negated predicate. When looking at what this term means for the relational inclusion it becomes clear why: \\
-Consider a relational term that includes the empty relation $\0$ aka $\bot_2$. As we have stated in the paragraph about the union, this operator would be made the outermost in the relational term and create separate predicates in the RAT-CAT formula. Therefore we can assume the term that corresponds to the predicate with $\bot_2$ to be union-free.
-For a concatenation or intersection with $\0$ the result would always be the empty relation.
-This makes the relational inclusion look like this:
-\[\relr \subseteq \rels' \cup \0 \cup \rels''\]
-Hence, in $\prf_\pi$ we can use ($\0_{conc}$) and ($\0_\cap$) until we reach the term $\0$ which we can then eliminate with ($\0_\cup$). \\
-One could argue that since $\pi$ is the shortest possible proof, the ($\bot_2L$) rule would only be used in the case that the included term is \0. In that case the branch would have been closed already with the decomposition of the positive predicate and the ($\bot_0$) rule (see paragraph on the empty relation in positive reasoning). Therefore this rule would never be used in $\pi$.
+\paragraph{Empty Relation} If $\rels=\bot_2$, Grünke et al. would apply ($\bot_2 L$) as in positive reasoning. In a shortest proof $\pi$ however, the rule is never used. As the inclusion must be true and there is an empty relation in the including term, either the empty relation is not needed to prove the inclusion (implying that the rule will not be used) or the empty relation is also the included term. In that case, the positive reasoning would have closed the branch already with the ($\bot_0$) rule (see paragraph on the empty relation in positive reasoning).
+Hence, this rule would never be used in $\pi$
+
 
 \paragraph{Full Relation} If $\rels= \top_2$, ($\top_2L$) can be invoked. This yields $\top_1$ to which Grünke et al. apply the ($\neg\top_1$) rule. This produces $\neg p[e]$ where $e$ is an event which appears positively in $\Gamma$, meaning it is an event that appears in the positive reasoning. Depending on the context, the decomposition can now continue. In the case that there is no context, choosing $e_2$ for the event will construct a contradiction. The ($\neg \cap_e$) rule derives $\neg e_2 = e_2$ and from that ($\neg =$) infers $\bot_0$ and closes the branch. 
 In our system this equates to using the (\textsc{full}) rule, which closes the branch if the including term is the full relation.
@@ -1250,9 +1265,9 @@ Hence, in our system we will apply a variation of the ($._{LR}$) rule called ($.
 
 \paragraph{Cross Product} If the ($\neg {\times}L$) rule is used on a cross product we use the ($._{LR}$) rule as stated in the proof for \Cref{lem:branching}.
 If $(A_1 \times A_2)$ was part of an intersection, we would refer to the paragraph on intersections.
-If any of the sets are the empty or full sets, we refer to the corresponding paragraphs.
+If any of the sets are the empty or full sets, we refer to the corresponding paragraphs for anything happening after the branching.
 
-\paragraph{Set union} If the ($\neg \cup_1$) rule is used in $\pi$, the predicate is split. As in rational CAT, sets are only used in cross products, this would only be applied to terms where one set of the cross product is a union like for example $p[(A_1 \cup A_2) \times A_3]$. Like in positive reasoning, for $\prf_\pi$ we can use the transformations ($\times_{\cup distL}$) and ($\times_{\cup distR}$) to distribute the cross product into $p[(A_1 \times A_3) \cup (A_1 \times A_3)]$. From \Cref{lem:splitting}, we know that this union, when we make it the outermost operator, is equal to splitting the predicates.
+\paragraph{Set union} If the ($\neg \cup_1$) rule is used in $\pi$, the predicate is split. As in rational CAT, sets are only used in cross products, this would only be applied to terms where one set of the cross product is a union like for example $p[(A_1 \cup A_2) \times A_3]$. Like in positive reasoning, for $\prf_\pi$ we can use the transformations ($\times_{\cup distL}$) and ($\times_{\cup distR}$) to distribute the cross product into $p[(A_1 \times A_3) \cup (A_1 \times A_3)]$. From \Cref{lem:splitting}, we know that this union, when we make it the outermost operator, is equal to splitting the predicates and we can continue with the procedure as stated in the paragraph on regular unions.
 
 \paragraph{Elimination ($\neg aL$):} If \rels{} in $e_1.\rels$ is simply a base relation, Grünke et al. would want to apply ($\neg aL$). This is only possible if the positive reasoning provides an atomic predicate $(e_1,f_1) \in \rels$ as a premise. This corresponds to the existence of a term $\rels$ or $\rels \cap \rels'$ at the same position in the included term. The ($\neg aL$) rule produces $\neg p[e_1.\rels] \land (e_1,f_1) \in \rels \land \neg p[f_1]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use again the ($._{LR}$) rule.\\
 While this rule opens a new branch in $\prf_\pi$, it can be closed immediately by applying either the (\textsc{reflexivity}) rule or the ($\cap_L$) rule.
@@ -1290,11 +1305,7 @@ Although we do not have a rule to create arbitrary unions, we can produce the sa
 The hypotheses in \cite{Gru+26} correspond to the relation-specific rules in \Cref{sec:relationspecific} and the assumptions and definitions in \Cref{sec:assumptions}. One can see in the preceding tableau, how we can integrate these to mimic the behavior of $\pi$. For the definitions we can simply use the according transformation instead of the (\textsc{weak}) rule.
 The extra rule in \cite{Gru+26} for the case $\relr \subseteq \id$ produces $\neg p[e.\relr'], \neg p[(e.\relr).\relr']$ which is equivalent to adding duplicated terms where $\relr$ is placed in front of any other relation where it seems necessary for the inclusion. The procedure in $\prf_\pi$ allows for this behavior since \id{} can be inserted at these positions via the inverted ($\id_{conc}$) transformation. After that, the procedure is the same. \\
 
-\todo{gibt es noch einen Nutzen für}{eine andere Regel?}
-
-
-In summary, we have shown that we can translate any finite RAT-CAT-SAT proof $\pi$ into a relational inclusion proof $\prf_\pi$.
-
+In summary, we have shown that we can translate any finite RAT-CAT proof $\pi$ for a relational inclusion $\relr \subseteq \Rels$ into a relational inclusion proof $\prf_\pi$.
 
 \subsection{Infinite Proofs}
 
@@ -1303,7 +1314,7 @@ To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a pr
 They mention that if intersection was allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurance of a backlink as the invariant.
 
 \section{Conclusion}\label{sec:conclusion}
-
+Time to conclude...
 
 \pagebreak
 \pagenumbering{Roman}
@@ -1620,18 +1631,18 @@ Through the ($\cup_{L2}$) rule, we can split the calculation and do it for each 
 %
 %\inferrule*{true}{R \subseteq R^+} \and durch die nächste regel abgedeckt
 %\inferrule*{true}{R.R^* = R^+} \and
-%\inferrule*[left=($+$)]{\Gamma[\sf r.r^*]}{\Gamma[\sf r^+]} \and
+%\inferrule*[left=($+$)]{\Omega[\sf r.r^*]}{\Omega[\sf r^+]} \and
 %\textcolor{red}{
 %\inferrule*[left=($+_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s^+}} \and durch weakening und s \subseteq s^+
 %\inferrule*[left=($+_{weak}$)]{\sf r \subseteq s^+ \\ \sf s \subseteq t}{\sf r \subseteq t^+} \and
 %\inferrule*[left=($+_{strength}$)]{R^+ \subseteq S \\ T \subseteq R}{T^+ \subseteq S} \and
-%\inferrule*[left=($+_{\cup}$)]{\Gamma[\sf r^+ \cup s^+]}{\Gamma[\sf (r^+ \cup s^+)^+]} \and
-%\inferrule*[left=($+_{\cap}$)]{\Gamma[\sf r^+ \cap s^+]}{\Gamma[\sf (r^+ \cap s^+)^+]} 
+%\inferrule*[left=($+_{\cup}$)]{\Omega[\sf r^+ \cup s^+]}{\Omega[\sf (r^+ \cup s^+)^+]} \and
+%\inferrule*[left=($+_{\cap}$)]{\Omega[\sf r^+ \cap s^+]}{\Omega[\sf (r^+ \cap s^+)^+]} 
 %
-%\inferrule*[left=($?$)]{\Gamma[\sf r \cup \id]}{\Gamma[\sf r?]} \and
-%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[\sf r? \cup s?]}{\Gamma[\sf (r \cup s)?]} \and
-%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[\sf r? \cap s?]}{\Gamma[\sf (r \cap s)?]} \and
-%\inferrule*[left=($._{?dist}$)]{\Gamma[\sf r? \cup s? \cup (r.s)?]}{\Gamma[\sf r?.s?]} \and
+%\inferrule*[left=($?$)]{\Omega[\sf r \cup \id]}{\Omega[\sf r?]} \and
+%\inferrule*[left=($?_{\cup dist}$)]{\Omega[\sf r? \cup s?]}{\Omega[\sf (r \cup s)?]} \and
+%\inferrule*[left=($?_{\cap dist}$)]{\Omega[\sf r? \cap s?]}{\Omega[\sf (r \cap s)?]} \and
+%\inferrule*[left=($._{?dist}$)]{\Omega[\sf r? \cup s? \cup (r.s)?]}{\Omega[\sf r?.s?]} \and
 %\inferrule*[left=($?_{1R}$)]{true}{\id \subseteq R?} \and
 %\inferrule*[left=($?_{1L}$)]{\id \subseteq R}{R? \subseteq R} \and
 %\inferrule*[left=($?_{2R}$)]{R \subseteq S}{R \subseteq S?} \and
@@ -1643,15 +1654,15 @@ Through the ($\cup_{L2}$) rule, we can split the calculation and do it for each 
 %\inferrule*{true}{R? \cap S? = (R \cap S)?} \and
 %\inferrule*{true}{R?.S? = R? \cup S? \cup (R.S) ?}
 %
-%\inferrule*[left=($*$)]{\Gamma[\sf \id \cup r^+]}{\Gamma[\sf r^*]} \and
+%\inferrule*[left=($*$)]{\Omega[\sf \id \cup r^+]}{\Omega[\sf r^*]} \and
 %\textcolor{red}{\inferrule*[left=($*_{2R}$)]{\sf r \subseteq s}{\sf r \subseteq s^*}} \and durch weakening
 %\inferrule*[left=($*_{1R}$)]{\true}{\sf \id \subseteq r^*} \and  
 %\inferrule*[left=($+*$)]{\true}{\sf r^+ \subseteq r^*} \and
 %\inferrule*[left=($?*$)]{\true}{\sf r? \subseteq r^*} \and
 %\inferrule*[left=($*_{2L}$)]{\sf \id \subseteq s \\ \sf r^+ \subseteq s}{\sf r^* \subseteq s} \and
 %\inferrule*{R \subseteq S}{R^* \subseteq S^*} über ref und con
-%\inferrule*[left=($*_{\cup elim}$)]{\Gamma[\sf (r^*.s^*)^*]}{\Gamma[\sf (r \cup s)^*]} \and
-%\inferrule*[left=($*_{double}$)]{\Gamma[\sf r^*.r^*]}{\Gamma[\sf r^*]} %\and
+%\inferrule*[left=($*_{\cup elim}$)]{\Omega[\sf (r^*.s^*)^*]}{\Omega[\sf (r \cup s)^*]} \and
+%\inferrule*[left=($*_{double}$)]{\Omega[\sf r^*.r^*]}{\Omega[\sf r^*]} %\and
 %\inferrule*[left=($*_{weak}$)]{\sf r \subseteq s^* \\ s \subseteq t}{\sf r \subseteq t^*} \and
 %\inferrule*[left=($*_{strength}$)]{\sf r^* \subseteq s \\ \sf t \subseteq r}{\sf t^* \subseteq s}
 %
@@ -1675,15 +1686,15 @@ Through the ($\cup_{L2}$) rule, we can split the calculation and do it for each 
 %\inferrule*{true}{\sim R~ \cup \sim S = \sim (R \cap S)} \and
 %\inferrule*{true}{\sim (R \cup S) = \sim R~ \cap \sim S}
 
-%\inferrule*[left=($?$)]{\Gamma[R \cup \id]}{\Gamma[R?]} \and
-%\inferrule*[left=($?_{\cup dist}$)]{\Gamma[R? \cup S?]}{\Gamma[(R \cup S)?]} \and
-%\inferrule*[left=($?_{\cap dist}$)]{\Gamma[R? \cap S?]}{\Gamma[(R \cap S)?]} \and
-%\inferrule*[left=($._{?dist}$)]{\Gamma[R? \cup S? \cup (R.S)?]}{\Gamma[R?.S?]} \and
-%\inferrule*[left=($\sim$)]{\Gamma[\sf r]}{\Gamma[\sf \sim \sim r]} \and
-%\inferrule*[left=($\sim_{\cap dist}$)]{\Gamma[\sf \sim r~ \cup \sim s]}{\Gamma[\sf \sim (r \cap s)]} \and
-%\inferrule*[left=($\sim_{\cup dist}$)]{\Gamma[\sf \sim r~ \cap \sim s]}{\Gamma[\sf \sim (r \cup s)]} \and
-%\inferrule*[left=($+$)]{\Gamma[R.R^*]}{\Gamma[R^+]} \and
-%\inferrule*[left=($*$)]{\Gamma[\id \cup R^+]}{\Gamma[R^*]} 
+%\inferrule*[left=($?$)]{\Omega[R \cup \id]}{\Omega[R?]} \and
+%\inferrule*[left=($?_{\cup dist}$)]{\Omega[R? \cup S?]}{\Omega[(R \cup S)?]} \and
+%\inferrule*[left=($?_{\cap dist}$)]{\Omega[R? \cap S?]}{\Omega[(R \cap S)?]} \and
+%\inferrule*[left=($._{?dist}$)]{\Omega[R? \cup S? \cup (R.S)?]}{\Omega[R?.S?]} \and
+%\inferrule*[left=($\sim$)]{\Omega[\sf r]}{\Omega[\sf \sim \sim r]} \and
+%\inferrule*[left=($\sim_{\cap dist}$)]{\Omega[\sf \sim r~ \cup \sim s]}{\Omega[\sf \sim (r \cap s)]} \and
+%\inferrule*[left=($\sim_{\cup dist}$)]{\Omega[\sf \sim r~ \cap \sim s]}{\Omega[\sf \sim (r \cup s)]} \and
+%\inferrule*[left=($+$)]{\Omega[R.R^*]}{\Omega[R^+]} \and
+%\inferrule*[left=($*$)]{\Omega[\id \cup R^+]}{\Omega[R^*]} 
 %\end{mathpar}
 
 \end{appendix}
