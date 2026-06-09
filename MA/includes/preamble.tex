@@ -20,6 +20,22 @@
 \newcommand{\blitz}{\textcolor{red}{\lightning}}
 \usepackage{float}
 \renewcommand{\phi}{\varphi}
+\usepackage{forest}
+
+\forestset{
+  tableau/.style={
+    for tree={
+      grow'=south,
+      draw=none,
+      edge={thick},
+      anchor=center,
+      align=center,
+      l=12mm,
+      s sep=6mm,
+      inner sep=0.5pt,
+    }
+  }
+}
 
 
 % Für Code

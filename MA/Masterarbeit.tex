@@ -1108,7 +1108,7 @@ Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep t
 \end{proof}
 
 
-\subsection{Finite Proofs}
+\subsection{Finite Proofs}\label{sec:finiteproofs}
 
 For proving completeness, we will first translate all finite proofs of Grünke et al. into relational inclusion proofs. Finite proofs are those which do not use the Kleene-star rules ($*L$),($*R$),($\neg *L$) and ($\neg *R$) infinitely often. \\
 Looking at the rules of Grünke et al., we can observe that any positive literal in RISF will be decomposed by applying rules to the $e_1.\relr$ term. The goal of the decomposition is to get an event $f_1$ for which $(e_1,f_1) \in \relr$ holds. If that point is reached, the ($eL$) rule can be applied, yielding $f=e_2 \land f_1 \neq \emptyset$. \\
@@ -1323,10 +1323,11 @@ In summary, we have shown that we can translate any finite RAT-CAT proof $\pi$ f
 \subsection{Infinite Proofs}
 
 For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. For this purpose, we construct an invariant $\mathcal{I}$ which we can use in the $(+_L)$ rule or ($+_R$) rule that works for every occurrence of a backlink in $\pi$.
-To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
-They mention that if intersection was allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use those as invariants.
-
-We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a Kleene-star rule (($*L$),($*R$),($\neg *L$),($\neg *R$)) infinitely often and is therefore cyclic. In $\pi_\infty$, a backlink is used everytime a term appears that already occurred earlier in the proof.  
+It is explained in \cite{Gru+26} that only the Kleene-star rules do not decompose expressions and hence, there must be infinitely many applications of those rules in any infinite branch.
+Furthermore, any infinite branch has to fulfill a progress condition, which is that there must be infinitely many applications of the \textit{progressing} rules ($*L$) and ($*R$). \\
+Grünke et al. then transform the infinite branches of their proofs into cyclic ones by introducing backlinks anytime a term appears a second time. The equivalence is defined to being the same term up to renaming of events and unused literals. \\
+We give an example of an infinite branch in \Cref{fig:infleft} where the terms were already translated into relational inclusions.
+ 
 
 \begin{figure}[h]
 \begin{mathpar}
@@ -1354,10 +1355,13 @@ We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a Kleen
 	}{\relr^+ \subseteq \rels_1}
 }{\relr^* \subseteq \textcolor{red}{\rels_1 \qquad \bullet}}
 \end{mathpar}
-\caption{An example of an infinite branch $\pi_\infty$ in a RAT-CAT proof $\pi$ that has been translated into relational expressions. To make the structure clearer, the labels are still the rules of Grünke et al. \cite{Gru+26}.} \label{fig:infleft}
+\caption{An example of an infinite branch $\pi_\infty$ in a RAT-CAT proof $\pi$ that has been translated into a relational inclusion proof $\prf_\pi$. To make the structure clearer, the labels are still the rules of Grünke et al. \cite{Gru+26}. The backlinks are marked with \textcolor{red}{$\bullet$} and \textcolor{blue}{$\circ$}} \label{fig:infleft}
 \end{figure}
+To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
+They mention that if intersections were allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use those as invariants.
 
-We let $\pi_\infty$ be an infinite branch applying the positive Kleene star rules ($*L$) and ($*R$) infinitely often. An example can be seen in \Cref{fig:infleft}. In $\prf_\pi$ we would replace the infinite branch with the rule ($+_L$) where we use an invariant $\I$ that is a intermediate term between \Relr{} and \Rels{} and a fixed point for $\relr^+$.
+We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a progressing Kleene-star rule (($*L$),($*R$)) infinitely often and is therefore cyclic. 
+In $\prf_\pi$ we would replace the infinite branch with the rule ($+_L$) where we use an invariant $\I$ that is an intermediate term between \Relr{} and \Rels{} and a fixed point for $\relr^+$.
 As mentioned, we choose the intersection of the including terms as the invariant:
 Let $s_i, i \in [1,n]$ be the terms that are supposed to include $\relr^+$
 \[\I = \bigcap_{i=1}^n \rels_i\]
@@ -1365,7 +1369,7 @@ The invariant $\I$ has to fulfill three properties:
 \[
 \textbf{(P1)}~ \relr \subseteq \I \qquad
 \textbf{(P2)}~ \relr.\I \subseteq \I \qquad
-\textbf{(P3)}~ \I \subseteq \rels
+\textbf{(P3)}~ \forall i \in [1,n]: \I \subseteq \rels_i 
 \]
 Since we know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds for all $i \in [1,n]$ the properties are easy to prove:
 
@@ -1374,16 +1378,34 @@ Since we know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds
 
 \paragraph{(P2)} $\relr.\left( \bigcap_{i = 1}^n \rels_i \right) \subseteq \bigcap_{i = 1}^n \rels_i$
 \begin{proof}
-From $\pi$ being a closed tableau we know that $\relr^+ \subseteq \rels_i$ holds for every $i \in [1,n]$.
+From $\pi$ being a closed tableau we know that $\relr^+ \subseteq \rels_i$ holds for every $i \in [1,n]$ and since we will receive $\relr^* \subseteq \rels_i$ from $\relr^+ \subseteq \rels_i$, we know that any $s_i$ can be resolved to $\relr.\rels_i$. Applying this to the invariant, we can deduce that it can be transformed to $\bigcap_{i = 1}^n \relr.\rels_i$.
 \begin{eqnarray*}
-\edgein \relr.(\bigcap_{i = 1}^n \rels_i) &\impl & (e,e_1) \in \relr \land (e_1,e') \in \bigcap_{i = 1}^n \rels_i \\
-&\impl & 
+\edgein \relr.(\bigcap_{i = 1}^n \rels_i) &\impl & \exists e_1: (e,e_1) \in \relr \land (e_1,e') \in \bigcap_{i = 1}^n \rels_i \\
+& \impl & \exists e_1: (e,e_1)\in \relr \land \bigwedge_{i=1}^n (e_1,e') \in s_i \\
+&\impl & \exists e_1: \bigwedge_{i=1}^n (e,e_1) \in \relr \land (e_1,e') \in \rels_i \\
+&\impl & \edgein \bigcap_{i = 1}^n \relr.\rels_i = \bigcap_{i = 1}^n \rels_i
 \end{eqnarray*}
 \end{proof}
 
 \paragraph{(P3)} $\bigcap_{i = 1}^n \rels_i \subseteq \rels_i$ for every $\rels_i$
 \begin{proof}
 As we can reformulate the term for every $\rels_j$ as $\rels_j \cap (\bigcap_{i=1}^n \rels_i) \subseteq \rels_j$ and we know from the soundness proof of ($\cap_L$) that $\relr \cap \relr' \subseteq \relr$ holds, \textbf{(P3)} holds for the invariant.
+\end{proof}
+
+\begin{lemma}\label{lem:properties} The proof tableaus for the properties \textbf{\upshape (P1)}, \textbf{\upshape (P2)} and \textbf{\upshape (P3)} are finite. \end{lemma}
+\begin{proof}
+For \textbf{(P1)} $\relr \subseteq \I$ the proof is to apply the rules in the cyclic part of $\pi_\infty$. Since that part splits off one $\relr$ from the including terms resulting in $\relr^* \subseteq \Rels_i$ for any of the $s_i$, is must be possible to split the $\relr$ off here to produce $\0 \subseteq \rels_i$ which can then be closed by (\textsc{empty}). 
+As the section of the branch between the occurrences of the term is finite, the proof for \textbf{(P1)} must be finite as well. \\
+For \textbf{(P2)} $\relr.\I \subseteq \I$ a similar argument can be made. We know from the cyclic proof that it is possible to split off arbitrarily many $\relr$ from the $\rels_i$ terms and still retain the term itself. We use this in the proof of the property. Accordingly, the proof for this can be the finite section between the occurrences of the term, which produces $\I \subseteq \I$ and that can be resolved to \true{} with the (\textsc{reflexivity}) rule. \\
+For \textbf{(P3)} $\forall i \in [1,n]: \I \subseteq \rels_i$ the proofs can be two rules long. First, we apply the ($\cap_{comm}$) rule to put the current term $\rels_j$ at the first position and then we invoke ($\cap_L$) to close the branch. This is a finite proof and thus, the application of the induction rule ($+_L$) yields a finite proof.
+\end{proof}
+
+\begin{theorem}[Infinite Translation Theorem]
+We can translate any infinite RAT-CAT proof $\pi$ into a finite relational inclusion proof $\prf_\pi$.
+\end{theorem}
+\begin{proof}
+We translate the proof up to the first occurrence of the ($*L$) or ($*R$) rule into a relational inclusion tableau as we showed in \Cref{sec:finiteproofs}. For the next step, we apply the ($*$) rule to split the tableau with ($\cup_{L2}$) and translate the branch concerning $\id \subseteq \rels_1$ as usual. The branch that handles $\relr^+ \subseteq \rels_1$ continues with the invariant rule ($+_L$). As the invariant we choose $\I = \bigcap_{i = 1}^n \rels_i$ where $n$ is the number of different terms that evoke backlinks. As we have shown, if $\pi$ is a proof, then the premises of the rule \textbf{(P1)}, \textbf{(P2)} and \textbf{(P3)} are fulfilled and thus, the translation is valid. 
+As we know from \Cref{lem:properties} the branches for proofs for the properties \textbf{(P2)} and \textbf{(P3)} will be finite.
 \end{proof}
 
 \section{Conclusion}\label{sec:conclusion}
