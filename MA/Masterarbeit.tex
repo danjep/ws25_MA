@@ -692,7 +692,9 @@ Since inversion is only applied to base relations, the $(-1_{elim})$ rule is pla
 \begin{mathpar}
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} 
 \end{mathpar}}
+\begin{proof}
 
+\end{proof}
 As we have described in \Cref{sec:notation}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
 Besides this we use some rules to handle \relW~ and \relR~ themselves.
 \begin{rules}{Write and Read Events}
@@ -1322,11 +1324,52 @@ In summary, we have shown that we can translate any finite RAT-CAT proof $\pi$ f
 
 \subsection{Infinite Proofs}
 
-For infinite proofs, the difficulty lies in the cyclicity of \cite{Gru+26}. For this purpose, we construct an invariant $\mathcal{I}$ which we can use in the $(+_L)$ rule or ($+_R$) rule that works for every occurrence of a backlink in $\pi$.
-It is explained in \cite{Gru+26} that only the Kleene-star rules do not decompose expressions and hence, there must be infinitely many applications of those rules in any infinite branch.
+For translating infinite proofs, the central point is to replace the cyclicity of Grünke et al. \cite{Gru+26} with a finite branch. For this purpose, we construct an invariant $\mathcal{I}$ which we can use in the $(+_L)$ rule that works for every occurrence of a backlink in the infinite branch $\pi_\infty$.
+Grünke et al. explain that only the Kleene-star rules do not decompose expressions and hence, there must be infinitely many applications of those rules in any infinite branch.
 Furthermore, any infinite branch has to fulfill a progress condition, which is that there must be infinitely many applications of the \textit{progressing} rules ($*L$) and ($*R$). \\
 Grünke et al. then transform the infinite branches of their proofs into cyclic ones by introducing backlinks anytime a term appears a second time. The equivalence is defined to being the same term up to renaming of events and unused literals. \\
-We give an example of an infinite branch in \Cref{fig:infleft} where the terms were already translated into relational inclusions.
+To be able to transform the infinite branches into cyclic ones, Grünke et al. introduce three new rules whose effect we will emulate with our rules again:
+\begin{figure}[h]
+\begin{rules}{Structural Rules}
+\inferrule*[left=(SUBST)]{\Gamma}{\sigma(\Gamma)} \and
+\inferrule*[left=(W)]{\Gamma, l}{\Gamma} \and
+\inferrule*[left=(CUT)]{\Gamma}{\Gamma, l \\ \mid \\ \Gamma, \neg l}
+\end{rules}
+\caption{The structural rules of Grünke et al. (\cite{Gru+26}) needed to turn an infinite branch into a cyclic one.}\label{fig:structuralrules}
+\end{figure}
+
+The (\textsc{SUBST}) rule applies a renaming $\sigma$ to the events in $\Gamma$ in order to detect isomorphic proof nodes that only differ in the names of the events. As we do not use events in our proof system, there is no need to translate this rule. \\
+The (\textsc{W}) rule is a weakening that forgets a literal. Depending on the side of the inclusion, we can use the (\textsc{strength}) rule and (\textsc{weak}) rule for the same purpose. \\
+The (\textsc{CUT}) rule introduces a case distinction and branches the tableau. Translating the terms into relational inclusions according to \Cref{lem:splitting} we get a rule like this:
+\begin{mathpar} \inferrule*[]{\relr \cap \relt \subseteq \rels \\ \relr \subseteq \rels \cup \relt}{\relr \subseteq \rels} \end{mathpar}
+We can construct this rule with (\textsc{weak}) and (\textsc{strength}):
+\begin{mathpar}  
+\inferrule*[left=(weak)]{
+	\inferrule*[Left=($\cup_{L2}$)]{
+		\inferrule*[Left=(strength)]{
+			\inferrule*[]{}{\Relr \subseteq \rels \cup \relt}
+			\\
+			\inferrule*[Right=($\cup_R$)]{
+				\inferrule*[Right=(refl.)]{true}{\rels \subseteq \rels}			
+			}{\rels \subseteq \rels \cup \relt}
+		}{\relr \subseteq \rels}
+		\\
+		\inferrule*[right=(weak)]{
+			\inferrule*[]{}{\Relr \cap \relt \subseteq \rels}
+			\\
+			\inferrule*[Right=($\cap_L$)]{true			
+			}{\Relr \cap \relt \subseteq \relr}
+		}{\Relr \subseteq \rels}	
+	}{\relr \cup \relr \subseteq \rels}
+	\\
+	\inferrule*[Right=($\cup_L$)]{
+		\inferrule*[Right=(refl.)]{true}{\relr \subseteq \relr}
+	}{\Relr \cup \Relr \subseteq \Relr}
+}{\Relr \subseteq \Rels}
+\end{mathpar}
+Now, we can translate any step that Grünke et al. might take in $\pi_\infty$. \\
+As there might exist multiple terms $\rels_i$ that induce a backlink, we need an invariant that holds for everyone of these terms.
+We give an example of an infinite branch in \Cref{fig:infleft} where the $\pi$ was already translated into a relational inclusion proof with the procedure in the previous section.
  
 
 \begin{figure}[h]
@@ -1355,23 +1398,23 @@ We give an example of an infinite branch in \Cref{fig:infleft} where the terms w
 	}{\relr^+ \subseteq \rels_1}
 }{\relr^* \subseteq \textcolor{red}{\rels_1 \qquad \bullet}}
 \end{mathpar}
-\caption{An example of an infinite branch $\pi_\infty$ in a RAT-CAT proof $\pi$ that has been translated into a relational inclusion proof $\prf_\pi$. To make the structure clearer, the labels are still the rules of Grünke et al. \cite{Gru+26}. The backlinks are marked with \textcolor{red}{$\bullet$} and \textcolor{blue}{$\circ$}} \label{fig:infleft}
+\caption{An example of an infinite branch $\pi_\infty$ in a RAT-CAT proof $\pi$ that has been translated into a branch $\B_\infty$ of a relational inclusion proof $\prf_\pi$. To make the structure clearer, the labels are still the rules of Grünke et al. \cite{Gru+26}. The backlinks are marked with \textcolor{red}{$\bullet$} and \textcolor{blue}{$\circ$}} \label{fig:infleft}
 \end{figure}
 To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
 They mention that if intersections were allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use those as invariants.
 
 We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a progressing Kleene-star rule (($*L$),($*R$)) infinitely often and is therefore cyclic. 
-In $\prf_\pi$ we would replace the infinite branch with the rule ($+_L$) where we use an invariant $\I$ that is an intermediate term between \Relr{} and \Rels{} and a fixed point for $\relr^+$.
+In $\prf_\pi$ we would replace the infinite branch $\B_\infty$ with the rule ($+_L$) where we use an invariant $\I$ that is an intermediate term between \Relr{} and \Rels{} and a fixed point for $\relr^+$.
 As mentioned, we choose the intersection of the including terms as the invariant:
 Let $s_i, i \in [1,n]$ be the terms that are supposed to include $\relr^+$
 \[\I = \bigcap_{i=1}^n \rels_i\]
-The invariant $\I$ has to fulfill three properties:
+The invariant $\I$ has to fulfill three properties according to our invariant rule:
 \[
 \textbf{(P1)}~ \relr \subseteq \I \qquad
 \textbf{(P2)}~ \relr.\I \subseteq \I \qquad
 \textbf{(P3)}~ \forall i \in [1,n]: \I \subseteq \rels_i 
 \]
-Since we know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds for all $i \in [1,n]$ the properties are easy to prove:
+We know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds for all $i \in [1,n]$. Furthermore, we can assume that every $s_i$ can be transformed into $\relr.\rels_i$, since between the occurrences of the term a $\relr$ term that is concatenated on the left side (since we can assume only ($*L$) is used according to \Cref{lem:decomposition}) can be split off. Using this information we can prove the properties:
 
 \paragraph{(P1)} $\relr \subseteq \bigcap_{i = 1}^n \rels_i $
 \begin{proof}As we have just mentioned, we know that $\relr \subseteq \rels_i$ holds for every $\rels_i$. The conjunction of these facts is exactly the definition of the intersection of all the $\rels_i$ terms. \end{proof}
