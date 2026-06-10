@@ -688,12 +688,15 @@ The base relations \loc{} and \ext{} are symmetric, meaning that for every $(e,e
 \inferrule*[left=($\co_{trans}$)]{\true}{\co .\co \subseteq \co} \and
 \inferrule*[left=($\loc_{trans}$)]{\true}{\loc .\loc \subseteq \loc} 
 \end{rules}
-Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.\todo{proof needed}{
-\begin{mathpar}
+Since inversion is only applied to base relations, the $(-1_{elim})$ rule is placed in this section. In theory it could be applied to any relation. The rule uses the fact that $\sf r.r^{-1}$ and $\sf r^{-1}.r$ include a part of \id{} that covers all events that occur on either end of the edges in \relr.
+\begin{rules}{Inversion Elimination}
 \inferrule*[left=($-1_{elim}$)]{\true}{\sf r \subseteq r.r^{-1}.r} 
-\end{mathpar}}
-\begin{proof}
-
+\end{rules}
+\begin{proof} Here we need to prove the implication, since it is not a given propertiy from the definition of CAT.
+\begin{eqnarray*}
+\edgein \relr &\impl & \edgein \Relr \land \egdein \relr^\inv \land \edgein \relr \\
+&\impl & \edgein \relr.\Relr^\inv.\relr
+\end{eqnarray*}
 \end{proof}
 As we have described in \Cref{sec:notation}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
 Besides this we use some rules to handle \relW~ and \relR~ themselves.
