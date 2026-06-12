@@ -256,7 +256,7 @@ Furthermore, there is research on refining stateless model checking \cite{Jon+25
 Some research groups instead examine the models themselves and their attributes \cite{LahBok22} and others the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene Algebra with Tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
-Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSAPCE-complete instead of EXPSPACE-complete \cite{KozSmi97,Nak17}.
+Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSPACE-complete instead of EXPSPACE-complete \cite{KozSmi97,Nak17}.
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
@@ -336,7 +336,7 @@ Let $\relr \subseteq (E \times E)$ be a relation. For any term where \relr~ is c
 Let $\rel \subseteq (E\times E)$ be a relation.
 \[\semsof{\bangle{rel}^+} := \{(e,e') \mid \exists n \in \N: \edgein \bangle{rel}^n\] \end{definition}
 
-\paragraph{Write and Read Restrictions} 
+\paragraph{Set Restrictions on Relations} 
 Let $A,B \subseteq E$ be the sets of events. $[A]$ and $[B]$ denote the relations $(A \times A) \cap \id$ and $(B \times B) \cap \id$. These relations can be used to restrict other relations to certain sets of operations like writes and reads.
 An example is $\relW.\po .\relR$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $\relW.\rf .\relR$, since it relates writes to those reads which use the written data. \\
 This notation is furthermore justified by the semantics of the CAT language, since the expression
@@ -361,16 +361,15 @@ When the constraints are eliminated, all that is left is a relational inclusion 
 \begin{definition}[Relational Inclusion Proofs]
 Let $\relr,\rels \subseteq (E \times E)$ be two relations on a domain $E$. A Relational Inclusion Proof $\prf$ for the inclusion $\relr \subseteq \rels$ is a closed derivation tree that starts with the inclusion at the root and ends at potentially several leafs with \true{} using the rules in \Cref{sec:implications,sec:transformations}. The proof derives the implication $\true \impl \relr \subseteq \rels$. 
 \end{definition}
-This is the core element of the proof system. Putting the memory consistency models aside, this part of the rules allows us to prove any inclusion of relations that is universally true, like for example $a^* \subseteq (aa)^* \cup a(aa)^*$. \todo{Übergang} \\ 
-
-Since this proof system is designed to handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations given in \Cref{sec:relationspecific}. Furthermore, there is a need to incorporate assumptions about the base relations and definitions of derived relations into the rules. We show this in \Cref{sec:assumptions}.
+This is the core element of the proof system. Putting the memory consistency models aside, this part of the rules allows us to prove any inclusion of relations that is universally true, like for example $a^* \subseteq (aa)^* \cup a(aa)^*$. 
+Since the proof system we design, will handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations given in \Cref{sec:relationspecific}. Furthermore, there is a need to incorporate assumptions about the base relations and definitions of derived relations into the rules. We show this in \Cref{sec:assumptions}.
 
 
 \subsection{Eliminating the Constraints}\label{sec:constraints}
 One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}\label{lem:elimination}
-Let $\relr_1, \relr_2 \subseteq (E \times E)$ be two relational terms. For any inclusion $\relr_1 \subseteq \relr_2$ it applies that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
+Let $\relr_1, \relr_2 \subseteq (E \times E)$ be two relational terms. For any inclusion $\relr_1 \subseteq \relr_2$ it holds that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
 \end{lemma}
 \begin{proof}
 We can prove this for each of the constraints. 
@@ -398,7 +397,7 @@ Let the constraint be \texttt{empty}:
 & \impl & \semsof{\texttt{acyclic}~ \sf r_2} \subseteq \semsof{\texttt{acyclic}~ \sf r_1}
 \end{eqnarray*}
 \end{proof}
-\noindent This lemma generates the following three rules:
+\noindent From \Cref{lem:elimination} we can generate the following three rules:
 \begin{rules}{Restraint Elimination} 
 \inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{empty}~ r_2} \subseteq \semsof{\sf \texttt{empty}~ r_1}} \and 
 \inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{acyclic}~ r_2} \subseteq \semsof{\texttt{acyclic}~ r_1}} \and
@@ -422,7 +421,7 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 \semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r\} \\
 &= & \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r.r^{-1} \} \\
-&=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}}
+&=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}} \reason{\defof \semsof{\texttt{irreflexive}}}
 \end{eqnarray*}
 \end{proof}
 
@@ -431,10 +430,10 @@ For any relational term \relr{} it holds that $\semsof{\mathtt{irreflexive}~ \sf
 \end{lemma}
 \begin{proof}
 \begin{eqnarray*}
-\semsof{\texttt{irreflexive } \relr} &=& \{X \in \E \mid \forall e \in E: (e,e) \notin \relr\} \\
-&=& \{X \in \E \mid \forall e \in E: (e,e) \notin \sf r \cap \id\} \\
-&=& \{X \in \E \mid \nexists (e,e') \in \sf r \cap \id\} \\
-&=& \semsof{\texttt{empty } \sf r \cap \id} 
+\semsof{\texttt{irreflexive } \relr} &=& \{X \in \E \mid \forall e \in E: (e,e) \notin \relr\} \reason{\defof \semsof{\texttt{irreflexive}}} \\
+&=& \{X \in \E \mid \forall e \in E: (e,e) \notin \relr \cap \id\} \\
+&=& \{X \in \E \mid \nexists (e,e') \in \relr \cap \id\} \\
+&=& \semsof{\texttt{empty } \relr \cap \id} \reason{\defof \semsof{\texttt{empty}}}
 \end{eqnarray*}
 \end{proof}
 
@@ -446,7 +445,7 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 \semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r \} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r \cup r^{-1} \} \\
-&=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \\
+&=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \reason{\defof \semsof{\texttt{acyclic}}}
 \end{eqnarray*}
 \end{proof}
 
@@ -467,17 +466,17 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 
 \begin{rules}{No Operator}
 \inferrule*[left=(reflexivity)]{\it true}{\sf r \subseteq r} \and
-\textcolor{red}{\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rels \subseteq \relt}{\relr \subseteq \relt}} \and
+\inferrule*[left=(transitivity)]{\sf r \subseteq s \\ \rels \subseteq \relt}{\relr \subseteq \relt} \and
 \inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
 \inferrule*[left=(full)]{true}{\relr \subseteq (E \times E)} \and
 \inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
 \inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} 
 \end{rules}
 \vspace{-10pt}
-\begin{rules}{union}
+\begin{rules}{Union}
 %\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
 \inferrule*[left=($\cup_{L}$)]{\sf r \subseteq s}{\sf r \cup s \subseteq s} \and
-\textcolor{red}{\inferrule*[left=($\cup_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t}} \and
+\inferrule*[left=($\cup_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t} \and
 \end{rules}
 \vspace{-10pt}
 \begin{rules}{Intersection}
@@ -492,13 +491,13 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 %\inferrule*[left=($._{RR}$)]{\sf \id \subseteq s}{\sf r \subseteq r.s}} \and 
 %\textcolor{red}{\inferrule*[left=($._{LR}$)]{\sf r \subseteq \id}{\sf s.r \subseteq s} \and
 %\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
-\textcolor{red}{\inferrule*[left=($._{LR}$)]{\relr \subseteq \relr' \\ \rels \subseteq \rels'}{\relr.\rels \subseteq \relr'.\rels'}}
+\inferrule*[left=($._{LR}$)]{\relr \subseteq \relr' \\ \rels \subseteq \rels'}{\relr.\rels \subseteq \relr'.\rels'}
 \end{rules}
 For concatenation we can use one general rule where we can construct many special cases with the help of the \id{} relation. Using the ($\id_{conc}$) rule, we can construct cases for $\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
 \begin{rules}{Transitive Closure}
 \inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s} \and
 \inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
-\inferrule*[left=($+_R$)]{\relr \subseteq \relI \\ \relI \subseteq \relI.\rels \\ \relI.\rels \subseteq \rels}{\relr \subseteq \Rels^+}
+%\inferrule*[left=($+_R$)]{\relr \subseteq \relI \\ \relI \subseteq \relI.\rels \\ \relI.\rels \subseteq \rels}{\relr \subseteq \Rels^+}
 \end{rules}
 \vspace{11pt}
 
@@ -534,6 +533,7 @@ While testing the proof system, a few rules were repeatedly needed to shorten th
 	\inferrule*[]{}{\sf s \subseteq t}}
 {\sf r \cup s \subseteq t}
 \end{mathpar}
+Especially the ($\cup_{L2}$) rule will be important when proving completeness later in this thesis.
 
 \subsection{Transformations}\label{sec:transformations}
 Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
@@ -888,17 +888,17 @@ For the induction rule we use the \Cref{def:alttc} of the transitive closure, se
 &\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
 \end{eqnarray*}
 
-\item ($+_R$): $\Relr \subseteq \relI \land \relI \subseteq \relI.\rels \land \relI.\rels \subseteq \rels$ \\
-Once more, we use the alternative definition of the transitive closure.
-\begin{eqnarray*}
-\edgein \relr &\impl & \edgein \relI \reason{\relr \subseteq \relI} \\
-&\impl & \edgein \relI.\rels \reason{\relI \subseteq \relI.\rels} \\
-&\impl & \edgein \relI.\rels.\rels \reason{\relI \subseteq \relI.\rels} \\
-&& \dots \\
-&\impl & \exists n \in \N: \edgein \relI.\rels.\rels^{n-1} \reason{\relI \subseteq \relI.\rels} \\
-&\impl & \exists n \in \N: \edgein \rels^n \reason{\relI.\rels \subseteq \rels} \\
-&\impl & \edgein \rels^+ \reason{\defof \rel^+}
-\end{eqnarray*}
+%\item ($+_R$): $\Relr \subseteq \relI \land \relI \subseteq \relI.\rels \land \relI.\rels \subseteq \rels$ \\
+%Once more, we use the alternative definition of the transitive closure.
+%\begin{eqnarray*}
+%\edgein \relr &\impl & \edgein \relI \reason{\relr \subseteq \relI} \\
+%&\impl & \edgein \relI.\rels \reason{\relI \subseteq \relI.\rels} \\
+%&\impl & \edgein \relI.\rels.\rels \reason{\relI \subseteq \relI.\rels} \\
+%&& \dots \\
+%&\impl & \exists n \in \N: \edgein \relI.\rels.\rels^{n-1} \reason{\relI \subseteq \relI.\rels} \\
+%&\impl & \exists n \in \N: \edgein \rels^n \reason{\relI.\rels \subseteq \rels} \\
+%&\impl & \edgein \rels^+ \reason{\defof \rel^+}
+%\end{eqnarray*}
 \end{itemize}
 \end{proof}
 
@@ -1064,7 +1064,8 @@ As they cannot be decomposed any further, they are not important in negative rea
 The splitting and branching in \cite{Gru+26} is furthermore important to provide an assumption that the authors make. They assume their predicates to be union-free and Kleene-star-free. As we will see, this is reached by applying rules that split predicates and branch the proof.
 
 \begin{figure}\label{fig:rules}
-\includegraphics[scale=1]{includes/JansRegeln.jpg}
+\centering
+\includegraphics[scale=0.7]{includes/JansRegeln.jpg}
 \caption{The rules for RAT-CAT-SAT proofs in \cite{Gru+26}.}
 \end{figure}
 
@@ -1290,7 +1291,7 @@ If any of the sets are the empty or full sets, we refer to the corresponding par
 \paragraph{Elimination ($\neg aL$):} If \rels{} in $e_1.\rels$ is simply a base relation, Grünke et al. would want to apply ($\neg aL$). This is only possible if the positive reasoning provides an atomic predicate $(e_1,f_1) \in \rels$ as a premise. This corresponds to the existence of a term $\rels$ or $\rels \cap \rels'$ at the same position in the included term. The ($\neg aL$) rule produces $\neg p[e_1.\rels] \land (e_1,f_1) \in \rels \land \neg p[f_1]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use again the ($._{LR}$) rule.\\
 While this rule opens a new branch in $\prf_\pi$, it can be closed immediately by applying either the (\textsc{reflexivity}) rule or the ($\cap_L$) rule.
 
-\paragraph{Event intersection ($\neg \cap_e$):} The ($\neg \cap_e$) will be applied in $\pi$ if all relations were decomposed and only $f_n \cap e_2 \neq \emptyset$ is left. After applying the rule, $f_n = e_2$ is all that remains from the predicate and if there exists $f_n = e_2$ from positive reasoning, $\pi$ would apply ($\bot_0$) rule, closing the cube and branch. Since the rule is only applied if it changes the cube towards a contradiction, the predicate from positive reasoning has to exist.
+\paragraph{Event intersection ($\neg \cap_e$):} The ($\neg \cap_e$) will be applied in $\pi$ if all relations were decomposed and only $f_n \cap e_2 \neq \emptyset$ is left. After applying the rule, $\neg f_n = e_2$ is all that remains from the predicate and if there exists $f_n = e_2$ from positive reasoning, $\pi$ would apply ($\bot_0$) rule, closing the cube and branch. Since the rule is only applied if it changes the cube towards a contradiction, the predicate from positive reasoning has to exist.
 In $\prf_\pi$, when all relations were decomposed and eliminated, this results in an inclusion $\0 \subseteq \0$ where the (\textsc{reflexivity}) rule gives us \true. 
 
 \paragraph{($\neg {\equiv} L$):} This rule is used in $\pi$ whenever a property is true for multiple events but only one of them was used for further decomposition. The only case where this is important is for an inclusion of the type $\relr \cap \rels \subseteq \rels$. Here, $\pi$ would yield the events $f_1,f_2$ for $(e_1,f_1) \in \Relr, (e_1,f_2) \in \rels, f_1 = f_2$ in positive reasoning and then use $f_1$ for the intersection with $e_2$, yielding $f_1 = e_2$. Going through the steps of decomposing $\rels$, the negative reasoning only gives us $\neg ((e_1.\rels \cap e_2) \neq \emptyset), \neg f_2 = e_2$ which has no contradiction to the other predicates. Only ($\neg \equiv L$) can produce $\neg f_1 = e_2$.
@@ -1455,7 +1456,39 @@ As we know from \Cref{lem:properties} the branches for proofs for the properties
 \end{proof}
 
 \section{Conclusion}\label{sec:conclusion}
-Time to conclude...
+The task for this master's thesis was to create a new proof system for comparing Memory Consistency Models that does not resolve relations to event-level, is neither cyclic nor infinite and creates proofs that are shorter then the ones in \cite{Gru+26}. We wanted the proof system to work reasonably well, proof it's soundness and completeness and have the system to cover all of CAT. Optimally, we wanted to make the proof system work automatically. \\
+In the end, we have developed a new proof system for inclusions between relations and with that inclusions between Memory Consistency Models that can be defined in rational CAT. We have shown that the system is sound by proving the implications and equivalences of every rule and that it is complete by showing that every proof of Grünke et al. can be translated into our system. \\
+The proof system does not resolve the relations to event level and uses invariants instead of cyclic proofs. \\
+While we have shown completeness, automation of the proof system is not possible yet, since this would require a deterministic choice of invariants and of a sufficient order in which the rules are to be applied.
+One could for example apply the ($\cup_{comm}$) rule indefinitely to a term $\relr \cup \Rels$ without ever yielding a proof. Applying the rules therefore still requires knowledge about the relations and what actions can produce actual results. \\
+Furthermore, we have not been able to handle recursive definitions in CAT and were not able to show any new results that would not have been possible with Grünke et al's system. One reason for the latter is, that we could not expand the system to include differences $\relr \setminus \Rels$ and complements $\sim \Relr$. \\
+Armed with knowledge about how to handle the rules though, users will be able to proof inclusions in a more intuitive and straightforward fashion.
+As we have seen in \Cref{sec:finiteproofs} many rules for the decomposition in \cite{Gru+26} do not require any action in our system because we use no event constants. This fact can shorten the proofs substantially as can see as an extreme example in \Cref{fig:shorterexample}. \\
+\begin{figure}
+\begin{minipage}{0.2\textwidth}
+\begin{mathpar}
+\inferrule*[left=($\cap_L$)]{true}{\Relr \cap \rels \subseteq \rels}
+\end{mathpar}
+\end{minipage}\begin{minipage}{0.8\textwidth}
+\begin{mathpar}
+\inferrule*[left=($\cap_2L$)]{e_1.(\relr \cap \Rels) \cap e_2 \neq \emptyset), \neg (e_1.\rels \cap e_2 \neq \emptyset)}{
+	\inferrule*[Left=($aL$)]{(e_1.\Relr) \cap (e_1.\rels) \cap e_2 \neq \emptyset, \neg (e_1.\rels \cap e_2 \neq \emptyset)}{			
+		\inferrule*[Left=($aL$)]{(e_1,f_1) \in \Relr, f_1 \cap (e_1.\rels) \cap e_2 \neq \emptyset, \neg (e_1.\rels \cap e_2 \neq \emptyset)}{
+			\inferrule*[Left=($eL$)]{\dots , (e_1,f_2) \in \rels, f_1 \cap f_2 \cap e_2 \neq \emptyset, \neg (e_1.\rels \cap e_2 \neq \emptyset)}{
+				\inferrule*[Left=($eL$)]{\dots , (e_1,f_2) \in \rels, f_1 = f_2, f_1 \cap e_2 \neq \emptyset, \neg (e_1.\rels \cap e_2 \neq \emptyset)}{
+					\inferrule*[Left=($\neg aL$)]{\dots , (e_1,f_2) \in \rels, f_1 = f_2, f_1 = e_2, f_1 \neq \emptyset, \neg (e_1.\rels \cap e_2 \neq \emptyset)}{
+						\inferrule*[Left=($\neg \cap_e$)]{\dots , f_1 = f_2, f_1 = e_2, \neg (f_2 \cap e_2 \neq \emptyset)}{
+							\inferrule*[Left=($\neg {\equiv}L$)]{\dots , f_1 = f_2, f_1 = e_2,  \neg f_2 = e_2}{
+								\inferrule*[Left=($\bot_0$)]{\dots , f_1 = e_2, \neg f_1 = e_2}{\bot_0}}}}}}}}}
+\end{mathpar}
+\end{minipage}
+\caption{Proof tableaus for the inclusion $\relr \cap \rels \subseteq \rels$ in our system on the left and in Grünke et al.'s system on the right. Literals that were not needed anymore were replaced by $\dots$. As we can see, some proofs become substantially smaller in our system.} \label{fig:shorterexample}
+\end{figure}
+
+
+
+In the future, one could expand the proof system to all of CAT or develop a mechanism to include recursive definitions. A very practical aspect is to automate this proof system in order to be able to build a tool for comparing MCMs.
+\todo{Future Work}{ganzes CAT, Automatisierung etc.}
 
 
 
