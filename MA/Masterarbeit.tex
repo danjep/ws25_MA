@@ -45,8 +45,8 @@
 
 \section{Introduction}\label{sec:intro}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads. 
-Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
-Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible.\\
+Multiple threads may operate on the same memory and could interfere with the others' stored values. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
+Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is one reason for the possibility of different executions.\\
 
 \begin{figure}[h]
 \centering
@@ -64,12 +64,14 @@ Multiple different executions are possible: If thread $T_1$ is executed complete
 
 Every program that a thread might execute consists of instructions which in turn consist of memory accesses. The instruction \texttt{a=y} for example consists of two operations, reading the value of \texttt{y} and writing the read value to \texttt{a}. These two operations are usually called events.
 CPU architectures and compilers may reorder the events in such programs for performance reasons and interleave the two threads as they see fit. 
-Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCM) in order to give them some orientation about how their code will be handled by the compiler and hardware.
-Since the language MCM determines the semantics of a program, developers need to confine themselves to the rules of the language (e.g. \textit{Data-Race-Freedom} (DRF)). In return they get certain guarantees for how the program will be compiled and executed. 
-The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to be respect the rules of the language MCM and the compiled instructions have to be consistent with the hardware MCM. 
+Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCMs) which give the code a semantic and let the programmers know how their code will be handled by the compiler and hardware. \\
+The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow the order in which they are written.\\
+\todo{Das entpricht nicht der Definition von SC im nächsten Kapitel. Kommt drauf an wie man die IWs in der \co interpretiert.}{
+For the example in \Cref{fig:example} this means that either one of the threads is executed completely before the other or that both writes are done before the reads. Only the result of $a=b=0$ is not permitted.} Therefore, MCMs give developers certain guarantees for how the program will be compiled and executed. \\ 
+The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiler has to comply with both the language MCM and the hardware MCM.
 Essentially, the MCMs  determine which update to the shared memory is seen by which thread at what time.
 
-As can be seen in the example, the memory consistency model can change the outcome of a program drastically. But the presence of a MCM may not guarantee the intended behavior. 
+As can be seen in the example, the memory consistency model can restrict the possible outcomes of a program. But the presence of a MCM may not guarantee the behavior that it's developers intended. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
 Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \\
 The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language, before we explain what the contribution of this master's thesis will be.
@@ -82,7 +84,7 @@ Operational models are abstractions of real machines with idealized components a
 Axiomatic models constrain relations on memory operations to allow or disallow behavior of programs. To this end one can understand memory operations as nodes in a graph where the edges are relations between these operations like the \textit{program order} (\po) or \textit{read-from} (\rf).
 While \po{} describes the order of instructions within a single thread, \rf{} depicts for each read which write provides the value that is extracted. \\
 Therefore the \po{} relation is given by how the program is written and \rf{} depends on the execution.
-From this, one can deduce that there are multiple possible execution graphs. In \Cref{fig:examplegraph,fig:storebuffering} one can see the possible graphs of the example from \Cref{fig:example}. 
+From this, one can deduce that there are multiple possible execution graphs. In \Cref{fig:examplegraph,fig:storebuffering} one can see the possible execution graphs of the example from \Cref{fig:example}. 
 
 \begin{figure}[h]
 \begin{minipage}[c]{0.33\textwidth}
@@ -197,7 +199,6 @@ Besides \textit{program order} and \textit{read-from} there are many relations t
 
 Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially faster on axiomatic models, research has focused on this type. 
 Axiomatic models are defined in three stages: Map each instruction onto a mathematical object and defining relations on the events. Then, enumerate all candidate executions like in \Cref{fig:examplegraph,fig:storebuffering}. Finally, decide which executions are valid according to the constraints on the relations. \\
-They are typically expressed in the CAT language of Alglave et al. \cite{Alg+14} which covers all of relational algebra and established itself as a standard. More on the CAT language in \Cref{sec:cat}.\\
 To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfills all constraints of the model. \\
 For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
 The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to Grünke et al. \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
@@ -205,9 +206,8 @@ The first task is to check generic properties of MCMs like permitting no out-of-
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
 For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26} which both are not able to handle every possible MCM but only a fragment.
 
-The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow \po .
-Later, models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} were developed to allow for more optimization by the hardware.
-
+Besides Lamport's Sequential Consistency, there are models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} which were developed to allow for more optimization by the hardware.
+\todo{Mehr models hinzufügen}{}
 
 
 
@@ -240,23 +240,24 @@ The Memory Models from the last section can be formalized according to \cite{Gru
 &\text{(SC per Location)} \hfill &\texttt{acyclic } (\po \cap \loc) \cup (\rf \cup \co \cup \fr)
 \end{align*}  
 
+\todo{Beispiel evtl nochmal aufgreifen}{TSO allows these executions, SC per location those...}
+
 \subsection{Contribution}
-This master's thesis will present a new proof-system for comparing memory consistency models that directly handles relations and uses invariants to handle potentially infinite decompositions.
-At the center of this proof system is a set of rules that transform relational inclusion terms like $\Relr \subseteq \Rels$ and produce the implication $\true \impl \relr \subseteq \rels$.
+This master's thesis will present a new proof-system for comparing memory consistency models that directly handles relations and uses invariants to handle potentially infinite decompositions of Kleene-star terms.
+At the center of this proof system is a set of rules that transform relational inclusion terms like $\Relr \subseteq \Rels$ and produce the implication $\true \impl \relr \subseteq \rels$ which makes the inclusion a logical tautology.
 By adding relation-specific rules, assumptions and definitions of derived relations (in the literature usually hypotheses) and handling the constraints to the relations that CAT expression use, we expand the results to memory consistency models defined in the CAT language.
-\Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis. The proof system consists of several sets of rules that each have their own purpose. In \Cref{sec:constraints} we will see how any inclusion between CAT expressions for MCMs can be transformed into a relational inclusion. Following in \Cref{sec:implications,sec:transformations} are the rules that can proof any relational inclusion term that is confined to the syntax of rational CAT. The transformations and axioms in \Cref{sec:relationspecific,sec:assumptions} expand the capabilities of the proof system to include knowledge about the base relations and base sets of CAT.  \\
+\Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis. In \Cref{sec:constraints} we will see how any inclusion between CAT expressions for MCMs can be transformed into a relational inclusion. Following in \Cref{sec:implications,sec:transformations} are the rules that can proof any relational inclusion term that is confined to the syntax of rational CAT. The transformations and axioms in \Cref{sec:relationspecific,sec:assumptions} expand the capabilities of the proof system to include knowledge about the base relations and base sets of CAT.  \\
 In \Cref{sec:soundness} we show the soundness of the proof system by proving each rule to be a valid implication or equality. \\
 The Completeness in \Cref{sec:completeness} is shown via a translation of a cyclic proof system \cite{Gru+26} into ours. This includes translating every rule that is needed into a rule or a sequence of rules in our system and transforming the infinite cyclic proofs into finite ones using invariants. 
 
 \section{Related Work}\label{sec:kontext}
-\todo{mehr ausführen was in den verschiedenen Bereichen gemacht wird} \\
 There are currently several established lines of research in the field of weak memory. One obvious issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools that were developed in the last decade already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
 Furthermore, there is research on refining stateless model checking \cite{Jon+25}.
 %In the realm of verification this would be on the program verification level. 
 Some research groups instead examine the models themselves and their attributes \cite{LahBok22} and others the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene Algebra with Tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
-Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSPACE-complete instead of EXPSPACE-complete \cite{KozSmi97,Nak17}.
+Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSPACE-complete instead of EXPSPACE-complete with intersection or \todo{Quelle}{undecidable with complement} \cite{KozSmi97,Nak17}.
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
 The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
@@ -267,17 +268,17 @@ The formula is then decomposed until there exists a satisfying model for the for
 Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
-This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. 
+This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. The improvements will be in terms of the length of proofs, size of proof-nodes and in terms of eliminating infinite branches.
 
 \pagebreak
 \section{Preliminaries} \label{sec:preliminaries}
 
 \subsection{Executions}
-Executions consist of a set of all events that occur $E$, the set of initial writes $IW$ and the base relations relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events that describe how the code is run. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
+Executions consist of a set of all events $E$, the set of initial writes $IW$ and the base relations that are determined through the program and how it is executed. It is one possible instance of the relations on the memory events and describes the order in which the events occur. The fact that executions consist of elements with relations between them, allows us to interpret them as execution graphs like the ones in \Cref{fig:examplegraph,fig:storebuffering}.
 \begin{definition}[Execution]
 An execution $X$ is the following tuple:
-\[X := (E, IW, \po, \rf, \rmw, \co, \loc, \ext, \id)\]  
-where $\po, \rf, \rmw, \co, \loc, \ext, \id \subseteq E \times E$.
+\[X := (E, IW, \po, \rf, \rmw, \co, \loc, \ext)\]  
+where $\po, \rf, \rmw, \co, \loc, \ext \subseteq E \times E$.
 $\mathbb{E}$ denotes the set of all possible executions. 
 %Furthermore, for any in CAT constructed relation $\bangle{rel}$, $\bangle{rel}_X$ denotes the instance of it on the execution $X$.
 \end{definition}
@@ -299,15 +300,16 @@ For the relational subterms of the CAT expressions, the semantics differ in the 
 Let $\rel, \rel_1, \rel_2 \subseteq (E \times E)$ be relations. $\bangle{base\_rel}$ and $\bangle{base\_set}$ are as defined in \Cref{fig:cat}.
 \begin{align*}
 \semsof{\bangle{rel}_1 \subseteq \bangle{rel}_2} &:= \forall (e,e'):(e,e') \in \bangle{rel}_1 \impl (e,e') \in \bangle{rel}_2 \\
-\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists (e_1,e') \in \semsof{\bangle{rel}_1} \land (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
-\semsof{\bangle{rel}_1 \cup \bangle{rel}_2} &:= \{(e,e') \in \semsof{\bangle{rel}_1} \lor (e,e') \in \semsof{\bangle{rel}_2} \} \\
-\semsof{\bangle{rel}_1 \cap \bangle{rel}_2} &:= \{ (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \in \semsof{\bangle{rel}_2}\} \\
-\semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \{ (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \notin \semsof{\bangle{rel}_2}\} \\
+\semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists e' \in E: (e_1,e') \in \semsof{\bangle{rel}_1} \land (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
+\semsof{\bangle{rel}_1 \cup \bangle{rel}_2} &:= \{\edge \mid \edgein \semsof{\bangle{rel}_1} \lor \edgein \semsof{\bangle{rel}_2} \} \\
+\semsof{\bangle{rel}_1 \cap \bangle{rel}_2} &:= \{\edge \mid \edgein \semsof{\bangle{rel}_1} \land  \edgein \semsof{\bangle{rel}_2}\} \\
+\semsof{\bangle{rel}_1 \setminus \bangle{rel}_2} &:= \{\edge \mid (e,e') \in \semsof{\bangle{rel}_1} \land (e,e') \notin \semsof{\bangle{rel}_2}\} \\
 \semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \semsof{\bangle{rel}}\} \\
-\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists n \in \N: e = e_1 \land e'=e_n \land \forall i\in [1,n]: (e_i,e_{i+1}) \in \semsof{\bangle{rel}}\} \\
+\semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists e_1,\dots e_n \in E: e = e_1 \land e'=e_n \land \forall i\in [1,n-1]:\\
+& (e_i,e_{i+1}) \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}?} &:= \semsof{\bangle{rel}} \cup \id \\
-\semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}?} \cup \semsof{\bangle{rel}^+} \\
+\semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}^+} \cup \id \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
 \semsof{\bangle{base\_rel}} &:= \{ (e,e') \in \bangle{base\_rel} \}
 \end{align*}
@@ -316,14 +318,15 @@ To give a clear understanding of what the base relations are, we give definition
 \begin{definition}[Semantics of Base Relations]
 Let $E$ be the set of all events, $R$ the set of all read operations and $W$ the set of all write operations.
 \begin{align*}
-\semsof{\0} &:= \emptyset \times \emptyset \\
-\semsof{\id} &:= \{(e,e) \mid e \in E\} \\
-\semsof{\po} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ belong to the same thread and } e \text{ happens before } e'\} \\
-\semsof{\loc} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ are on the same memory location}\} \\
-\semsof{\ext} &:= \{\edgein E\times E \mid e \text{ and } e' \text{ belong to different threads}\} \\
-\semsof{\rf} &:= \{\edgein W \times R \mid e \text{ is the last write before } e' \text{ on the same memory location}\} \\
-\semsof{\co} &:= \{\edgein W\times W \mid e' \text{ happens after } e \text{ on the same memory location}\} \\
-\semsof{\rmw} &:= \{\edgein R \times W \mid e' \text{ is the next event after the read } e \text{ in the program order } \po\}
+\semsof{\0} := \quad & \emptyset \times \emptyset \\
+\semsof{\id} := \quad & \{(e,e) \mid e \in E\} \\
+\semsof{\po} := \quad & \{\edgein E\times E \mid e \text{ and } e' \text{ belong to the same thread and }\\
+& e \text{ occurs syntactically before } e' \text{ in the program}\} \\
+\semsof{\loc} := \quad & \{\edgein E\times E \mid e \text{ and } e' \text{ are on the same memory location}\} \\
+\semsof{\ext} := \quad & \{\edgein E\times E \mid e \text{ and } e' \text{ belong to different threads}\} \\
+\semsof{\rf} := \quad & \{\edgein W \times R \mid e \text{ is the write that stores the value which } e' \text{ reads} \} \\
+\semsof{\co} := \quad & \{\edgein W\times W \mid e' \text{ is a write on the same memory location} \\ & \text{ that is executed later than } e\} \\
+\semsof{\rmw} := \quad & \{\edgein R \times W \mid e' \text{ is the next event after the read } e \text{ in the program order } \po\}
 \end{align*}
 \end{definition}
 For better readability, the \semsof{\cdot} symbols can be omitted when dealing with relations, since the semantics are equal to the intuitive definition of relations.
@@ -334,10 +337,10 @@ For better readability, the \semsof{\cdot} symbols can be omitted when dealing w
 Let $\relr \subseteq (E \times E)$ be a relation. For any term where \relr~ is concatenated with itself $n \in \N$ times, we can instead write $\relr^n$. In this notation, $\relr$ is equal to $\relr^1$. This notation will shorten terms and increases readability. Furthermore, it yields a definition of the semantics of $\rel^+$ that is equivalent to the one in \Cref{def:sem}:
 \begin{definition}[Alternative Definition of the Transitive Closure] \label{def:alttc}
 Let $\rel \subseteq (E\times E)$ be a relation.
-\[\semsof{\bangle{rel}^+} := \{(e,e') \mid \exists n \in \N: \edgein \bangle{rel}^n\] \end{definition}
+\[\semsof{\bangle{rel}^+} := \{(e,e') \mid \exists n \in \N: \edgein \bangle{rel}^n\}\] \end{definition}
 
 \paragraph{Set Restrictions on Relations} 
-Let $A,B \subseteq E$ be the sets of events. $[A]$ and $[B]$ denote the relations $(A \times A) \cap \id$ and $(B \times B) \cap \id$. These relations can be used to restrict other relations to certain sets of operations like writes and reads.
+Let $A \subseteq E$ be a set of events. $[A]$ denotes the relation $(A \times A) \cap \id$. This relation can be used to restrict other relations to certain sets of operations like writes and reads.
 An example is $\relW.\po .\relR$, which restricts \po{} to only those elements which feature a write as the first event and a read as the second one. One can use this notation for assumptions about the relations in the CAT language. For example, the \rf{} relation can always be assumed to be restricted to writes in the first position and reads in the second one, i.e. $\relW.\rf .\relR$, since it relates writes to those reads which use the written data. \\
 This notation is furthermore justified by the semantics of the CAT language, since the expression
 \[\relW.\rf .\relR := \{(w,r) \mid (w,w) \in \relW \land (w,r) \in \rf \land (r,r) \in \relR\}\]
@@ -346,12 +349,12 @@ In \Cref{sec:relationspecific} we use this notation to represent the known restr
 \pagebreak
 
 \section{The Proof System} \label{sec:proofsys}
-In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that derive the expression $\semsof{M} \subseteq \semsof{M'}$ from the statement $\true$. The derivation therefore acts according to logical implication, since $\true \impl \semsof{M} \subseteq \semsof{M'}$ would mean that the implied part holds. If there is no valid derivation from $\true$ to the inclusion that should be proven, then the inclusion cannot hold.
+In order to prove $\semsof{M} \subseteq \semsof{M_{prop}}$ we devise a general method of proving one model to be stronger than another based on inclusion between the relations. For this purpose, we design rules that derive the expression $M \subseteq M'$ from the statement $\true$. The derivation therefore acts according to logical implication, since $\true \impl M \subseteq M'$ would mean that the implied part holds. If there is no valid derivation from $\true$ to the inclusion that should be proven, then the inclusion cannot hold.
 Since there may be multiple branches of reasoning it is important to clarify that every branch needs to end at \true{} in order to verify the inclusion. We call a branch that ends in \true{} \textit{closed} and one that does not \textit{open}. Correspondingly, we call a derivation tree \textit{closed} if every branch is closed and \textit{open} otherwise.
 
 \begin{definition}[CAT Inclusion Proofs]
-Let $M,M'$ be CAT expressions constituting sets of executions on a domain of events $E$. A CAT Inclusion Proof $\prf^{CAT}$ is a closed derivation tree that starts at the bottom with $\semsof{M} \subseteq \semsof{M'}$ and ends at potentially several axioms using the rules from this section.
-Hence, the proof derives the implication $\true \impl \semsof{M} \subseteq \semsof{M'}$.
+Let $M,M'$ be CAT expressions constituting sets of executions on a domain of events $E$. A CAT Inclusion Proof $\prf^{CAT}$ is a closed derivation tree that starts at the bottom with $M \subseteq M'$ and ends at potentially several axioms using the rules from this section.
+Hence, the proof derives the implication $\true \impl M \subseteq M'$.
 \end{definition}
 
 These proofs need rules to handle the CAT constraints which are given in the next subsection (\Cref{sec:constraints}). 
@@ -376,7 +379,7 @@ We can prove this for each of the constraints.
 Let the constraint be \texttt{empty}:
 \begin{eqnarray*}
 \sf r_1 \subseteq r_2 
-& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2} \impl \nexists (e_1,e_2) \in {\sf r_1}) \\
+& \impl &\forall X \in \E : (\nexists (e_1,e_2) \in {\sf r_2} \impl (e_1,e_2) \notin {\sf r_1}) \\
 & \impl &(X \in \semsof{\texttt{empty}~ \relr_2} \impl X \in \semsof{\texttt{empty}~ \sf r_1}) \reason{\defof \semsof{\texttt{empty}}}\\
 & \impl & \semsof{\texttt{empty}~ \sf r_2} \subseteq \semsof{\texttt{empty}~ \sf r_1}
 \end{eqnarray*}
@@ -399,9 +402,9 @@ Let the constraint be \texttt{empty}:
 \end{proof}
 \noindent From \Cref{lem:elimination} we can generate the following three rules:
 \begin{rules}{Restraint Elimination} 
-\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{empty}~ r_2} \subseteq \semsof{\sf \texttt{empty}~ r_1}} \and 
-\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{acyclic}~ r_2} \subseteq \semsof{\texttt{acyclic}~ r_1}} \and
-\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \semsof{\texttt{irreflexive}~ r_2} \subseteq \semsof{\texttt{irreflexive}~ r_1}}
+\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
+\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
+\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
 \end{rules}
 
 Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
@@ -419,7 +422,7 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 \begin{proof} This can equally be proven using \Cref{def:catsem}.
 \begin{eqnarray*}
 \semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
-&=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r\} \\
+&=& \{X \in \E \mid \forall e,e' \in E: \nexists (e,e') \in \sf r\} \\
 &= & \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r.r^{-1} \} \\
 &=& \semsof{\texttt{irreflexive}~ \sf r.r^{-1}} \reason{\defof \semsof{\texttt{irreflexive}}}
 \end{eqnarray*}
@@ -443,7 +446,7 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 \begin{proof}
 \begin{eqnarray*}
 \semsof{\texttt{empty}~ \sf r} &=& \{X \in \E \mid \nexists (e_1,e_2) \in \sf r\} \reason{\defof \semsof{\texttt{empty}}} \\
-&=& \{X \in \E \mid \forall e \in E: \nexists (e,e') \in \sf r \} \\
+&=& \{X \in \E \mid \forall e,e' \in E: \nexists (e,e') \in \sf r \} \\
 &=& \{X \in \E \mid \forall e \in E: \nexists (e,e) \in \sf r \cup r^{-1} \} \\
 &=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \reason{\defof \semsof{\texttt{acyclic}}}
 \end{eqnarray*}
@@ -451,10 +454,10 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 
 The \cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} give us the following four rules:
 \begin{rules}{Constraint Transformation}
-\inferrule*[left=($a\rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r^+}}{\semsof{\texttt{acyclic}~ \sf r}} \and
-\inferrule*[left=($e \rightarrow i$)]{\semsof{\texttt{irreflexive}~ \sf r.r^{-1}}}{\semsof{\texttt{empty}~ \sf r}} \and
-\inferrule*[left=($i \rightarrow e$)]{\semsof{\texttt{empty}~ \sf r \cap \id}}{\semsof{\texttt{irreflexive}~ \sf r}} \and
-\inferrule*[left=($e \rightarrow a$)]{\semsof{\texttt{acyclic}~ \sf r\cup r^{-1}}}{\semsof{\texttt{empty}~ \sf r}}
+\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
+\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
+\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
+\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
 \end{rules} 
 
 These will be needed to eliminate the constraint from the term and to be able to continue with a relational inclusion proof. 
@@ -493,10 +496,10 @@ Let $\Delta[t]$ be a relation term that includes the subterm $t$.
 %\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
 \inferrule*[left=($._{LR}$)]{\relr \subseteq \relr' \\ \rels \subseteq \rels'}{\relr.\rels \subseteq \relr'.\rels'}
 \end{rules}
-For concatenation we can use one general rule where we can construct many special cases with the help of the \id{} relation. Using the ($\id_{conc}$) rule, we can construct cases for $\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
+For concatenation we can use one general rule where we can construct many special cases with the help of the \id{} relation. Using the ($\id_{conc}$) rule, we can construct cases for $\rels' = \id, \relr' = \id, \relr = \id$ or $\rels= \id$. %$\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
 \begin{rules}{Transitive Closure}
-\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s} \and
-\inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
+\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s} %\and
+%\inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
 %\inferrule*[left=($+_R$)]{\relr \subseteq \relI \\ \relI \subseteq \relI.\rels \\ \relI.\rels \subseteq \rels}{\relr \subseteq \Rels^+}
 \end{rules}
 \vspace{11pt}
@@ -568,17 +571,15 @@ To incorporate the capabilities these properties offer, they will be added to th
 \inferrule*[left=($\cap_{comm}$)]{\Omega[\sf r \cap s]}{\Omega[\sf s \cap r]} \and
 \inferrule*[left=($\cup_{ass}$)]{\Omega[\sf (r \cup s) \cup t]}{\Omega[\sf r \cup (s \cup t)]} \and
 \inferrule*[left=($\cap_{ass}$)]{\Omega[\sf (r \cap s) \cap t]}{\Omega[\sf r \cap (s \cap t)]} \and
-\inferrule*[left=($\cup_{dist}$)]{\Omega[\sf r \cup s \cup s']}{\Omega[\sf r \cup (s \cup s')]} \and
-\inferrule*[left=($\cap_{dist}$)]{\Omega[\sf r \cap s \cap s']}{\Omega[\sf r \cap (s \cap s')]} \and
-\inferrule*[left=($\cup_{\cap dist}$)]{\Omega[\sf r \cup (s \cap s')]}{\Omega[\sf (r \cup s) \cap (r \cup s')]} \and
+\inferrule*[left=($\cup_{\cap dist}$)]{\Omega[\sf r \cup (s \cap t)]}{\Omega[\sf (r \cup s) \cap (r \cup \relt)]} \and
 \inferrule*[left=($\times_{\cup distL}$)]{\Omega[(A_1 \times A_2) \cup (A_1 \times A_3)]}{\Omega[A_1 \times (A_2 \cup A_3)]} \and
 \inferrule*[left=($\times_{\cup distR}$)]{\Omega[(A_1 \times A_3) \cup (A_2 \times A_3)]}{\Omega[(A_1 \cup A_2) \times A_3]} \and
-\inferrule*[left=($\cap_{\cup dist}$)]{\Omega[\sf r \cap (s \cup s')]}{\Omega[\sf (r \cap s) \cup (r \cap s')]} \and
+\inferrule*[left=($\cap_{\cup dist}$)]{\Omega[\sf r \cap (s \cup \relt)]}{\Omega[\sf (r \cap s) \cup (r \cap \relt)]} \and
 \inferrule*[left=($\times_{\cap distL}$)]{\Omega[(A_1 \times A_2) \cap (A_1 \times A_3)]}{\Omega[A_1 \times (A_2 \cap A_3)]} \and
 \inferrule*[left=($\times_{\cap distR}$)]{\Omega[(A_1 \times A_3) \cap (A_2 \times A_3)]}{\Omega[(A_1 \cap A_2) \times A_3]} \and
 \inferrule*[left=($._{ass}$)]{\Omega[\sf (r.s).t]}{\Omega[\sf r.(s.t)]} \and
-\inferrule*[left=($._{\cup distL}$)]{\Omega[\sf r.s \cup r.s']}{\Omega[\sf r.(s \cup s')]} \and
-\inferrule*[left=($._{\cup distR}$)]{\Omega[\sf s.r \cup s'.r]}{\Omega[\sf(s \cup s').r]} 
+\inferrule*[left=($._{\cup distL}$)]{\Omega[\sf r.s \cup r.\relt]}{\Omega[\sf r.(s \cup \relt)]} \and
+\inferrule*[left=($._{\cup distR}$)]{\Omega[\sf s.r \cup \relt.r]}{\Omega[\sf(s \cup \relt).r]} 
 %\inferrule*[left=($._{\cap distR}$)]{\Omega[\sf r.s \cap r.s']}{\Omega[\sf r.(s \cap s')]} \and
 %\inferrule*[left=($._{\cap distL}$)]{\Omega[\sf s.r \cap s'.r]}{\Omega[\sf(s \cap s').r]} 
 \end{rules}
@@ -699,10 +700,10 @@ Since inversion is only applied to base relations, the $(-1_{elim})$ rule is pla
 \end{eqnarray*}
 \end{proof}
 As we have described in \Cref{sec:notation}, the relations \relW~ and \relR~ can be used to restrict relations to groups of events. Some base relations are already restricted. The \rf{} relation only connects writes to reads and the \co{} relation only connects writes to later writes.
-Besides this we use some rules to handle \relW~ and \relR~ themselves.
+Besides this we use some rules to handle set restrictions like \relW~ and \relR~ themselves.
+For this purpose let $A \subseteq E$ be a set of events. 
 \begin{rules}{Write and Read Events}
-\inferrule*[left=(W)]{\true}{\sf [W] \subseteq \id} \and
-\inferrule*[left=(R)]{\true}{\sf [R] \subseteq \id} \and
+\inferrule*[left=(A)]{\true}{[A] \subseteq \id} \and
 \inferrule*[left=(WR)]{\true}{\sf [W].[R] \subseteq \0} \and
 \inferrule*[left=(RW)]{\it true}{\sf [R].[W] \subseteq \0} \and
 \inferrule*[left=(\rf)]{\it true}{\sf \rf = [W].\rf .[R]} \and
@@ -720,7 +721,7 @@ The last part of relation-specific rules concerns inclusions between base relati
 \subsection{Incorporating the Assumptions and Definitions}\label{sec:assumptions}
 In many CAT files the authors use derived relations and assumptions about these and the base relations that are not part of the initial assumptions given with CAT. The formulation is for example
 \[ \texttt{assume r \& s = \0} \text{ or } \texttt{let r = (s | t)+}\]
-for an assumption of an empty intersection between \relr and \rels and a definition of \relr as the transitive closure of $\sf s \cup t$. \\
+for an assumption of an empty intersection between \relr{} and \rels{} and a definition of \relr{} as the transitive closure of $\sf s \cup t$. \\
 These definitions and assumptions can be incorporated into the proof system by transforming them into rules or by replacing the relations with the corresponding definitions and assumptions in preprocessing. To avoid producing extraordinary long terms, we use the former method.
 Assumptions can easily be turned into axioms of the proof system. 
 
@@ -875,18 +876,32 @@ Given by the definition of the relation \relr.
 
 \item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$ \\
 For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier.
+
+Base Case: $n=1$
 \begin{eqnarray*}
-(e,e') \in \relr^+ &\impl & \exists n\in \N: (e,e') \in \relr^n \reason{\defof \rel^+} \\
-&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
-&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relI \reason{\relr \subseteq \relI} \\
-&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relr.\relI \\
-&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relI \reason{\relr.\relI \subseteq \relI} \\
-&\impl & \exists n \in \N : (e,e') \in \relr^{n-3}.\relI \reason{\relr.\relI \subseteq \relI} \\
-&& \dots \\
-&\impl & (e,e') \in \relr.\relI \reason{\relr.\relI \subseteq \relI} \\
-&\impl & (e,e') \in \relI \reason{\relr.\relI \subseteq \relI} \\
-&\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
+\edgein \relr^1 &\impl & \edgein \relr \reason{\defof \rel^+} \\
+&\impl & \edgein \relI \reason{\relr \subseteq \relI} 
 \end{eqnarray*}
+Inductionhypothesis: If $\relr^{n-1} \subseteq \relI$, then $\Relr^n \subseteq \relI$. \\
+Inductionstep:
+\begin{eqnarray*}
+\edgein \relr^n &\impl & (e,e') \in \relr.\relr^{n-1} \\
+&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relr^{n-1} \reason{\defof \rel.\rel}\\
+&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relI \reason{Inductionhypothesis}\\
+&\impl & \edgein \relr.\relI \reason{\defof \rel.\rel} \\
+&\impl & \edgein \relI \reason{\relr.\relI \subseteq \relI}
+%&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
+%&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relI \reason{\relr \subseteq \relI} \\
+%&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relr.\relI \\
+%&\impl & \exists n \in \N : (e,e') \in \relr^{n-2}.\relI \reason{\relr.\relI \subseteq \relI} \\
+%&\impl & \exists n \in \N : (e,e') \in \relr^{n-3}.\relI \reason{\relr.\relI \subseteq \relI} \\
+%&& \dots \\
+%&\impl & (e,e') \in \relr.\relI \reason{\relr.\relI \subseteq \relI} \\
+%&\impl & (e,e') \in \relI \reason{\relr.\relI \subseteq \relI} \\
+%&\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
+\end{eqnarray*}
+
+Since $\relI \subseteq \rels$ and as we have shown $\relr^+ \subseteq \relI$, we get $\relr^+ \subseteq \rels$.
 
 %\item ($+_R$): $\Relr \subseteq \relI \land \relI \subseteq \relI.\rels \land \relI.\rels \subseteq \rels$ \\
 %Once more, we use the alternative definition of the transitive closure.
