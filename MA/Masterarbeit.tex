@@ -46,7 +46,7 @@
 \section{Introduction}\label{sec:intro}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads. 
 Multiple threads may operate on the same memory and could interfere with the others' stored values. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
-Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is one reason for the possibility of different executions.\\
+Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory address and at least one of them uses a write operation is called a \textit{data race}. This is one reason for the possibility of different executions.\\
 
 \begin{figure}[h]
 \centering
@@ -767,6 +767,72 @@ Let $\relr, \rels \subseteq (E\times E)$ be two relational terms. If there is a 
 \noindent To prove the theorem, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
 The transformations are proven in the corresponding section or in the appendix. Using the \Cref{lem:implications,lem:bmono,lem:umono}, it is clear that every proof $\prf$ that uses only these rules is sound and therefore the inclusion at the root of $\prf$ holds.
 
+\subsection{Weakening and Strengthening}
+To prove the weakening and strengthening rules, we need to prove monotinicity for each operator. Starting with the binary operators, this guarantees that for union, intersection and concatenation, it holds that replacing a subterm with a stronger one will not weaken the term and replacing a subterm with a weaker one will not strengthen the term.
+\begin{lemma}[Binary Monotinicity]\label{lem:bmono} Let $\star: (E\times E) \times (E \times E) \rightarrow (E \times E)$ be any binary operator in rational CAT. It holds that if $\sf r \subseteq s$, then $\sf t \star r \subseteq t \star s$ and $\sf r \star t \subseteq s \star t$ \end{lemma} 
+\begin{proof}
+For proving monotonicity, the lemma needs to be shown for every binary operator in rational CAT.
+We will start with the union operator:
+\begin{eqnarray*}
+(e,e') \in \sf t \cup r &\impl & (e,e') \in \relt \lor (e,e') \in \relr \reason{\defof \rel_1 \cup \rel_2} \\
+& \impl & (e,e') \in \relt \lor (e,e') \in \sf s \reason{r \subseteq s} \\
+&\impl & (e,e') \in \relt \cup \rels \reason{\defof \rel_1 \cup \rel_2}
+\end{eqnarray*}
+Just as simple as for union is the proof for intersection:
+\begin{eqnarray*}
+(e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \relr \reason{\defof \rel_1 \cap \rel_2}\\
+& \impl & (e,e') \in \relt \land (e,e') \in \sf s \reason{r \subseteq s} \\
+&\impl & (e,e') \in \relt \cap \rels \reason{\defof \rel_1 \cap \rel_2}
+\end{eqnarray*}
+Since the first two operators were commutative, the order of the relations was not important. As this is not the case for concatenation, there needs to be a distinction between $\sf t.r$ and $\sf r.t$
+\begin{eqnarray*}
+(e,e'') \in \sf t.r &\impl & (e,e') \in \relt \land (e',e'') \in \relr \reason{\defof \rel_1.\rel_2}\\
+& \impl & (e,e') \in \relt \land (e',e'') \in \sf s \reason{r \subseteq s} \\
+&\impl & (e,e'') \in \relt.\rels \reason{\defof \rel_1.\rel_2}
+\end{eqnarray*}
+\begin{eqnarray*}
+(e,e'') \in \sf r.t &\impl & (e,e') \in \relr \land (e',e'') \in \relt \reason{\defof \rel_1.\rel_2} \\
+& \impl & (e,e') \in \rels \land (e',e'') \in \sf t \reason{r \subseteq s} \\
+&\impl & (e,e'') \in \rels.\relt \reason{\defof \rel_1.\rel_2}
+\end{eqnarray*}
+This proves monotonicity for every binary operator of rational CAT.
+\end{proof}
+The unary operators of rational CAT are inversion, reflexive closure, transitive closure and reflexive-transitive closure. The next step is to show monotonicity for these aswell.
+\begin{lemma}[Unary Monotonicity]\label{lem:umono} Let $f:(E\times E) \rightarrow (E \times E)$ be a unary operator (function) of rational CAT. It holds that for any $\relr,\rels \subseteq E \times E$, if $\sf r \subset s$, then $f(\relr) \subseteq f(\rels)$.
+\end{lemma}
+\begin{proof}
+The first unary operator of rational CAT will be inversion:
+\begin{eqnarray*}
+(e,e') \in \relr^{-1} &\impl & (e',e) \in \relr \reason{\defof \rel^{-1}}\\
+&\impl & (e',e) \in \sf s \reason{\sf r \subseteq s} \\
+&\impl & (e,e') \in \rels^{-1} \reason{\defof \rel^{-1}}
+\end{eqnarray*}
+Next up is the transitive closure:
+\begin{eqnarray*}
+(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
+&\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels \reason{\sf r \subseteq s} \\
+&\impl & (e,e') \in \rels^+ \reason{\defof \rel^+}
+\end{eqnarray*}
+For the unary operators reflexive closure the monotonicity is given through its definition and \Cref{lem:bmono}:
+\[\relr? = \relr \cup \id \subseteq \rels \cup \id = \rels?\]
+For the reflexive-transitive closure the monotonicity is given through their definition and the monotonicity of the union operator and the transitive closure:
+\[\relr^* = \relr^+ \cup \id \subseteq \rels^+ \cup \id = \rels^*\]
+\end{proof}
+With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and strengthening rules.
+\begin{itemize}
+\item $(\textsc{weak}):~ \Delta[\relr] \subseteq \rels \land {\sf t \subseteq r} \impl \Delta[\relt] \subseteq \rels$
+\begin{eqnarray*}
+(e,e') \in \Delta[\relt] &\impl & (e,e') \in \Delta[\relr] \reason{\text{\Cref{lem:bmono,lem:umono}, } \sf t \subseteq r} \\
+& \impl & (e,e') \in \rels \reason{\Delta[\relr] \subseteq \rels}
+\end{eqnarray*}
+\item $(\textsc{strength}):~ \relr \subseteq \Delta[s] \land \rels \subseteq \relt \impl \relr \subseteq \Delta[\relt]$
+\begin{eqnarray*}
+\edgein \relr &\impl & \edgein \Delta[\rels] \reason{\relr \subseteq \Delta[\rels]} \\
+&\impl & \edgein \Delta[\relt] \reason{\text{\Cref{lem:bmono,lem:umono}, } \rels \subseteq \relt}
+\end{eqnarray*}
+\end{itemize}
+
+
 \subsection{Proving Relational Implications}\label{sec:prvrelimp}
 \begin{lemma}\label{lem:implications}
 For every rule in \Cref{sec:implications}, it holds that the premises implicate the conclusion.
@@ -875,19 +941,19 @@ Given by the definition of the relation \relr.
 \end{eqnarray*}
 
 \item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$ \\
-For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier.
+For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier. Furthermore, we prove soundness of the rule by first proving $\relr^+ \subseteq \relI$ via an induction on the number of $\Relr$ and then using the precondition $\relI \subseteq \rels$. 
 
-Base Case: $n=1$
+\paragraph{Base Case:} $n=1$
 \begin{eqnarray*}
 \edgein \relr^1 &\impl & \edgein \relr \reason{\defof \rel^+} \\
 &\impl & \edgein \relI \reason{\relr \subseteq \relI} 
 \end{eqnarray*}
-Inductionhypothesis: If $\relr^{n-1} \subseteq \relI$, then $\Relr^n \subseteq \relI$. \\
-Inductionstep:
+\paragraph{Inductionhypothesis:} $\relr^{n-1} \subseteq \relI$ holds for a particular $(n-1)$. \\
+\paragraph{Inductionstep:}
 \begin{eqnarray*}
 \edgein \relr^n &\impl & (e,e') \in \relr.\relr^{n-1} \\
 &\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relr^{n-1} \reason{\defof \rel.\rel}\\
-&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relI \reason{Inductionhypothesis}\\
+&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relI \reason{\text{Inductionhypothesis}}\\
 &\impl & \edgein \relr.\relI \reason{\defof \rel.\rel} \\
 &\impl & \edgein \relI \reason{\relr.\relI \subseteq \relI}
 %&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
@@ -900,7 +966,7 @@ Inductionstep:
 %&\impl & (e,e') \in \relI \reason{\relr.\relI \subseteq \relI} \\
 %&\impl & (e,e') \in \rels \reason{\relI \subseteq \rels}
 \end{eqnarray*}
-
+By the principle of the induction we have shown $\relr^n \subseteq \relI$ for every $n \in \N$ and therefore $\relr^+ \subseteq \relI$.
 Since $\relI \subseteq \rels$ and as we have shown $\relr^+ \subseteq \relI$, we get $\relr^+ \subseteq \rels$.
 
 %\item ($+_R$): $\Relr \subseteq \relI \land \relI \subseteq \relI.\rels \land \relI.\rels \subseteq \rels$ \\
@@ -917,71 +983,6 @@ Since $\relI \subseteq \rels$ and as we have shown $\relr^+ \subseteq \relI$, we
 \end{itemize}
 \end{proof}
 
-
-\subsection{Weakening and Strengthening}
-To prove the weakening and strengthening rules, we need to prove monotinicity for each operator. Starting with the binary operators, this guarantees that for union, intersection and concatenation, it holds that replacing a subterm with a stronger one will not weaken the term and replacing a subterm with a weaker one will not strengthen the term.
-\begin{lemma}[Binary Monotinicity]\label{lem:bmono} Let $\star: (E\times E) \times (E \times E) \rightarrow (E \times E)$ be any binary operator in rational CAT. It holds that if $\sf r \subseteq s$, then $\sf t \star r \subseteq t \star s$ and $\sf r \star t \subseteq s \star t$ \end{lemma} 
-\begin{proof}
-For proving monotonicity, the lemma needs to be shown for every binary operator in rational CAT.
-We will start with the union operator:
-\begin{eqnarray*}
-(e,e') \in \sf t \cup r &\impl & (e,e') \in \relt \lor (e,e') \in \relr \reason{\defof \rel_1 \cup \rel_2} \\
-& \impl & (e,e') \in \relt \lor (e,e') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e') \in \relt \cup \rels \reason{\defof \rel_1 \cup \rel_2}
-\end{eqnarray*}
-Just as simple as for union is the proof for intersection:
-\begin{eqnarray*}
-(e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \relr \reason{\defof \rel_1 \cap \rel_2}\\
-& \impl & (e,e') \in \relt \land (e,e') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e') \in \relt \cap \rels \reason{\defof \rel_1 \cap \rel_2}
-\end{eqnarray*}
-Since the first two operators were commutative, the order of the relations was not important. As this is not the case for concatenation, there needs to be a distinction between $\sf t.r$ and $\sf r.t$
-\begin{eqnarray*}
-(e,e'') \in \sf t.r &\impl & (e,e') \in \relt \land (e',e'') \in \relr \reason{\defof \rel_1.\rel_2}\\
-& \impl & (e,e') \in \relt \land (e',e'') \in \sf s \reason{r \subseteq s} \\
-&\impl & (e,e'') \in \relt.\rels \reason{\defof \rel_1.\rel_2}
-\end{eqnarray*}
-\begin{eqnarray*}
-(e,e'') \in \sf r.t &\impl & (e,e') \in \relr \land (e',e'') \in \relt \reason{\defof \rel_1.\rel_2} \\
-& \impl & (e,e') \in \rels \land (e',e'') \in \sf t \reason{r \subseteq s} \\
-&\impl & (e,e'') \in \rels.\relt \reason{\defof \rel_1.\rel_2}
-\end{eqnarray*}
-This proves monotonicity for every binary operator of rational CAT.
-\end{proof}
-The unary operators of rational CAT are inversion, reflexive closure, transitive closure and reflexive-transitive closure. The next step is to show monotonicity for these aswell.
-\begin{lemma}[Unary Monotonicity]\label{lem:umono} Let $f:(E\times E) \rightarrow (E \times E)$ be a unary operator (function) of rational CAT. It holds that for any $\relr,\rels \subseteq E \times E$, if $\sf r \subset s$, then $f(\relr) \subseteq f(\rels)$.
-\end{lemma}
-\begin{proof}
-The first unary operator of rational CAT will be inversion:
-\begin{eqnarray*}
-(e,e') \in \relr^{-1} &\impl & (e',e) \in \relr \reason{\defof \rel^{-1}}\\
-&\impl & (e',e) \in \sf s \reason{\sf r \subseteq s} \\
-&\impl & (e,e') \in \rels^{-1} \reason{\defof \rel^{-1}}
-\end{eqnarray*}
-Next up is the transitive closure:
-\begin{eqnarray*}
-(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
-&\impl & \exists n \in \N: e=e_1 \land e' = e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels \reason{\sf r \subseteq s} \\
-&\impl & (e,e') \in \rels^+ \reason{\defof \rel^+}
-\end{eqnarray*}
-For the unary operators reflexive closure the monotonicity is given through its definition and \Cref{lem:bmono}:
-\[\relr? = \relr \cup \id \subseteq \rels \cup \id = \rels?\]
-For the reflexive-transitive closure the monotonicity is given through their definition and the monotonicity of the union operator and the transitive closure:
-\[\relr^* = \relr^+ \cup \id \subseteq \rels^+ \cup \id = \rels^*\]
-\end{proof}
-With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and strengthening rules.
-\begin{itemize}
-\item $(\textsc{weak}):~ \Delta[\relr] \subseteq \rels \land {\sf t \subseteq r} \impl \Delta[\relt] \subseteq \rels$
-\begin{eqnarray*}
-(e,e') \in \Delta[\relt] &\impl & (e,e') \in \Delta[\relr] \reason{\text{\Cref{lem:bmono,lem:umono}, } \sf t \subseteq r} \\
-& \impl & (e,e') \in \rels \reason{\Delta[\relr] \subseteq \rels}
-\end{eqnarray*}
-\item $(\textsc{strength}):~ \relr \subseteq \Delta[s] \land \rels \subseteq \relt \impl \relr \subseteq \Delta[\relt]$
-\begin{eqnarray*}
-\edgein \relr &\impl & \edgein \Delta[\rels] \reason{\relr \subseteq \Delta[\rels]} \\
-&\impl & \edgein \Delta[\relt] \reason{\text{\Cref{lem:bmono,lem:umono}, } \rels \subseteq \relt}
-\end{eqnarray*}
-\end{itemize}
 
 \subsection{Soundness for MCM Inclusion Proofs}
 We have proven soundness of our proof system for arbitrary relations $\relr \subseteq \rels$.
@@ -1469,6 +1470,8 @@ We can translate any infinite RAT-CAT proof $\pi$ into a finite relational inclu
 We translate the proof up to the first occurrence of the ($*L$) or ($*R$) rule into a relational inclusion tableau as we showed in \Cref{sec:finiteproofs}. For the next step, we apply the ($*$) rule to split the tableau with ($\cup_{L2}$) and translate the branch concerning $\id \subseteq \rels_1$ as usual. The branch that handles $\relr^+ \subseteq \rels_1$ continues with the invariant rule ($+_L$). As the invariant we choose $\I = \bigcap_{i = 1}^n \rels_i$ where $n$ is the number of different terms that evoke backlinks. As we have shown, if $\pi$ is a proof, then the premises of the rule \textbf{(P1)}, \textbf{(P2)} and \textbf{(P3)} are fulfilled and thus, the translation is valid. 
 As we know from \Cref{lem:properties} the branches for proofs for the properties \textbf{(P2)} and \textbf{(P3)} will be finite.
 \end{proof}
+
+\todo{Section Limitations/Evaluation?}{}
 
 \section{Conclusion}\label{sec:conclusion}
 The task for this master's thesis was to create a new proof system for comparing Memory Consistency Models that does not resolve relations to event-level, is neither cyclic nor infinite and creates proofs that are shorter then the ones in \cite{Gru+26}. We wanted the proof system to work reasonably well, proof it's soundness and completeness and have the system to cover all of CAT. Optimally, we wanted to make the proof system work automatically. \\
