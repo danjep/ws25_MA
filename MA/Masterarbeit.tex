@@ -27,14 +27,14 @@
 %\vfill
 %\pagebreak
 
-%\section*{Abstract}
-%\pagebreak
+\section*{Abstract}
+\pagebreak
 
 {
-%\thispagestyle{empty}
+\thispagestyle{empty}
 \hypersetup{linkcolor=black}
 \tableofcontents
-%\thispagestyle{empty} %yeet
+\thispagestyle{empty} %yeet
 }
 
 \vfill
@@ -46,7 +46,7 @@
 \section{Introduction}\label{sec:intro}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads. 
 Multiple threads may operate on the same memory and could interfere with the others' stored values. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. 
-Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory address and at least one of them uses a write operation is called a \textit{data race}. This is one reason for the possibility of different executions.\\
+Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The reason is that the threads can be interleaved in different ways. The situation where two or more threads access the same memory address and at least one of them uses a write operation is called a \textit{data race} and is one reason for the possibility of different executions. Another reason is that the operations of each thread may be reordered for performance reasons and hence, the execution is not consistent with the order of the program anymore. \\
 
 \begin{figure}[h]
 \centering
@@ -66,8 +66,8 @@ Every program that a thread might execute consists of instructions which in turn
 CPU architectures and compilers may reorder the events in such programs for performance reasons and interleave the two threads as they see fit. 
 Since this permits different executions for the same program, programmers need to be careful about their code. Programming languages and CPU architectures provide \textit{memory consistency models} (MCMs) which give the code a semantic and let the programmers know how their code will be handled by the compiler and hardware. \\
 The most intuitive and restrictive MCM is Lamport's \textit{Sequential Consistency} (SC) \cite{Lam79} which guarantees that operations are executed as if they were in some sequential order and the operations of each thread follow the order in which they are written.\\
-\todo{Das entpricht nicht der Definition von SC im nächsten Kapitel. Kommt drauf an wie man die IWs in der \co interpretiert.}{
-For the example in \Cref{fig:example} this means that either one of the threads is executed completely before the other or that both writes are done before the reads. Only the result of $a=b=0$ is not permitted.} Therefore, MCMs give developers certain guarantees for how the program will be compiled and executed. \\ 
+For the example in \Cref{fig:example} this means that either one of the threads is executed completely before the other or that both writes are done before the reads. Only the result of $a=b=0$ is not permitted, since this is not consistent with the order of each thread. 
+This shows, that MCMs give developers certain guarantees for how the program will be compiled and executed. \\ 
 The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiler has to comply with both the language MCM and the hardware MCM.
 Essentially, the MCMs  determine which update to the shared memory is seen by which thread at what time.
 
@@ -206,9 +206,7 @@ The first task is to check generic properties of MCMs like permitting no out-of-
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
 For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26} which both are not able to handle every possible MCM but only a fragment.
 
-Besides Lamport's Sequential Consistency, there are models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} which were developed to allow for more optimization by the hardware.
-\todo{Mehr models hinzufügen}{}
-
+Besides Lamport's Sequential Consistency, there are models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} which were developed to allow for more optimization. Besides these rather theoretical models, there exists MCMs that describe the behavior of hardware like Power \cite{Mad+12}, of a programming language like Java Memory Model \cite{Man+05} or of an operating system like Linux Kernel Memory Model (LKMM) \cite{Alg+18,LKM25} and many more types for various applications.
 
 
 \subsection{The CAT language} \label{sec:cat}
@@ -225,7 +223,7 @@ CAT has some built-in base relations which include the already mentioned \po{} a
 \bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \co \mid \loc \mid \ext \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
-\caption{The CAT language according to \cite{Alg+16}, where $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement. Furthermore, $\textsf{0}$ denotes the empty relation and \id~ the identity relation. \\
+\caption{The CAT language according to \cite{Alg+16}, where $\bangle{rel}^+$ is the transitive closure, $\bangle{rel}?$ the reflexive closure, $\bangle{rel}^*$ the reflexive and transitive closure, $\sim\bangle{rel}$ the complement. Furthermore, $\textsf{0}$ denotes the empty relation and \id~ the identity relation. The $^*$ operator is also called Kleene-star. \\
 The \textcolor{teal}{teal}-colored part is what differentiates CAT from rational CAT.}   
 \label{fig:cat}
 \end{figure}
@@ -240,7 +238,63 @@ The Memory Models from the last section can be formalized according to \cite{Gru
 &\text{(SC per Location)} \hfill &\texttt{acyclic } (\po \cap \loc) \cup (\rf \cup \co \cup \fr)
 \end{align*}  
 
-\todo{Beispiel evtl nochmal aufgreifen}{TSO allows these executions, SC per location those...}
+With the definition of SC we can show now why the execution in \Cref{fig:storebuffering} is not allowed by the memory model. For this we add the \co~ and \fr~ to the graph:
+\begin{figure}[H]
+\begin{minipage}{0.5\textwidth}
+\centering
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 1cm and 0.2cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y=0}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=0}};
+
+\node[blank, below right= 1cm and 0.2cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x=0}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=0}};
+
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
+
+\draw[arrow, color=rfgreen] (Init) edge[bend left] node[left] {\rf} (Ry);
+\draw[arrow, color=rfgreen] (Init) edge[bend right] node[right] {\rf} (Rx);
+
+\draw[arrow, color=orange] (Init) edge[bend left] node[right] {\co} (y<-1);
+\draw[arrow, color=orange] (Init) edge[bend right] node[left] {\co} (x<-1);
+
+\draw[arrow, color=violet] (Ry) edge[] node[above] {\textsf{fr}} (y<-1);
+\draw[arrow, color=violet] (Rx) edge[] node[below] {\fr} (x<-1);
+\end{tikzpicture}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+\centering
+\begin{tikzpicture}[node distance=1.5cm and 3cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 1cm and 0.2cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y=0}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=0}};
+
+\node[blank, below right= 1cm and 0.2cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x=0}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=0}};
+
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow, color=red] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow, color=red] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
+
+\draw[arrow, color=red] (Ry) edge[] node[above] {\textsf{fr}} (y<-1);
+\draw[arrow, color=red] (Rx) edge[] node[below] {\textsf{fr}} (x<-1);
+\end{tikzpicture}
+\end{minipage}
+\caption{On the left we have the execution of the example program in \Cref{fig:example} in case 4 (\Cref{fig:storebuffering}) with all relations of \hb~ in the graph. On the right side, we can see the cycle that makes the execution inconsistent with \texttt{acyclic }\hb.} \label{fig:SCexample}
+\end{figure} 
+Now, we can see that the relations in \hb~ form a cycle (marked in red on the right side) and therefore the execution is not allowed.
+
 
 \subsection{Contribution}
 This master's thesis will present a new proof-system for comparing memory consistency models that directly handles relations and uses invariants to handle potentially infinite decompositions of Kleene-star terms.
@@ -678,6 +732,54 @@ As mentioned in the previous section in \Cref{lem:inversion}, it is possible to 
 %\end{mathpar}
 \end{rules}
 
+With the rules from the last three subsections, we can now proof inclusions between relational terms. As an example we give a proof for $a^* \subseteq (aa)^* \cup a(aa)*$ in \Cref{fig:exampleproof}.
+\begin{figure}[H]
+\begin{mathpar}
+\inferrule*[left=($*$)]{
+	\inferrule*[left=($\cup_{L2}$)]{
+		\inferrule*[Left=($*$)]{
+			\inferrule*[left=($\cup_{R}$)]{
+				\inferrule*[Left=(refl.)]{\true
+				}{\id \subseteq \id}}
+			{\id \subseteq \id \cup (aa)^+ \cup a(aa)^*}}
+		{\id \subseteq (aa)^* \cup a(aa)^*}
+		\\
+		\textcolor{teal}{a^+\subseteq (aa)^* \cup a(aa)^*}}
+	{\id \cup a^+ \subseteq (aa*) \cup a(aa)*}}
+{a^* \subseteq (aa)^* \cup a(aa)^*}
+\end{mathpar}
+\begin{mathpar} \footnotesize
+	\inferrule*[right=($+_L$)]{
+		\inferrule*[left=($\cup_{R}$)]{
+			\inferrule*[Left=($._{LR}$)]{
+				\inferrule*[left=($*$)]{
+					\inferrule*[Left=($\cup_R$)]{
+						\inferrule*[Left=(refl.)]{true}{\id \subseteq \id}					
+					}{\id \subseteq \id \cup (aa)^+}					
+				}{\id \subseteq (aa)^*}}
+			{a \subseteq a.(aa)^*}}
+		{a \subseteq I} 
+		\\
+		\inferrule*[right=($._{\cup dist}$)]{
+			\inferrule*[Right=($\cup_{RL}$)]{
+				\inferrule*[right=($+$)]{
+					\inferrule*[right=($*$)]{
+						\inferrule*[Right=($\cup_R$)]{
+							\inferrule*[Right=(refl.)]{true}{(aa)^+ \subseteq (aa)^+}
+						}{(aa)^+ \subseteq \id \cup (aa)^+}
+					}{(aa)^+ \subseteq (aa)^*}}
+				{aa(aa)^* \subseteq (aa)^*}}
+			{a(aa)^* \cup aa(aa)^* \subseteq I}}
+		{a.I \subseteq I}
+		\\
+		\inferrule*[Right=(refl.)]{\true}{I \subseteq I}}
+	{\textcolor{teal}{a^+ \subseteq (aa)^* \cup a(aa)^*}}
+\end{mathpar}
+\caption{We can use our proof system for inclusions between relational terms. The proof starts with the first tableau and the \textcolor{teal}{teal}-colored part is continued below. As the invariant for the induction rule, we use $I = (aa)^* \cup a(aa)^*$.}
+\label{fig:exampleproof}
+\end{figure}
+Here, we use the ($+_L$) rule with an invariant $I=(aa)^* \cup a(aa)^*$. Structurally, we can see that  we try to transform the terms on either side into the same one in order to use the (\textsc{reflexivity}) rule.
+
 
 \subsection{Relation-specific Rules}\label{sec:relationspecific}
 Memory Consistency Models are defined on a group of relations. Each of them comes with certain properties that need to be recognized in the rules. In \cite{Gru+26} this concept is called \textit{Hypotheses}. \\
@@ -838,7 +940,7 @@ With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and stre
 For every rule in \Cref{sec:implications}, it holds that the premises implicate the conclusion.
 \end{lemma}
 \begin{proof}
-We prove the lemma by showing that the implications hold for every rule in \Cref{sec:implications}:
+We prove the lemma by showing that the implications hold for every rule in \Cref{sec:implications}. The \Cref{lem:bmono,lem:umono} proving monotonicity of the operators help with that:
 
 
 \begin{itemize}
@@ -859,102 +961,57 @@ Given by the definition of the relation \relr.
 
 \item ($\cup_{L}$): $\relr \subseteq \rels \impl \relr \cup \rels \subseteq \sf s$
 \begin{eqnarray*}
-(e,e') \in \sf r \cup s &\impl & (e,e') \in \relr \lor (e,e') \in \rels \reason{\defof \rel \cup \rel}\\
-&\impl & (e,e') \in \rels \lor (e,e') \in \sf s \quad \mid \sf r \subseteq s \\
-&\impl & (e,e') \in \rels 
+\edgein \relr \cup \Rels &\impl & \edgein \rels \cup \rels \reason{\relr \subseteq \Rels \text{ and } \Cref{lem:bmono}}\\
+&\impl & \edgein \rels \reason{(\cup_L) \text{ and }\rels \subseteq \Rels}
 \end{eqnarray*}
 
 
 \item ($\cup_{R}$): $\sf r \subseteq s \impl \sf r \subseteq s \cup t$
 \begin{eqnarray*}
-(e,e') \in \sf r &\impl & (e,e') \in \sf s \reason{\sf r \subseteq s}\\
-& \impl & (e,e') \in \rels \lor (e,e') \in \sf t  \\
-&\impl & (e,e') \in \rels \cup \relt \reason{\defof \rel \cup \rel}
+\edgein \sf r &\impl & \edgein \Relr \cup \0 \reason{(\0_\cup)} \\
+&\impl & \edgein \rels \cup \0 \reason{\relr \subseteq \rels \text{ and } \Cref{lem:bmono}}\\
+& \impl & \edgein \rels \cup \relt \reason{\0 \subseteq \relt \text{ and } \Cref{lem:bmono}} 
 \end{eqnarray*} 
 
 \item ($\cap_{L}$): $true \impl \sf r \cap s \subseteq r$
 \begin{eqnarray*}
-(e,e') \in \relr \cap \rels &\impl & (e,e') \in \relr \land (e,e') \in \rels \reason{\defof \rel \cap \rel} \\
-&\impl & (e,e') \in \sf r 
+(e,e') \in \relr \cap \rels &\impl & \edgein \relr \cap (E \times E) \reason{\rels \subseteq (E \times E) \text{ and } \Cref{lem:bmono}} \\ 
+%(e,e') \in \relr \land (e,e') \in \rels \reason{\defof \rel \cap \rel} \\
+&\impl & (e,e') \in \relr \reason{(\textsc{full}_\cap)} 
 \end{eqnarray*}
 
 \item ($\cap_{R}$): $\sf r \subseteq s \land \relr \subseteq \relt \impl r \subseteq s \cap t$
 \begin{eqnarray*}
-(e,e') \in \relr &\impl & (e,e') \in \relr \land (e,e') \in \sf r \\
-& \impl &  (e,e') \in \rels \land (e,e') \in \sf r \reason{ \sf r \subseteq s} \\
-&\impl & \edgein \rels \land \edgein \relt \reason{\relt \subseteq \relt} \\
-&\impl & (e,e') \in \rels \cap \relt \reason{\defof \rel \cap \rel}
+(e,e') \in \relr &\impl & \edgein \relr \cap \relr \reason{\phi \Leftrightarrow \phi \land \phi} \\
+& \impl &  (e,e') \in \rels \cap \relr \reason{ \relr \subseteq \rels \text{ and } \Cref{lem:bmono}} \\
+&\impl & \edgein \rels \cap \relt \reason{\relt \subseteq \relt \text{ and } \Cref{lem:bmono}} 
 \end{eqnarray*}
 
-%\item ($._{trans}$): $\sf r \subseteq \id \impl r \subseteq r.r$
-%\begin{eqnarray*}
-%(e,e') \in \sf r &\impl & (e,e) \in \sf r \reason{\relr \subseteq \id} \\
-%&\impl & (e,e).(e,e) \in \sf r.r \\
-%&\impl & (e,e) \in \sf r.r
-%\end{eqnarray*}
-%\item ($._{RL}$): $\id \subseteq \sf s \impl r \subseteq s.r$ 
-%\begin{eqnarray*}
-%(e,e') \in \sf r &\impl & (e,e).(e,e') \in \id.\relr \reason{(\id_{comm})}\\
-%&\impl & (e,e) \in \id \land (e,e') \in \relr \reason{\defof \rel.\rel}\\
-%&\impl & (e,e) \in \rels \land (e,e') \in \sf r \reason{\id \subseteq s}\\
-%&\impl & (e,e).(e,e') \in \rels.\relr \reason{\defof \rel.\rel}\\
-%&=& (e,e') \in \sf s.r 
-%\end{eqnarray*}
-%\item ($._{RR}$): $\sf \id \subseteq s \impl r \subseteq r.s$ 
-%\begin{eqnarray*}
-%(e,e') \in \sf r &\impl & (e,e').(e',e') \in \sf r.\id \reason{\defof \id}\\
-%&\impl & (e,e') \in \relr \land (e',e') \in \id \reason{\defof \rel.\rel}\\
-%&\impl & (e,e') \in \relr \land (e',e') \in \rels \reason{\id \subseteq \sf s} \\
-%&\impl & (e,e').(e',e') \in \relr.\rels \reason{\defof \rel.\rel}\\
-%&\impl & (e,e') \in \sf r.s
-%\end{eqnarray*}
-%
-%\item ($._{LL}$): $\sf r \subseteq \id \impl s.r \subseteq s$
-%\begin{eqnarray*}
-%(e_1,e_3) \in \sf s.r &\impl & \{(e_1,e_2) \in \rels \land (e_2,e_3) \in \relr\} \reason{\defof \rel.\rel} \\
-%&\impl & (e_1,e_2) \in \rels \land (e_2,e_3) \in \id   \reason{\sf r \subseteq \id} \\
-%&\impl & (e_1,e_3) \in \rels \land (e_3,e_3) \in \id  \reason{(e_2,e_3)\in \id \impl e_2 = e_3} \\
-%&\impl & (e_1,e_3) \in \sf s
-%\end{eqnarray*}
-%
-%\item ($._{LR}$): $\sf r \subseteq \id \impl \sf r.s \subseteq s$
-%\begin{eqnarray*}
-%(e_1,e_2).(e_2,e_3) \in \sf r.s &\impl & (e_1,e_2) \in \relr \land (e_2,e_3) \in \sf s \\
-%&\impl & (e_2,e_3) \in \rels \land (e_1,e_2) \in \id \reason{\sf r \subseteq \id} \\
-%&\impl & (e_1,e_3) \in \rels \land (e_1,e_1) \in \id \reason{(e_1,e_2)\in \id \impl e_1 = e_2} \\
-%&\impl & (e_1,e_3) \in \rels
-%\end{eqnarray*}
 \item ($._{LR}$) $\relr \subseteq \relr' \land \rels \subseteq \rels' \impl \relr.\rels \subseteq \relr'.\rels'$
 \begin{eqnarray*}
-\edgein \relr.\rels &\impl & \exists e,e',\hat{e} \in E: (e,\hat{e}) \in \relr \land (\hat{e},e') \in \rels \reason{\defof \rel.\rel}\\
-&\impl & \exists e,e',\hat{e} \in E: (e,\hat{e})  \in \relr' \land (\hat{e},e') \in \rels \reason{\relr \subseteq \relr'} \\
-&\impl & \exists e,e',\hat{e} \in E: (e,\hat{e})  \in \relr' \land (\hat{e},e') \in \rels' \reason{\rels \subseteq \rels'} \\
-&\impl & \edgein \relr'.\rels' \reason{\defof \rel.\rel}
+\edgein \Relr.\rels &\impl & \edgein \relr.\rels' \reason{\rels \subseteq \rels' \text{ and } \Cref{lem:bmono}} \\
+&\impl & \edgein \relr'.\rels' \reason{\relr \subseteq \relr' \text{ and } \Cref{lem:bmono}}
 \end{eqnarray*}
 
 \item ($+_{LR}$): $\sf r \subseteq s^+ \impl r^+ \subseteq s^+$
 \begin{eqnarray*}
-(e,e') \in \relr^+ &\impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \relr \reason{\defof \rel^+} \\
-& \impl & \exists n \in \N: e=e_1 \land e'=e_n \land \forall i \in [1,n]: (e_i,e_{i+1}) \in \rels^+ \reason{\sf r \subseteq s^+}\\
-& \impl & (e,e') \in \rels^{+^+} \reason{\defof \rel^+}\\
+\edgein \relr^+ &\impl & \edgein (\rels^+)^+ \reason{\relr \subseteq \Rels^+ \text{ and } \Cref{lem:umono}} \\
 & \impl & (e,e') \in \sf s^+ \reason{(+^+)}
 \end{eqnarray*}
 
 \item ($+_L$): $\sf r \subseteq I \land r.I \subseteq I \land I \subseteq s \impl r^+ \subseteq s$ \\
-For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier. Furthermore, we prove soundness of the rule by first proving $\relr^+ \subseteq \relI$ via an induction on the number of $\Relr$ and then using the precondition $\relI \subseteq \rels$. 
+For the induction rule we use the \Cref{def:alttc} of the transitive closure, seeing that it makes the transformations easier. Furthermore, we prove soundness of the rule by first proving $\relr^+ \subseteq \relI$ via an induction on the number $n$ in $\Relr^n$ and then using the precondition $\relI \subseteq \rels$. 
 
 \paragraph{Base Case:} $n=1$
 \begin{eqnarray*}
 \edgein \relr^1 &\impl & \edgein \relr \reason{\defof \rel^+} \\
 &\impl & \edgein \relI \reason{\relr \subseteq \relI} 
 \end{eqnarray*}
-\paragraph{Inductionhypothesis:} $\relr^{n-1} \subseteq \relI$ holds for a particular $(n-1)$. \\
+\paragraph{Inductionhypothesis:} $\relr^n \subseteq \relI$ holds for a particular $n \in \N$. 
 \paragraph{Inductionstep:}
 \begin{eqnarray*}
-\edgein \relr^n &\impl & (e,e') \in \relr.\relr^{n-1} \\
-&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relr^{n-1} \reason{\defof \rel.\rel}\\
-&\impl & \exists e'' \in E: (e,e'') \in \relr \land (e'',e') \in \relI \reason{\text{Inductionhypothesis}}\\
-&\impl & \edgein \relr.\relI \reason{\defof \rel.\rel} \\
+\edgein \relr^{n+1} &\impl & (e,e') \in \relr.\relr^{n} \\
+&\impl & \edgein \relr.\relI \reason{\text{Inductionhypothesis and } \Cref{lem:bmono}}\\
 &\impl & \edgein \relI \reason{\relr.\relI \subseteq \relI}
 %&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relr \\
 %&\impl & \exists n \in \N : (e,e') \in \relr^{n-1}.\relI \reason{\relr \subseteq \relI} \\
@@ -1471,17 +1528,23 @@ We translate the proof up to the first occurrence of the ($*L$) or ($*R$) rule i
 As we know from \Cref{lem:properties} the branches for proofs for the properties \textbf{(P2)} and \textbf{(P3)} will be finite.
 \end{proof}
 
-\todo{Section Limitations/Evaluation?}{}
-
-\section{Conclusion}\label{sec:conclusion}
-The task for this master's thesis was to create a new proof system for comparing Memory Consistency Models that does not resolve relations to event-level, is neither cyclic nor infinite and creates proofs that are shorter then the ones in \cite{Gru+26}. We wanted the proof system to work reasonably well, proof it's soundness and completeness and have the system to cover all of CAT. Optimally, we wanted to make the proof system work automatically. \\
-In the end, we have developed a new proof system for inclusions between relations and with that inclusions between Memory Consistency Models that can be defined in rational CAT. We have shown that the system is sound by proving the implications and equivalences of every rule and that it is complete by showing that every proof of Grünke et al. can be translated into our system. \\
-The proof system does not resolve the relations to event level and uses invariants instead of cyclic proofs. \\
-While we have shown completeness, automation of the proof system is not possible yet, since this would require a deterministic choice of invariants and of a sufficient order in which the rules are to be applied.
-One could for example apply the ($\cup_{comm}$) rule indefinitely to a term $\relr \cup \Rels$ without ever yielding a proof. Applying the rules therefore still requires knowledge about the relations and what actions can produce actual results. \\
-Furthermore, we have not been able to handle recursive definitions in CAT and were not able to show any new results that would not have been possible with Grünke et al's system. One reason for the latter is, that we could not expand the system to include differences $\relr \setminus \Rels$ and complements $\sim \Relr$. \\
-Armed with knowledge about how to handle the rules though, users will be able to proof inclusions in a more intuitive and straightforward fashion.
-As we have seen in \Cref{sec:finiteproofs} many rules for the decomposition in \cite{Gru+26} do not require any action in our system because we use no event constants. This fact can shorten the proofs substantially as can see as an extreme example in \Cref{fig:shorterexample}. \\
+\section{Evaluation}
+In this section we evaluate the capabilities of this proof system. We can compare memory models that defined in rational CAT, a fragment of the CAT language we have defined in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis at al. and KATI \cite{Kou+24} by Koutsouridis at al.. \\
+The flip side of this fact is that we were not able to expand the capabilities to non-monotonic operators (complement and difference). \\
+Our proofs, if used correctly, feature no infinite tableaus or cyclic proofs but instead use invariants which need to be found by the human using the proof system. This is a disadvantage in comparison with the other proof systems, since we cannot yet automatize our rules and implement the system in a tool. \\
+\begin{wrapfigure}{r}{0.4\textwidth}
+\vspace*{-1.5cm}
+\begin{mathpar}
+\inferrule*[Left=($\cup_{comm}$)]{\dots}{
+	\inferrule*[Left=($\cup_{comm}$)]{\rels \cup \relr \subseteq \relt}{
+		\inferrule*[Left=($\cup_{comm}$)]{\relr \cup \rels \subseteq \relt}{
+			\inferrule*[Left=($\cup_{comm}$)]{\rels \cup \relr \subseteq \relt}{\relr \cup \Rels \subseteq \relt}}}}
+\end{mathpar}
+\caption{If we apply rules inconsiderately, infinite branches like this one can occur.}
+\end{wrapfigure}
+For that to be possible, we would furthermore need a set of rules which specify which rule should be applied at which point, since arbitrary application of rules might lead to infinite branches that yield no progress. \\
+Another limitation of our proof system is that we cannot explicitly handle recursive definitions. These can implicate infinite branches too, if the definition is repeatedly applied. \\ 
+One benefit that our system offers is that proofs may be significantly shorter than for example those of Grünke et al. An extreme case is shown in \Cref{fig:shorterexample}.\\
 \begin{figure}
 \begin{minipage}{0.2\textwidth}
 \begin{mathpar}
@@ -1502,6 +1565,20 @@ As we have seen in \Cref{sec:finiteproofs} many rules for the decomposition in \
 \end{minipage}
 \caption{Proof tableaus for the inclusion $\relr \cap \rels \subseteq \rels$ in our system on the left and in Grünke et al.'s system on the right. Literals that were not needed anymore were replaced by $\dots$. As we can see, some proofs become substantially smaller in our system.} \label{fig:shorterexample}
 \end{figure}
+Since we handle the same fragment of CAT, it can be beneficial in many cases to use our proof system. 
+\todo{Betrifft das viele Beweise?}{Gibt es auch welche wo es anders herum ist?}\\
+
+
+\section{Conclusion}\label{sec:conclusion}
+The task for this master's thesis was to create a new proof system for comparing Memory Consistency Models that does not resolve relations to event-level, is neither cyclic nor infinite and creates proofs that are shorter then the ones in \cite{Gru+26}. We wanted the proof system to work reasonably well, proof it's soundness and completeness and have the system to cover all of CAT. Optimally, we wanted to make the proof system work automatically. \\
+In the end, we have developed a new proof system for inclusions between relations and with that inclusions between Memory Consistency Models that can be defined in rational CAT. We have shown that the system is sound by proving the implications and equivalences of every rule and that it is complete by showing that every proof of Grünke et al. can be translated into our system. \\
+The proof system does not resolve the relations to event level and uses invariants instead of cyclic proofs. \\
+While we have shown completeness, automation of the proof system is not possible yet, since this would require a deterministic choice of invariants and of a sufficient order in which the rules are to be applied.
+One could for example apply the ($\cup_{comm}$) rule indefinitely to a term $\relr \cup \Rels$ without ever yielding a proof. Applying the rules therefore still requires knowledge about the relations and what actions can produce actual results. \\
+Furthermore, we have not been able to handle recursive definitions in CAT and were not able to show any new results that would not have been possible with Grünke et al's system. One reason for the latter is, that we could not expand the system to include differences $\relr \setminus \Rels$ and complements $\sim \Relr$. \\
+Armed with knowledge about how to handle the rules though, users will be able to proof inclusions in a more intuitive and straightforward fashion.
+As we have seen in \Cref{sec:finiteproofs} many rules for the decomposition in \cite{Gru+26} do not require any action in our system because we use no event constants. This fact can shorten the proofs substantially as can see as an extreme example in \Cref{fig:shorterexample}. \\
+
 
 
 
