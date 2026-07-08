@@ -1206,9 +1206,30 @@ We only look at the non-atomic literals where one literal turns into two new one
 The rules that we care about are the following: 
 \[(\neg aL), (\neg {*}L), (\neg {\cup_2}L), (\neg {\equiv}L), (\neg A), (\neg \cup_1), (\neg \top_1)\]
 Since this only appears in negative reasoning, we can assume that the literal in the premise has the form $\neg p[\dots]$. Furthermore, this gives us the knowledge that only the including term $\rels$ in $\relr \subseteq \rels$ is concerned in $\prf_\pi$. \\
-Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
-Each term of the union can be decomposed on it's own.
-The rules that split literals all use the union operator (see (${\neg}{*}L$), ($\neg {\cup_2}L$), ($\neg\cup_1$)) or duplicate a literal for an equivalent event (see ($\neg aL$), ($\neg A$), ($\neg {\equiv} L$), ($\neg \top_1$)). In the latter case, this would correspond to a union with the same term $\rels \cup \rels$.
+Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be a union $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
+We can make this more explicit: The rules we consider all have the form 
+\begin{mathpar}
+\inferrule*[]{\Gamma, \neg p[\rels]}{\Gamma, \neg p[\rels_1], \neg p[\rels_2]}
+\end{mathpar}
+where $\Gamma$ are more predicates which may describe more including or included relational terms and $p[\dots]$ is the context of $\Rels$. For the translation in our system, we denote the context as $\Delta[\dots ]$ and let $\relr_\Gamma$ and $\relt_\Gamma$ be the included and including terms described by $\Gamma$ respectively. Given these translations, we get: 
+\begin{mathpar}\inferrule*[]{\relr_\Gamma \subseteq \relt_\Gamma \cup \Delta[\rels_1] \cup \Delta[\rels_2]}{\relr_\Gamma \subseteq \relt_\Gamma \cup \Delta[\rels]}
+\end{mathpar}
+If there is a way to get $\Delta[\rels_1 \cup \rels_2]$ from $\Delta[\rels]$ then we can use ($\cap_{\cup dist}$), ($._{\cup distL}$) and ($._{\cup distR}$) to factor out the union from $\Delta$.
+Now, we only need to show that we can get $\rels_1 \cup \rels_2$ from $\rels$ with our rules for every splitting rule in \cite{Gru+26}. \\
+
+($\neg {*}L$) has $\Gamma, \neg p[e.\Rels^*]$ as premise and $\Gamma, \neg p[e], p[(e.\rels).\rels^*]$ as a conclusion. With the ($*$) rule, we can get $\id \cup \rels^+$ inside any context and with ($+$) we can transform $\rels^+$ to $\rels.\rels^*$. \\
+
+($\neg {\cup_2}L$) has $\neg p[e.(\rels_1 \cup \rels_2)]$ in the premise and $\neg p[\Rels_1], \neg p[\Rels_2]$ in the conclusion. Thus, the term in the premise already has the desired form and no more transformations are necessary. \\
+
+($\neg \cup_1$) has $\neg p[A_1 \cup A_2]$ in the premise and $\neg p[A_1], \neg p[A_2]$ in the conclusion. The notion of sets of events in \cite{Gru+26} is that it can be either a base set or the possible results of $e.\rels$. In the latter case, there must have been a union of relations in the term and we can use the procedure for the ($\neg {\cup_2}L$) rule.
+In the former case, we know that base set appear in rational CAT only in cross products $A \times B$. So if the rule is applied and we have $(A_1 \cup A_2) \times B$, we can use the ($\times_{\cup distL}$) and ($\times_{\cup distR}$) rules to factor out the union and then proceed as for ($\neg \cup_2 L$). \\
+
+($\neg aL$) has $\neg p[e_1.\rels], (e_1,e_2) \in \Rels$ in the premise and $\neg p[e_1.\rels], \neg p[e_2], (e_1,e_2) \in \Rels$ in the conclusion. The predicate $(e_1,e_2) \in \rels$ tells us that the relation $\Rels$ appears at the same position in the included term. Therefore, the rule will eliminate that relation in one of the resulting terms and keep it in the other. In \Cref{sec:negreasoning} we will see how exactly the rule handles this. As far as the splitting is concerned, we can simply duplicate the term $\rels$ with (\textsc{strength}), ($\cup_L$) and (\textsc{reflexivity}) and continue with the procedure from \Cref{sec:negreasoning} in only one of the terms. \\
+
+($\neg A$) has $\neg p[A], e \in A$ in the premise and $\neg p[A], \neg p[e], e \in A$ in the conclusion. Again, as both terms are semantically the same, we can duplicate it in our system.
+($\neg {\equiv}L$) has $\neg p[e_1], e_1=e_2$ in the premise and $\neg p[e_1], \neg p[e_2], e_1=e_2$ in the conclusion. It is very clear that this is a duplication. Later in this thesis (Again \Cref{sec:negreasoning}) we will argue that this rule is only applied when there is an intersection $\rels \cap \Rels'$ and the wrong term's event is carried along and that we can prevent this in our system with the commutativity rule. Equally, we could duplicate the term and use commutativity to create $(\rels \cap \Rels') \cup \rels' \cap \rels$.\\
+
+($\neg \top_1$) has in it's premise $\neg p[\top_1]$ and in it's conclusion $\neg p[\top_1],\neg[e]$. This is basically the same case as ($\neg A$) since $\top_1$ is the full set of events ($E$ in our system) and $e$ is any event which is automatically in $\top_1$.
 \end{proof}
 
 
@@ -1216,7 +1237,7 @@ The rules that split literals all use the union operator (see (${\neg}{*}L$), ($
 Whenever $\pi$ creates new branches like this:
 \begin{mathpar} \inferrule*[left=$\pi$:]{\pi_1}{\C_1 \\ \mid \\ \C_2}
 \end{mathpar}
-where $\pi_1$ is the preceding proof of a branching rule and $\C_1$ and $\C_2$ are the first cubes after it, $\prf_\pi$ can create new branches for the inclusion terms $\Omega_1, \Omega_2$ where $\C_1$ and $\C_2$ describe counterexamples to exactly those inclusions.
+where $\pi_1$ is the preceding proof of a branching rule and $\C_1$ and $\C_2$ are the first cubes after it and describe counterexamples to the inclusion terms $\Omega_1$ and $\Omega_2$, $\prf_\pi$ can create new branches for these terms.
 \end{lemma}
 
 \begin{proof}
@@ -1227,12 +1248,17 @@ For the Kleene-star rule ($*L$) the branching is based on a union too, since $\r
 In negative reasoning, branching occurs whenever there is an intersection or a cross product.
 For intersections, the ($\cap_2L$) rule distributes the preceding event to both terms on either side of the intersection. Those two terms will be decomposed into the events $f_1,f_2$. This is only possible, if either relation is the full relation or if they exist at the same position in the included term.
 Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}R$) or the ($\neg eL$) rule can be applied. The intuition for the former case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. This would mean, that it is no counterexample. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
-In the relational proof, this equates to a term $\relr \subseteq (\rels \cap \rels')$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \rels'$. \\
-In the case of the latter rule, the intersection can be anywhere in the including term. But the order in which rules are applied in $\pi$ let's us know that this side of the inclusion is eliminated from left to right. Therefore we know that if the rule is applied, all terms that are concatenated on the left side have already been eliminated and we only have terms concatenated to the right side. Furthermore, we know from \Cref{lem:splitting} that the predicate will be union-free and we can assume that there is no intersection around this one, since in that case $\pi$ would have created a new branch via ($\neg eL$) before where the ($\neg \cap_1 L$) rule would be applicable. \\
-Hence, we know the term to be of the form $\neg p[(\rels \cap \Rels').\relt]$.
-As both branches will be closed in the future and could not be closed before, the terms both have the potential for a contradiction.
-We have already stated that $\rels, \rels'$ have to appear in the included term at the same position as in the including term. The branch with $\neg f_1 \cap f_2 \neq \emptyset$ (resulting in $\neg f_1 = f_2$) can only induce a contradiction if the predicate $f_1 = f_2$ already exists. This means that the intersection as a whole needs to exist in the included term at the exact same position. \\
-Therefore we can apply the ($._{LR}$) rule in our system, branching the inclusion term $(\rels \cap \rels').\relr' \subseteq (\rels \cap \rels').\relt$ into $\rels \cap \rels' \subseteq \rels \cap \rels'$ and $\relr' \subseteq \relt$. 
+In the relational proof, the premise of ($\neg {\cap_1}$) equates to a term $\relr \subseteq (\rels \cap \rels')$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \rels'$. \\
+In the case of the ($\neg eL$) rule, the intersection can be anywhere in the including term.
+From RISF and the rules of Grünke et al., we can deduce that the proof $\pi$ resolves the including term from left to right. Since the rules for decomposing terms require a concatenated event, and in RISF an event is concatenated only at the left end, we can assume that only terms concatenated on the right side are appended to the current term. This could only change due to an inverted term. However, since this must be a base relation according to \Cref{lem:inversion}, the ($\neg aR$) rule can also be applied after applying the ($\cdot^\inv L$) rule. More details on this follow in \Cref{sec:negreasoning}. \\
+Furthermore, we know from \Cref{lem:splitting} that the predicate will be union-free and we can assume that there is no intersection around this one, since in that case the rule ($\neg eL$) should have been applied to that term before. Then, $\pi$ would have created a new branch where the ($\neg \cap_1 L$) rule would be applicable. \\
+Following our arguments, we know that the current intersection term cannot have a concatenation on the left side, cannot be part of a union or an intersection and therefore has to be of the form $\neg p[(\rels \cap \Rels').\relt]$. \\
+As both branches will be closed in the future and could not be closed before, both terms that result from the branching have the potential for a contradiction. \\
+For the $\Gamma, \neg f_1 \cap f_2 \neq \emptyset$ branch it holds that it will yield the predicate $\neg f_1 = f_2$ and as this predicate will induce a contradiction, the predicate $f_1 = f_2$ has to exist in the cube, originating from positive reasoning. Since the events mark the position in the relational term, this implicates that the exact same intersection term has to exist at the same position in the included term.\\
+Therefore we can apply the ($._{LR}$) rule in our system:
+\begin{mathpar}
+\inferrule*[left=($._{LR}$)]{\relr_\Gamma \subseteq \relt_\Gamma \\ \rels \cap \rels' \subseteq \rels \cap \rels'}{(\rels \cap \rels').\relr_\Gamma \subseteq (\rels \cap \rels').\relt_\Gamma}
+\end{mathpar}
 
 If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
 The latter predicate retains the context and after applying ($\neg A$) to it, yields a positive event $f_2$ for the decomposition as demanded by \Cref{lem:decomposition}. Once more, this requires a predicate $f_2 \in A_2$ originating from the positive reasoning. \\
@@ -1365,7 +1391,7 @@ For a concatenation, the full relation would stay and we would not apply any rul
 \paragraph{Inversion} If $\relr = \relr'^{-1}$ then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, the ($aR$) rule can be used, yielding a fresh event $f$ as demanded by the decomposition lemma.
 Since the inversion is still in the term as an inverted edge $(f,e)$, we do not need to apply any rule in the corresponding relational inclusion proof.
 
-\subsubsection{Negative Reasoning}
+\subsubsection{Negative Reasoning}\label{sec:negreasoning}
 For \rels{} the rules that Grünke et al. apply are mostly different. First, the ($._{2,2}$), ($\neg {\cup_2}L$), ($\neg * L$) and ($\cap_2L$) rules create a number of disjunct terms which only use concatenations and intersections. After that, the atomic predicates from positive reasoning are used to eliminate those relations that are in \relr{} too by using the ($\neg aL$), ($\neg{\times}L$), ($\id L$), ($\top_2L$), ($\bot_2L$) and ($\neg eL$) rules. 
 
 \paragraph{Concatenation} If $\rels = \rels_1.\rels_2$, Grünke et al. would again apply the ($._{2,2}L$) rule resulting in $\neg (e_1.\rels_1).\rels_2$. According to the decomposition lemma, at some point in the future $e_1.\rels_1$ will have been decomposed into an event $f$ and the decomposition continues with $f.\rels_2$.
