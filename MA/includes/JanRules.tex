@@ -1,0 +1,262 @@
+\newenvironment{rulebox}[1]
+{
+\begin{Box}{#1}
+\begin{mathpar}[\lineskip=0.5em plus 0.4em minus 0.4em]
+}
+{
+\end{mathpar}
+\end{Box}
+}
+%
+\newenvironment{ruleboxes}
+{
+\begin{tcbraster}[enhanced, raster columns=1, raster row skip=-8pt]%
+}
+{
+\end{tcbraster}
+}
+\begin{figure}[htpb]
+\begin{ruleboxes}%
+\begin{rulebox}{Relational Rules}
+    \begin{bprooftree}
+        \LeftLabel{$({\arel}\lrule)$}
+        \AxiomC{$\acube, \acontextof{\anode\flexcomp\arel}$}
+        \UnaryInfC{$\acube, (\anode,\anodep)\in\arel, \acontextof{\anodep}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\arel}\rrule)$}
+        \AxiomC{$\acube,\acontextof{\arel\flexcomp\anode}$}
+        \UnaryInfC{$\acube,(\anodep,\anode)\in\arel,\acontextof{\anodep}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\id}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp\id}$}
+        \UnaryInfC{$\acube,\anycontextof{\anode}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\arel}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel,\neg\acontextof{\anode_2}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\bot_2}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp\bot_2}$}
+        \UnaryInfC{$\acube,\anycontextof{\bot_1}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\top_2}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp\top_2}$}
+        \UnaryInfC{$\acube,\anycontextof{\top_1}$}
+    \end{bprooftree}
+     \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\comp_{2,2}}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\flexcomp{\color{red}\arelexpr_2})}$}
+        \UnaryInfC{$\acube,\anycontextof{(\anode\flexcomp{\color{orange} \arelexpr_1})\flexcomp{\color{red}\arelexpr_2}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({*}\lrule)$}
+        \AxiomC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr}^{*}}$}
+        \UnaryInfC{$\acube,\acontextof{\anode} \rulespace \acontextof{(\anode\flexcomp{\color{orange}\arelexpr})\flexcomp{\color{orange}\arelexpr}^{*}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{*}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\flexcomp{\color{orange} \arelexpr}^{*}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode},\neg\acontextof{(\anode\flexcomp{\color{orange}\arelexpr})\flexcomp{\color{orange}\arelexpr}^{*}}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\cup_2}\lrule)$}
+        \AxiomC{$\acube,\acontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\cup{\color{red}\arelexpr_2})}$}
+        \UnaryInfC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr_1}} \rulespace \acube,\acontextof{\anode\flexcomp{\color{red} \arelexpr_2}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\mathrel{\neg{\cup_2}\lrule})$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\flexcomp({\color{orange} \arelexpr_1} \cup {\color{red} \arelexpr_2})}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode\flexcomp{\color{orange} \arelexpr_1}}, \neg\acontextof{\anode\flexcomp{\color{red} \arelexpr_2}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\cdot^{-1}}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp{\color{orange} \arelexpr}^{-1}}$}
+        \UnaryInfC{$\acube,\anycontextof{{\color{orange} \arelexpr}\flexcomp\anode}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\cap_2}\lrule)$}
+        \AxiomC{$\acube,\anycontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\cap{\color{red} \arelexpr_2})}$}
+        \UnaryInfC{$\acube,\anycontextof{(\anode\flexcomp{\color{orange} \arelexpr_1}) \cap(\anode\flexcomp{\color{red} \arelexpr_2})}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\equiv}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode_1},\anode_1 = \anode_2$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode_1},\anode_1 = \anode_2,\neg\acontextof{\anode_2}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\times}\lrule)$}
+        \AxiomC{$\acube,\acontextof{\anode_1\flexcomp(\anode_2\times{\color{red} \asetexpr})}$}
+        \UnaryInfC{$\acube,\anode_1 =\anode_2,\acontextof{{\color{red} \asetexpr}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\times}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\flexcomp{\color{orange} \asetexpr_1}\times{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\neg(\anode\cap{\color{orange} \asetexpr_1}\neq\emptyset) \rulespace \acube,\neg\acontextof{{\color{red} \asetexpr_2}}$}
+    \end{bprooftree}
+\end{rulebox}
+\begin{rulebox}{Set Rules}
+    \begin{bprooftree}
+        \LeftLabel{$({\aset})$}
+        \AxiomC{$\acube,\acontextof{\aset}$}
+        \UnaryInfC{$\acube,\anodep\in\aset,\acontextof{\anodep}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\aset})$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \aset}},\anode\in\aset$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \aset}},\anode\in\aset,\neg\acontextof{\anode}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\top_1})$}
+        \AxiomC{$\acube,\acontextof{\top_1}$}
+        \UnaryInfC{$\acube,\acontextof{\anodep}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\cup_1})$}
+        \AxiomC{$\acube,\acontextof{{\color{orange} \asetexpr_1}\cup{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\acontextof{{\color{orange} \asetexpr_1}} \rulespace \acontextof{{\color{red} \asetexpr_2}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\cup_1})$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}\cup{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}},\neg\acontextof{{\color{red} \asetexpr_2}}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\top_1})$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \top_1}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \top_1}},\neg\acontextof{\anode}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\anode}\lrule)$}
+        \AxiomC{$\acube,\acontextof{\anode_1\cap\anode_2}$}
+        \UnaryInfC{$\acube,\anode_1=\anode_2,\acontextof{\anode_1}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\anode}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\cap{\color{orange} \asetexpr}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \acube,\neg\anode\cap{\color{orange} \asetexpr}\neq\emptyset$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$({\bot_1})$}
+        \AxiomC{$\acube,\acontextof{\bot_1}$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\comp_{1,2}}\lrule)$}
+        \AxiomC{$\acube,\neg(\anode\cap({\color{orange} \asetexpr}\flexcomp{\color{red} \arelexpr})\neq\emptyset)$}
+        \AxiomC{$\asetexpr\notin\allnodes$}
+        \BinaryInfC{$\acube,\neg(({\color{red} \arelexpr}\flexcomp\anode)\cap{\color{orange} \asetexpr}\neq\emptyset)$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\comp_{2,1}}\lrule)$}
+        \AxiomC{$\acube,\neg(\anode\cap({\color{red} \arelexpr}\flexcomp{\color{orange} \asetexpr})\neq\emptyset)$}
+        \AxiomC{$\asetexpr\notin\allnodes$}
+        \BinaryInfC{$\acube,\neg((\anode\flexcomp{\color{red} \arelexpr})\cap{\color{orange} \asetexpr}\neq\emptyset)$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$({\neg{\cap_1}}\lrule)$}
+        \AxiomC{$\acube,\neg(\anode\cap({\color{orange} \asetexpr_1}\cap{\color{red} \asetexpr_2})\neq\emptyset)$}
+        \UnaryInfC{$\acube,\neg(\anode\cap{\color{orange} \asetexpr_1}\neq\emptyset) \rulespace \acube,\neg(\anode\cap{\color{red} \asetexpr_2}\neq\emptyset)$}
+    \end{bprooftree}
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\cap_\anode})$}
+        \AxiomC{$\acube,\neg(\anode_1\cap\anode_2\neq\emptyset)$}
+        \UnaryInfC{$\acube,\neg(\anode_1 =\anode_2)$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{{}_2\times}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{red} \arelexpr}\flexcomp(\anode\times{\color{orange} \asetexpr})}$}
+        \UnaryInfC{$\acube,\neg\acontextof{({\color{red} \arelexpr}\flexcomp\anode)\times{\color{orange} \asetexpr})}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\times_2}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{(\anode\times{\color{orange} \asetexpr})\flexcomp{\color{red} \arelexpr}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode\times({\color{orange} \asetexpr}\flexcomp{\color{red} \arelexpr})}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\times^{-1}}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{(\anode\times{\color{orange} \asetexpr})^{-1}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \asetexpr}\times\anode}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{{}_\cap\times}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{red} \arelexpr}\cap(\anode\times{\color{orange} \asetexpr})}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode\times(\anode\flexcomp{\color{red} \arelexpr}\cap{\color{orange} \asetexpr})}$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\times_\cap}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{(\anode\times{\color{orange} \asetexpr})\cap{\color{red} \arelexpr}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode\times(\anode\flexcomp{\color{red} \arelexpr}\cap{\color{orange} \asetexpr})}$}
+    \end{bprooftree}
+    \\\\
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{{}_1\times}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}\flexcomp(\anode\times{\color{orange} {\color{red} \asetexpr_2}})}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{red} \asetexpr_2}} \rulespace \neg({\color{orange} \asetexpr_1}\cap\anode\neq\emptyset)$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\times_1}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{(\anode \times{\color{orange} \asetexpr_1})\flexcomp{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \neg({\color{orange} \asetexpr_1}\cap{\color{red} \asetexpr_2}\neq\emptyset)$}
+    \end{bprooftree}
+\end{rulebox}
+\begin{rulebox}{Predicate Rules}
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{\emptyset})$}
+        \AxiomC{$\acube,\neg(\anode\neq\emptyset)$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\neg{=})$}
+        \AxiomC{$\acube,\neg(\anode =\anode)$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree}
+    
+    \begin{bprooftree}
+        \LeftLabel{$(\bot_0)$}
+        \AxiomC{$\acube,\apredexpr,\neg\apredexpr$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree}
+\end{rulebox}
+\end{ruleboxes}
+\caption{Tableau rules.}
+\Description{Tableau rules}
+\label{figure:tableaurules}
+\end{figure}
