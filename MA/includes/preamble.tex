@@ -230,3 +230,28 @@ innertopmargin=\topskip,
 \tikzstyle{purple} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=purple]
 \tikzstyle{edge} = [thick,>=stealth]
 \tikzstyle{arrow} = [thick,-stealth]
+
+% Alles für Jans Regeln
+\usepackage{prooftrees}
+%\usepackage{forest}
+%\useforestlibrary{prooftrees}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,raster}
+\DeclareTColorBox{Box}{ m }{
+    enhanced,
+    sharp corners,
+    colback=white,
+    colframe=lightgray,
+    %
+    coltitle=gray,
+    title=#1,
+    fonttitle=\bfseries,
+    attach boxed title to top left={yshift=-0.5\baselineskip-0.4pt,xshift=2mm},
+    boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm,colback=white,before upper=\strut},
+    %
+    left=0pt,
+    right=0pt,
+    before upper={\setlength{\abovedisplayskip}{0pt}},
+} 
+
+\newcommand{\acube}{\Gamma}

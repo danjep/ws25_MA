@@ -1,11 +1,11 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  29 APR 2026 14:32
+This is XeTeX, Version 3.141592653-2.6-0.999998 (MiKTeX 26.5) (preloaded format=xelatex 2026.7.9)  9 JUL 2026 12:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./preamble.tex
 (preamble.tex
-LaTeX2e <2022-11-01> patch level 1
-L3 programming layer <2023-03-30>
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
 
 ! LaTeX Error: \usepackage before \documentclass.
 
@@ -42,6 +42,15 @@ l.8 \usepackage{
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
+(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/generic/insbox\insbox.tex
+\@InsertBoxMargin=\dimen150
+\@numlines=\count273
+\@linesleft=\count274
+\@boxcontent=\box53
+\@numnormal=\count275
+\@framewidth=\dimen151
+\@wherebottom=\dimen152
+)
 
 ! LaTeX Error: \usepackage before \documentclass.
 
@@ -145,13 +154,165 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.25 \usepackage{
+l.23 \usepackage{
+                 forest}
+\usepackage may only appear in the document preamble, i.e.,
+between \documentclass and \begin{document}.
+
+! Undefined control sequence.
+l.25 \forestset
+               {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.26   t
+        ableau/.style={
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no t in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no / in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no ' in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no k in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no 6 in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no 0 in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no 5 in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no , in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 26--39
+[]
+ []
+
+
+! LaTeX Error: \usepackage before \documentclass.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.42 \usepackage{
                  listings}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.26 \lstset
+l.43 \lstset
             {frame=l,
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -166,7 +327,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.26 \lstset{f
+l.43 \lstset{f
               rame=l,
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -205,7 +366,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.28   basicstyle={\small
+l.45   basicstyle={\small
                          \ttfamily},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -227,7 +388,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.29   numberstyle=\tiny
+l.46   numberstyle=\tiny
                         \color{blue},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -236,7 +397,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.29   numberstyle=\tiny\color
+l.46   numberstyle=\tiny\color
                               {blue},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -263,7 +424,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.30   keywordstyle=\color
+l.47   keywordstyle=\color
                           {purple},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -292,7 +453,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.31   commentstyle=\small
+l.48   commentstyle=\small
                           \color{gray},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -301,7 +462,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.31   commentstyle=\small\color
+l.48   commentstyle=\small\color
                                 {gray},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -327,7 +488,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.32   stringstyle=\color
+l.49   stringstyle=\color
                          {orange},
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -368,7 +529,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no = in font nullfont!
 Missing character: There is no 2 in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 26--36
+Overfull \hbox (20.0pt too wide) in paragraph at lines 43--53
 []
  []
 
@@ -379,13 +540,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.38 \usepackage[vlined, linesnumbered, ruled]{
+l.55 \usepackage[vlined, linesnumbered, ruled]{
                                                algorithm2e}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.39 \SetKwComment
+l.56 \SetKwComment
                   {Comment}{/* }{*/}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -400,7 +561,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.39 \SetKwComment{C
+l.56 \SetKwComment{C
                     omment}{/* }{*/}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -417,7 +578,7 @@ Missing character: There is no * in font nullfont!
 Missing character: There is no * in font nullfont!
 Missing character: There is no / in font nullfont!
 ! Undefined control sequence.
-l.42 \IncMargin
+l.59 \IncMargin
                {1.5em}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -431,7 +592,7 @@ Missing character: There is no 5 in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no m in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 39--43
+Overfull \hbox (20.0pt too wide) in paragraph at lines 56--60
 []
  []
 
@@ -442,13 +603,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.45 \usepackage{
+l.62 \usepackage{
                  tikz}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.46 \usetikzlibrary
+l.63 \usetikzlibrary
                     {arrows,calc,shapes,positioning}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -463,7 +624,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.46 \usetikzlibrary{a
+l.63 \usetikzlibrary{a
                       rrows,calc,shapes,positioning}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -505,7 +666,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.47 \usepackage{
+l.64 \usepackage{
                  wrapfig}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
@@ -517,18 +678,18 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.48 \usepackage[labelfont=bf]{
+l.65 \usepackage[labelfont=bf]{
                                caption}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 46--49
+Overfull \hbox (20.0pt too wide) in paragraph at lines 63--66
 []
  []
 
 ! Undefined control sequence.
-l.51 \definecolor
+l.68 \definecolor
                  {citeblue2}{RGB}{44,107,165}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -543,7 +704,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.51 \definecolor{c
+l.68 \definecolor{c
                    iteblue2}{RGB}{44,107,165}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -571,8 +732,8 @@ Missing character: There is no 1 in font nullfont!
 Missing character: There is no 6 in font nullfont!
 Missing character: There is no 5 in font nullfont!
 ! Undefined control sequence.
-l.52 \definecolor
-                 {citeblue}{rgb}{0,0.4,0.6}
+l.69 \definecolor
+                 {citeblue}{rgb}{0,0.25,0.5}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -594,37 +755,38 @@ Missing character: There is no 0 in font nullfont!
 Missing character: There is no , in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no . in font nullfont!
-Missing character: There is no 4 in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no 5 in font nullfont!
 Missing character: There is no , in font nullfont!
 Missing character: There is no 0 in font nullfont!
 Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
+Missing character: There is no 5 in font nullfont!
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
-Overfull \hbox (20.0pt too wide) in paragraph at lines 51--12
+Overfull \hbox (20.0pt too wide) in paragraph at lines 68--12
 []
  []
 
-Package: csquotes 2022-09-14 v5.2n context-sensitive quotations (JAW)
+Package: csquotes 2026-05-19 v5.2p context-sensitive quotations (JAW)
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
-Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count181
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count276
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
-\KV@toks@=\toks16
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
 )
-\csq@reset=\count182
-\csq@gtype=\count183
-\csq@glevel=\count184
-\csq@qlevel=\count185
-\csq@maxlvl=\count186
-\csq@tshold=\count187
-\csq@ltx@everypar=\toks17
+\csq@reset=\count277
+\csq@gtype=\count278
+\csq@glevel=\count279
+\csq@qlevel=\count280
+\csq@maxlvl=\count281
+\csq@tshold=\count282
+\csq@ltx@everypar=\toks18
 Package csquotes Info: The 'quote' environment appears to be undefined.
 (csquotes)             I'm defining a typical 'quote' environment now.
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def
-File: csquotes.def 2022-09-14 v5.2n csquotes generic definitions (JAW)
+File: csquotes.def 2026-05-19 v5.2p csquotes generic definitions (JAW)
 )
 Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
 Package csquotes Info: ... configuration file loaded successfully.
@@ -639,7 +801,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.54 \usepackage[backend=biber, style=numeric]{
+l.71 \usepackage[backend=biber, style=numeric]{
                                                biblatex}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
@@ -651,13 +813,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.56 ...e, urlcolor=citeblue, linkcolor=citeblue]{
+l.73 ...e, urlcolor=citeblue, linkcolor=citeblue]{
                                                   hyperref}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.57 \hypersetup
+l.74 \hypersetup
                 {colorlinks=true}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -672,7 +834,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.57 \hypersetup{c
+l.74 \hypersetup{c
                   olorlinks=true}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -699,19 +861,19 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.58 \usepackage[english, nameinlink, noabbrev]{
+l.75 \usepackage[english, nameinlink, noabbrev]{
                                                 cleveref}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 57--59
+Overfull \hbox (20.0pt too wide) in paragraph at lines 74--76
 []
  []
 
 ! Undefined control sequence.
-l.77 \definecolor
-                 {rfgreen}{rgb}{0.2,0.55,0.2}
+l.102 \definecolor
+                  {rfgreen}{rgb}{0.2,0.55,0.2}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -725,8 +887,8 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.77 \definecolor{r
-                   fgreen}{rgb}{0.2,0.55,0.2}
+l.102 \definecolor{r
+                    fgreen}{rgb}{0.2,0.55,0.2}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
@@ -753,7 +915,7 @@ Missing character: There is no 0 in font nullfont!
 Missing character: There is no . in font nullfont!
 Missing character: There is no 2 in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 77--93
+Overfull \hbox (20.0pt too wide) in paragraph at lines 102--116
 []
  []
 
@@ -764,14 +926,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.95 \usepackage[most]{
-                       tcolorbox}
+l.129 \usepackage[most]{
+                        tcolorbox}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.97 \definecolor
-                 {examblue}{rgb}{0,0.2,0.55}
+l.131 \definecolor
+                  {examblue}{rgb}{0,0.2,0.55}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -785,8 +947,8 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.97 \definecolor{e
-                   xamblue}{rgb}{0,0.2,0.55}
+l.131 \definecolor{e
+                    xamblue}{rgb}{0,0.2,0.55}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
@@ -812,12 +974,12 @@ Missing character: There is no . in font nullfont!
 Missing character: There is no 5 in font nullfont!
 Missing character: There is no 5 in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 97--102
+Overfull \hbox (20.0pt too wide) in paragraph at lines 131--136
 []
  []
 
 ! Undefined control sequence.
-l.104 \tcbset
+l.138 \tcbset
              {
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -832,7 +994,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.105   m
+l.139   m
          ybox/.style={
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1102,13 +1264,13 @@ Missing character: There is no 1 in font nullfont!
 Missing character: There is no p in font nullfont!
 Missing character: There is no t in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 105--129
+Overfull \hbox (20.0pt too wide) in paragraph at lines 139--165
 []
  []
 
-\c@theorem=\count188
+\c@theorem=\count283
 ! Undefined control sequence.
-l.141 \crefname
+l.177 \crefname
                {proposition}{Proposition}{Propositions}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1123,7 +1285,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.141 \crefname{p
+l.177 \crefname{p
                  roposition}{Proposition}{Propositions}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1163,12 +1325,12 @@ Missing character: There is no o in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no s in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 141--142
+Overfull \hbox (20.0pt too wide) in paragraph at lines 177--178
 [] 
  []
 
 ! Undefined control sequence.
-l.144 \crefname
+l.180 \crefname
                {property}{Eigenschaft}{Eigenschaften}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1183,7 +1345,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.144 \crefname{p
+l.180 \crefname{p
                  roperty}{Eigenschaft}{Eigenschaften}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1221,12 +1383,12 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no n in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 144--145
+Overfull \hbox (20.0pt too wide) in paragraph at lines 180--181
 [] 
  []
 
 ! Undefined control sequence.
-l.147 \crefname
+l.183 \crefname
                {lemma}{Lemma}{Lemmata}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1241,7 +1403,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.147 \crefname{l
+l.183 \crefname{l
                  emma}{Lemma}{Lemmata}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1264,12 +1426,12 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no a in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 147--148
+Overfull \hbox (20.0pt too wide) in paragraph at lines 183--184
 [] 
  []
 
 ! Undefined control sequence.
-l.150 \mdfdefinestyle
+l.186 \mdfdefinestyle
                      {theoremstyle}{%
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1284,7 +1446,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.150 \mdfdefinestyle{t
+l.186 \mdfdefinestyle{t
                        heoremstyle}{%
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1435,7 +1597,7 @@ Missing character: There is no = in font nullfont!
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    }
-l.156 }
+l.192 }
        
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1445,7 +1607,7 @@ delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 
 ! Undefined control sequence.
-l.157 \mdfsetup
+l.193 \mdfsetup
                {skipabove=\topskip , skipbelow=\topskip}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1466,7 +1628,7 @@ Missing character: There is no = in font nullfont!
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    s
-l.157 \mdfsetup{skipabove=\topskip , sk
+l.193 \mdfsetup{skipabove=\topskip , sk
                                        ipbelow=\topskip}
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1488,7 +1650,7 @@ Missing character: There is no = in font nullfont!
 ! Missing number, treated as zero.
 <to be read again> 
                    }
-l.157 ...{skipabove=\topskip , skipbelow=\topskip}
+l.193 ...{skipabove=\topskip , skipbelow=\topskip}
                                                   
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
@@ -1497,7 +1659,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    }
-l.157 ...{skipabove=\topskip , skipbelow=\topskip}
+l.193 ...{skipabove=\topskip , skipbelow=\topskip}
                                                   
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, bp, or sp; but yours is a new one!
@@ -1507,7 +1669,7 @@ delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 
 ! Undefined control sequence.
-l.158 \mdfdefinestyle
+l.194 \mdfdefinestyle
                      {defistyle}{linecolor=darkgray, linewidth=2pt, roundcor...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1624,7 +1786,7 @@ Missing character: There is no n in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no = in font nullfont!
 ! Undefined control sequence.
-l.159 \mdtheorem
+l.195 \mdtheorem
                 [style=defistyle, nobreak=true]{definition}[theorem]{Definit...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1692,7 +1854,7 @@ Missing character: There is no i in font nullfont!
 Missing character: There is no o in font nullfont!
 Missing character: There is no n in font nullfont!
 ! Undefined control sequence.
-l.160 \crefname
+l.196 \crefname
                {definition}{definition}{definitions}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1738,75 +1900,75 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.162 \renewcommand{\definition}
+l.198 \renewcommand{\definition}
                                 {\crefalias{theorem}{definition}\olddefinition}
 
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 150--163
+Overfull \hbox (20.0pt too wide) in paragraph at lines 186--199
 []
  []
 
 
-Overfull \hbox (3.19pt too wide) in paragraph at lines 150--163
+Overfull \hbox (3.19pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 ,
  []
 
 
-Overfull \hbox (19.96pt too wide) in paragraph at lines 150--163
+Overfull \hbox (19.96pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 the-
  []
 
 
-Overfull \hbox (9.58pt too wide) in paragraph at lines 150--163
+Overfull \hbox (9.58pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 o-
  []
 
 
-Overfull \hbox (30.76pt too wide) in paragraph at lines 150--163
+Overfull \hbox (30.76pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 remti-
  []
 
 
-Overfull \hbox (16.76pt too wide) in paragraph at lines 150--163
+Overfull \hbox (16.76pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 tle-
  []
 
 
-Overfull \hbox (31.93001pt too wide) in paragraph at lines 150--163
+Overfull \hbox (31.93001pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 font=,
  []
 
 
-Overfull \hbox (13.41pt too wide) in paragraph at lines 150--163
+Overfull \hbox (13.41pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 in-
  []
 
 
-Overfull \hbox (20.23pt too wide) in paragraph at lines 150--163
+Overfull \hbox (20.23pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 ner-
  []
 
 
-Overfull \hbox (20.44pt too wide) in paragraph at lines 150--163
+Overfull \hbox (20.44pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 top-
  []
 
 
-Overfull \hbox (23.74pt too wide) in paragraph at lines 150--163
+Overfull \hbox (23.74pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 mar-
  []
 
 
-Overfull \hbox (40.88pt too wide) in paragraph at lines 150--163
+Overfull \hbox (40.88pt too wide) in paragraph at lines 186--199
 \TU/lmr/bx/n/10 gin=5pt
  []
 
-\c@excount=\count189
+\c@excount=\count284
 ! Undefined control sequence.
-l.170 \crefname
+l.206 \crefname
                {example}{Beispiel}{Beispiele}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1821,7 +1983,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.170 \crefname{e
+l.206 \crefname{e
                  xample}{Beispiel}{Beispiele}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1851,7 +2013,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 170--175
+Overfull \hbox (20.0pt too wide) in paragraph at lines 206--211
 []
  []
 
@@ -1862,7 +2024,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.184 \usepackage{
+l.220 \usepackage{
                   lipsum}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
@@ -1874,13 +2036,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.187 \usepackage{
+l.223 \usepackage{
                   pdfpages}
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
 ! Undefined control sequence.
-l.189 \usetikzlibrary
+l.225 \usetikzlibrary
                      {positioning}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1895,7 +2057,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.189 \usetikzlibrary{p
+l.225 \usetikzlibrary{p
                        ositioning}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1912,7 +2074,7 @@ Missing character: There is no i in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no g in font nullfont!
 ! Undefined control sequence.
-l.190 \tikzstyle
+l.226 \tikzstyle
                 {white} = [circle, minimum width=0.4cm, text centered, draw=...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1989,7 +2151,7 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.191 \tikzstyle
+l.227 \tikzstyle
                 {blank} = [minimum width=0.6cm, text centered]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2037,7 +2199,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no d in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.192 \tikzstyle
+l.228 \tikzstyle
                 {gray} = [circle, minimum width=0.6cm, text centered, text=w...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2127,7 +2289,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no y in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.193 \tikzstyle
+l.229 \tikzstyle
                 {blue} = [circle, minimum width=0.6cm, text centered, text=b...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2213,7 +2375,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.194 \tikzstyle
+l.230 \tikzstyle
                 {purple} = [circle, minimum width=0.6cm, text centered, text...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2303,7 +2465,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.195 \tikzstyle
+l.231 \tikzstyle
                 {edge} = [thick,>=stealth]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2334,7 +2496,7 @@ Missing character: There is no t in font nullfont!
 Missing character: There is no h in font nullfont!
 Missing character: There is no ] in font nullfont!
 ! Undefined control sequence.
-l.196 \tikzstyle
+l.232 \tikzstyle
                 {arrow} = [thick,-stealth]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -2364,6 +2526,287 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no h in font nullfont!
 Missing character: There is no ] in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 225--233
+[]
+ []
+
+
+! LaTeX Error: \usepackage before \documentclass.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.235 \usepackage{
+                  prooftrees}
+\usepackage may only appear in the document preamble, i.e.,
+between \documentclass and \begin{document}.
+
+
+! LaTeX Error: \usepackage before \documentclass.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.238 \usepackage{
+                  tcolorbox}
+\usepackage may only appear in the document preamble, i.e.,
+between \documentclass and \begin{document}.
+
+! Undefined control sequence.
+l.239 \tcbuselibrary
+                    {skins,raster}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.239 \tcbuselibrary{s
+                      kins,raster}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no s in font nullfont!
+Missing character: There is no k in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+! Undefined control sequence.
+l.240 \DeclareTColorBox
+                       {Box}{ m }{
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no B in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no x in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no k in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no y in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.247     title=#
+                 1,
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no , in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 239--256
+[]
+ []
+
+
+Overfull \hbox (3.19pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 ,
+ []
+
+
+Overfull \hbox (13.89pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 at-
+ []
+
+
+Overfull \hbox (21.24pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 tach
+ []
+
+
+Overfull \hbox (29.87pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 boxed
+ []
+
+
+Overfull \hbox (11.49pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 ti-
+ []
+
+
+Overfull \hbox (12.93001pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 tle
+ []
+
+
+Overfull \hbox (10.22pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 to
+ []
+
+
+Overfull \hbox (16.61pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 top
+ []
+
+
+Overfull \hbox (66.32pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 left=yshift=-
+ []
+
+
+Overfull \hbox (83.09pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 0.5,xshift=2mm,
+ []
+
+
+Overfull \hbox (29.87pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 boxed
+ []
+
+
+Overfull \hbox (11.49pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 ti-
+ []
+
+
+Overfull \hbox (12.93001pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 tle
+ []
+
+
+Overfull \hbox (362.94pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 style=tile,size=minimal,left=0.5mm,right=0.5mm,colback=white,be
+fore
+ []
+
+
+Overfull \hbox (41.63pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 upper=|,
+ []
+
+
+Overfull \hbox (45.18001pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 left=0pt,
+ []
+
+
+Overfull \hbox (52.96pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 right=0pt,
+ []
+
+
+Overfull \hbox (15.81pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 be-
+ []
+
+
+Overfull \hbox (19.27pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 fore
+ []
+
+
+Overfull \hbox (16.61pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 up-
+ []
+
+
+Overfull \hbox (28.85pt too wide) in paragraph at lines 239--256
+\TU/lmr/bx/n/10 per=,
+ []
+
 )
 ! Emergency stop.
 <*> ./preamble.tex
@@ -2372,11 +2815,11 @@ Missing character: There is no ] in font nullfont!
 
  
 Here is how much of TeX's memory you used:
- 1050 strings out of 411463
- 15648 string characters out of 5818008
- 1843290 words of memory out of 5000000
- 21366 multiletter control sequences out of 15000+600000
- 512303 words of font info for 34 fonts, out of 8000000 for 9000
+ 1116 strings out of 402628
+ 16153 string characters out of 5439107
+ 431368 words of memory out of 5000000
+ 30249 multiletter control sequences out of 15000+600000
+ 627737 words of font info for 42 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 40i,1n,48p,253b,73s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 42i,1n,51p,253b,75s stack positions out of 10000i,1000n,20000p,200000b,200000s
 No pages of output.
