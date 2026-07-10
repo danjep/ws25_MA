@@ -232,7 +232,11 @@ innertopmargin=\topskip,
 \tikzstyle{arrow} = [thick,-stealth]
 
 % Alles für Jans Regeln
-\usepackage{prooftrees}
+\usepackage[tableaux]{prooftrees}
+\usepackage{bussproofs}
+\newenvironment{bprooftree}%
+    {\leavevmode\hbox\bgroup}%
+    {\DisplayProof\egroup}
 %\usepackage{forest}
 %\useforestlibrary{prooftrees}
 \usepackage{tcolorbox}
@@ -254,4 +258,20 @@ innertopmargin=\topskip,
     before upper={\setlength{\abovedisplayskip}{0pt}},
 } 
 
+%Symbole
 \newcommand{\acube}{\Gamma}
+\newcommand{\arel}{a}
+\newcommand{\acontextof}[1]{p[#1]}
+\newcommand{\anycontextof}[1]{l[#1]}
+\newcommand{\anode}{e}
+\newcommand{\anodep}{f}
+\newcommand{\lrule}{L}
+\newcommand{\rrule}{R}
+\newcommand{\flexcomp}{.}
+\newcommand{\comp}{.}
+\newcommand{\aset}{s}
+\newcommand{\asetexpr}{s}
+\newcommand{\arelexpr}{r}
+\newcommand{\rulespace}{\quad \mid \quad}
+\newcommand{\apredexpr}{p}
+\newcommand{\allnodes}{\Omega}

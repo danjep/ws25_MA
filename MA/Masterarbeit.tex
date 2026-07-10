@@ -1,5 +1,5 @@
 \documentclass[a4paper,twoside,12pt, english]{article}
-\usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+\usepackage[a4paper, left=2.5cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
@@ -1191,10 +1191,9 @@ As they cannot be decomposed any further, they are not important in negative rea
 The splitting and branching in \cite{Gru+26} is furthermore important to provide an assumption that the authors make. They assume their predicates to be union-free and Kleene-star-free. As we will see, this is reached by applying rules that split predicates and branch the proof.
 
 
-%\include{includes/JanRules.tex}
-\begin{figure}\label{fig:rules}
-\centering
-\includegraphics[scale=0.68]{includes/JansRegeln.jpg}
+
+\begin{figure}[htpb]\label{fig:rules}
+\include{includes/JanRules.tex}
 \caption{The rules for RAT-CAT-SAT proofs in \cite{Gru+26}.}
 \end{figure}
 
