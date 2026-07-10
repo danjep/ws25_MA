@@ -1206,7 +1206,7 @@ Whenever $\pi$ splits a non-atomic literal $l$ into the non-atomic literals $l_1
 In $\pi$ many rules split a literal into multiple ones. The atomic literals $(\neg) e_1 = e_2, e \in A, (e,e') \in \relr$ and $e \neq \emptyset$ keep information about the relational term that has already been decomposed and are not of concern for this lemma.
 We only look at the non-atomic literals where one literal turns into two new ones.
 The rules that we care about are the following: 
-\[(\neg aL), (\neg {*}L), (\neg {\cup_2}L), (\neg {\equiv}L), (\neg A), (\neg \cup_1), (\neg \top_1)\]
+\[(\neg aL), (\neg aR), (\neg {*}L), (\neg {*}R), (\neg {\cup_2}L), (\neg {\cup_2}R), (\neg {\equiv}L), (\neg {\equiv}R), (\neg A), (\neg \cup_1), (\neg \top_1)\]
 Since this only appears in negative reasoning, we can assume that the literal in the premise has the form $\neg p[\dots]$. Furthermore, this gives us the knowledge that only the including term $\rels$ in $\relr \subseteq \rels$ is concerned in $\prf_\pi$. \\
 Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be a union $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
 We can make this more explicit: The rules we consider all have the form 
@@ -1219,14 +1219,15 @@ where $\Gamma$ are more predicates which may describe more including or included
 If there is a way to get $\Delta[\rels_1 \cup \rels_2]$ from $\Delta[\rels]$ then we can use ($\cap_{\cup dist}$), ($._{\cup distL}$) and ($._{\cup distR}$) to factor out the union from $\Delta$.
 Now, we only need to show that we can get $\rels_1 \cup \rels_2$ from $\rels$ with our rules for every splitting rule in \cite{Gru+26}. \\
 
-($\neg {*}L$) has $\Gamma, \neg p[e.\Rels^*]$ as premise and $\Gamma, \neg p[e], p[(e.\rels).\rels^*]$ as a conclusion. With the ($*$) rule, we can get $\id \cup \rels^+$ inside any context and with ($+$) we can transform $\rels^+$ to $\rels.\rels^*$. \\
+($\neg {*}L$) has $\Gamma, \neg p[e.\Rels^*]$ as premise and $\Gamma, \neg p[e], p[(e.\rels).\rels^*]$ as a conclusion. With the ($*$) rule, we can get $\id \cup \rels^+$ inside any context and with ($+$) we can transform $\rels^+$ to $\rels.\rels^*$.
+For ($\neg {*}R$) the same holds. \\
 
-($\neg {\cup_2}L$) has $\neg p[e.(\rels_1 \cup \rels_2)]$ in the premise and $\neg p[\Rels_1], \neg p[\Rels_2]$ in the conclusion. Thus, the term in the premise already has the desired form and no more transformations are necessary. \\
+($\neg {\cup_2}L$) and ($\neg {\cup_2}R$) have $\neg p[e.(\rels_1 \cup \rels_2)]$ or $\neg p[(\rels_1 \cup \rels_2).e]$ respectively in the premise and $\neg p[\Rels_1], \neg p[\Rels_2]$ in the conclusion. Thus, the term in the premise already has the desired form and no more transformations are necessary. \\
 
 ($\neg \cup_1$) has $\neg p[A_1 \cup A_2]$ in the premise and $\neg p[A_1], \neg p[A_2]$ in the conclusion. The notion of sets of events in \cite{Gru+26} is that it can be either a base set or the possible results of $e.\rels$. In the latter case, there must have been a union of relations in the term and we can use the procedure for the ($\neg {\cup_2}L$) rule.
 In the former case, we know that base set appear in rational CAT only in cross products $A \times B$. So if the rule is applied and we have $(A_1 \cup A_2) \times B$, we can use the ($\times_{\cup distL}$) and ($\times_{\cup distR}$) rules to factor out the union and then proceed as for ($\neg \cup_2 L$). \\
 
-($\neg aL$) has $\neg p[e_1.\rels], (e_1,e_2) \in \Rels$ in the premise and $\neg p[e_1.\rels], \neg p[e_2], (e_1,e_2) \in \Rels$ in the conclusion. The predicate $(e_1,e_2) \in \rels$ tells us that the relation $\Rels$ appears at the same position in the included term. Therefore, the rule will eliminate that relation in one of the resulting terms and keep it in the other. In \Cref{sec:negreasoning} we will see how exactly the rule handles this. As far as the splitting is concerned, we can simply duplicate the term $\rels$ with (\textsc{strength}), ($\cup_L$) and (\textsc{reflexivity}) and continue with the procedure from \Cref{sec:negreasoning} in only one of the terms. \\
+($\neg aL$) and ($\neg aR$) have $(e_1,e_2) \in \Rels$ in their premise together with either $\neg p[e_1.\rels]$ or $p[\rels.e_2]$ and $\neg p[e_1.\rels], \neg p[e_2], (e_1,e_2) \in \Rels$ respectively $\neg p[\rels.e_2], \neg p[e_1], (e_1,e_2) \in \rels$ in the conclusion. The predicate $(e_1,e_2) \in \rels$ tells us that the relation $\Rels$ appears at the same position in the included term. Therefore, the rule will eliminate that relation in one of the resulting terms and keep it in the other. In \Cref{sec:negreasoning} we will see how exactly the rule handles this. As far as the splitting is concerned, we can simply duplicate the term $\rels$ with (\textsc{strength}), ($\cup_L$) and (\textsc{reflexivity}) and continue with the procedure from \Cref{sec:negreasoning} in only one of the terms. \\
 
 ($\neg A$) has $\neg p[A], e \in A$ in the premise and $\neg p[A], \neg p[e], e \in A$ in the conclusion. Again, as both terms are semantically the same, we can duplicate it in our system.
 ($\neg {\equiv}L$) has $\neg p[e_1], e_1=e_2$ in the premise and $\neg p[e_1], \neg p[e_2], e_1=e_2$ in the conclusion. It is very clear that this is a duplication. Later in this thesis (Again \Cref{sec:negreasoning}) we will argue that this rule is only applied when there is an intersection $\rels \cap \Rels'$ and the wrong term's event is carried along and that we can prevent this in our system with the commutativity rule. Equally, we could duplicate the term and use commutativity to create $(\rels \cap \Rels') \cup \rels' \cap \rels$.\\
@@ -1234,7 +1235,7 @@ In the former case, we know that base set appear in rational CAT only in cross p
 ($\neg \top_1$) has in it's premise $\neg p[\top_1]$ and in it's conclusion $\neg p[\top_1],\neg[e]$. This is basically the same case as ($\neg A$) since $\top_1$ is the full set of events ($E$ in our system) and $e$ is any event which is automatically in $\top_1$.
 \end{proof}
 
-
+\todo{bis hier rechte Regeln hinzugefügt}{}
 \begin{lemma}[Branching Lemma]\label{lem:branching}
 Whenever $\pi$ creates new branches like this:
 \begin{mathpar} \inferrule*[left=$\pi$:]{\pi_1}{\C_1 \\ \mid \\ \C_2}
