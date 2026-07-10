@@ -1290,60 +1290,58 @@ We will see that any formula $\phi'$ that is a decomposition from a RISF formula
 \begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
 Let $l[e_1.\relt]$ be a literal in a cube. Eventually, every proof $\pi$ will either decompose the predicate to $l[f]$ or close the branch with $\bot_0$.
 \end{lemma}
+
+To prove the lemma, we will divide the rules that can be applied to the literal into two groups:
+
+\paragraph{Decomposing Rules: } These rules directly transform $l[e_1.\relt]$ into $l[f]$ or close the branch. In this group are ($aL$), ($\id L$), ($\neg aL$), ($\top_2$), ($\cdot^\inv L$) and the Kleene star rules ($*L$) and ($\neg *L$). The last two are also another group, since they only yield $l[f]$ in one branch or new predicate. 
+
+\paragraph{Structural Rules: } The structural rules do not decompose $e_1.\relt$ but handle the relational term $\relt$ and place the event $e_1$ in the correct position for further decomposition.
+In this category we have ($\cap_2L$), ($._{2,2}L$), ($\cup_2L$), ($\neg \cup_2 L$) and the remaining branch of ($*L$) and the second predicate of ($\neg *L$). 
+
+\begin{lemma}
+Any decomposing rule either directly transforms $\acontextof{\anode_1\flexcomp \relt}$ into $\acontextof{\anodep}$ or in combination with directly following rules.
+\end{lemma}
 \begin{proof}
-To prove the lemma, we will divide the rules that can be applied to the literal into two groups:\\
-\paragraph{Decomposing Rules: } These rules directly transform $l[e_1.\relt]$ into $l[f]$ or close the branch. In this group are ($aL$), ($\id L$), ($\neg aL$), ($\top_2$) in connection with ($\top_1$) and ($\neg \top_1$), ($\cdot^\inv L$) in connection with ($aL$) or ($\neg aL$) and the Kleene star rules ($*L$) and ($\neg *L$). The last two are also another group, since they only yield $l[f]$ in one branch or new predicate. \\
+The ($aL$), ($\neg aL$), ($\id L$), ($*L$) and ($\neg *L$) rules directly yield $p[f]$.
+($\top_2$) does the transformation in connection with ($\top_1$) and ($\neg \top_1$), ($\cdot^\inv L$) in connection with ($aL$) or ($\neg aL$).
 For the (${\times}L$) rule the lemma holds, considering that the ($A$) rule will be applied to the resulting set. \\
+
 For the ($\neg {\times}L$) rule we use the same argument with the ($\neg A$) rule. The precondition of $e \in A$ will always be met. \\
 For a term $\Gamma, \neg p[e.(A \times B)]$ in the premise, the rule creates two branches $\Gamma, \neg e \cap A \neq \emptyset$ and $\Gamma, \neg p[B]$ that will both be closed.
 For the former branch, it can only be closed with $f_1 \in A, \neg e = f_1$, since otherwise either the cube could have been closed before the branching or $\pi$ would not be the shortest proof.
-The latter branch will always result in a term of the form $B \cap f$ if no $f_2 \in B$ is available. If the context is $B.\relt \cap e_2$, the ($\neg_{\cdot_{1,2}}R$) rule enables a decomposition of \relt{} from the right side. As no negated rule besides ($\neg \cap_e$) yields a negated atomic predicate, the branch cannot be closed without resolving $B \cap f$ where $f$ is the event resulting from the decomposition.
+The latter branch will always result in a term of the form $B \cap f$ if no $f_2 \in B$ is available. The reason is, that any context will result in this term. If the context is $B.\relt \cap e_2$, the ($\neg_{\cdot_{1,2}}R$) rule enables a decomposition of \relt{} from the right side. Let $f$ be the event resulting from that decomposition with $(f,e_2) \in \relt$. This transforms the predicate into $B \cap f$.
 If the context is $B \cap (e.\relt)$, the decomposition of $e.\relt$ can, again, not close the branch and only produces an event $f$.
-The term $B \cap f$ can only be resolved when $f_2 \in B$ exists and it needs to be resolved to close the branch. Due to $\pi$ being the shortest proof, the branch has to be closed with this predicate and $f_2 \in B$ exists and therefore the ($\neg A$) rule is applicable directly after the ($\neg {\times}L$) rule. \\
+The ($\cap_e$) rule is the only rule that yields a new negated atomic predicate. Such a predicate is needed to close the branch and therefore the term $B \cap f$ can only be resolved when $f_2 \in B$ exists. Due to $\pi$ being the shortest proof, the branch has to be closed with this predicate and $f_2 \in B$ exists and therefore the ($\neg A$) rule is applicable directly after the ($\neg {\times}L$) rule. 
+
 For ($\bot_2 L$) we consider that in positive reasoning the following rule ($\bot_1$) will close the branch and in negative reasoning, the rule would never be used. \\
-The reason for this argument is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. \\
-For ($\cdot^\inv L$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation is a base relation and the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
+The reason for this argument is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. 
+
+For ($\cdot^\inv L$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation is a base relation and any cross product of base relations would have been inverted via the ($\neg {\times}^\inv L$) rule. Furthermore, the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
 Towards a contradiction, we assume that the precondition $(f,e) \in \relr$ does not exist. If we look at the term as a whole, then $e.\relr^\inv$ has to be concatenated to another term on the right side, in an intersection with another term or the only term left. In all three cases ($(\relr.e).\relt$ or $(\relr.e) \cap (e.\relt)$ or $(\relr.e) \cap e_2$), there is no rule applicable now that wasn't before. Therefore either the branch must be closed or $(f,e) \in \relr$ has to exist. For the branch to be closed, the same predicate (with $\relr.e$) has to appear positively. Because the positive term can always be decomposed into atomic predicates according to \cite{Gru+26}, this is not possible and the branch cannot be closed and furthermore, $(f,e) \in \relr$ has to exist.
-In summary, each rule produces only atomic predicates or replaces the $e_1.\relr$ term in the predicate with $e'.\relr'$ or $f$ if the cube cannot be closed. \\
+\end{proof}
 
-\paragraph{Structural Rules: } The structural rules do not decompose $e_1.\relt$ but handle the relational term $\relt$ and place the event $e_1$ in the correct position for further decomposition.
-In this category we have ($\cap_2L$), ($._{2,2}L$), ($\cup_2L$), ($\neg \cup_2 L$) and the remaining branch of ($*L$) and the second predicate of ($\neg *L$). \\
-
+\begin{proof}[Decomposition Lemma Proof]
 To show that $l[e_1.\relt]$ will always be decomposed into $l[f]$ or $\bot_0$, we perform an induction on the size of $\relt$. 
-The size of the relational term is equivalent to the number of occurrences of base relations in $\relt$. 
+The size of the relational term is equivalent to the number of occurrences of base relations in $\relt$. \\
+
 In the base case, $\relt$ is a (inverted) base relation or a cross product of base sets and we can apply one of the decomposing rules. \\
-As the induction hypothesis we assume that any term $\relt'$ of a particular length $n \in \N$ will be decomposed into an event $f_n$. \\ 
+
+As the induction hypothesis we assume that any term $\relt'$ of a particular length $n \in \N$ will be decomposed into an event $f_n$. \\
+
 If the last remaining base relation $\relt_n$ is connected to $\relt'$ via an intersection, and the ($\cap_2 L$) rule is used at some point in the proof, then we can apply a decomposing rule to the remaining base relation yielding $f'$ and use the ($eL$) rule to get $f$ or use the ($\neg \cap_e$) rule to close the branch with contradiction. \\
 If the last base relation is connected via concatenation, the term we have to resolve is $f_n.\relt_n$ which only requires either ($aL$) or ($\neg aL$) which are decomposing rules. \\
 For a union, the branching reduces the term into two terms of length $n$ which according to the hypothesis will be decomposed into an event. \\
 A Kleene star can be transformed into arbitrarily many concatenations and therefore the argument follows the one for ($._{2,2}L$) 
 \end{proof}
 
-%\begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
-%Every rule from \cite{Gru+26} that is applied in $\pi$ to a term $p[e_1.\relt]$, besides atomic predicates, only yields either a new term $p[e_1'.\relt']$ or an event $p[f_1]$ inside the context of the predicate or closes the branch with $\bot_0$.
-%Since this lemma can be applied repeatedly on the resulting term $e_1'.\relt'$, any decomposition of the term $e_1.\relt$ will eventually yield an event $f_1$ or close the branch.
-%\end{lemma} 
-%
-%\begin{proof}
-%The lemma holds obviously for ($aL$), ($\id L$),($\neg aL$), ($\cap_2 L$), ($*L$), ($\neg {*} L$) and ($\cdot_{2,2} L$).
-%For ($\top_2 L$) the lemma holds considering that the resulting $\top_1$ will be decomposed to an event via ($\top_1$) or ($\neg \top_1$). For ($\bot_2 L$) we consider that in positive reasoning the following rule ($\bot_1$) will close the branch and in negative reasoning, the rule would never be used. \\
-%The reason for this is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. \\
-%For the (${\times}L$) rule the lemma holds, considering that the ($A$) rule will be applied to the resulting set. \\
-%For the ($\neg {\times}L$) rule we use the same argument with the ($\neg A$) rule. The precondition of $e \in A$ will always be met. \\
-%For a term $\Gamma, \neg p[e.(A \times B)]$ in the premise, the rule creates two branches $\Gamma, \neg e \cap A \neq \emptyset$ and $\Gamma, \neg p[B]$ that will both be closed.
-%For the former branch, it can only be closed with $f_1 \in A, \neg e = f_1$, since otherwise either the cube could have been closed before the branching or $\pi$ would not be the shortest proof.
-%The latter branch will always result in a term of the form $B \cap f$ if no $f_2 \in B$ is available. If the context is $B.\relt \cap e_2$, the ($\neg_{\cdot_{1,2}}R$) rule enables a decomposition of \relt{} from the right side. As no negated rule besides ($\neg \cap_e$) yields a negated atomic predicate, the branch cannot be closed without resolving $B \cap f$ where $f$ is the event resulting from the decomposition.
-%If the context is $B \cap (e.\relt)$, the decomposition of $e.\relt$ can, again, not close the branch and only produces an event $f$.
-%The term $B \cap f$ can only be resolved when $f_2 \in B$ exists and it needs to be resolved to close the branch. Due to $\pi$ being the shortest proof, the branch has to be closed with this predicate and $f_2 \in B$ exists and therefore the ($\neg A$) rule is applicable directly after the ($\neg {\times}L$) rule. \\
-%For ($\cdot^\inv L$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation is a base relation and the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
-%Towards a contradiction, we assume that the precondition $(f,e) \in \relr$ does not exist. If we look at the term as a whole, then $e.\relr^\inv$ has to be concatenated to another term on the right side, in an intersection with another term or the only term left. In all three cases ($(\relr.e).\relt$ or $(\relr.e) \cap (e.\relt)$ or $(\relr.e) \cap e_2$), there is no rule applicable now that wasn't before. Therefore either the branch must be closed or $(f,e) \in \relr$ has to exist. For the branch to be closed, the same predicate (with $\relr.e$) has to appear positively. Because the positive term can always be decomposed into atomic predicates according to \cite{Gru+26}, this is not possible and the branch cannot be closed and furthermore, $(f,e) \in \relr$ has to exist.
-%In summary, each rule produces only atomic predicates or replaces the $e_1.\relr$ term in the predicate with $e'.\relr'$ or $f$ if the cube cannot be closed.
-%\end{proof}
-
 The decomposition lemma thus gives us the set of rules that is applied to terms in RISF.
-Besides the rules that are applied to $p[e_1.\relr]$ or $\neg p[e_1.\rels]$ respectively, the proof mentions ($\bot_1$), ($\top_1$), ($\neg \top_1$), ($A$), ($\neg A$). Moreover, the rules ($\neg \equiv L$), ($\neg \cap_e$), ($\neg eL$), ($\cup_1$), ($\neg \cup_1$), ($\bot_0$) and ($\neg =$) can be applied on the resulting terms.
+Besides the rules that are applied to $p[e_1.\relr]$ or $\neg p[e_1.\rels]$ respectively, the proof mentions ($\bot_1$), ($\top_1$), ($\neg \top_1$), ($A$), ($\neg A$), ($\neg {\times}^\inv L$). Moreover, the rules ($\neg {\equiv} L$), ($\neg \cap_e$), ($\neg eL$), ($\cup_1$), ($\neg \cup_1$), ($\bot_0$) and ($\neg =$) can be applied on the resulting terms.
 
-The rules ($\neg_{\cdot_{1,2}}L$), ($\neg_{\cdot_{2,1}}L$), ($\neg \cap_1 L$), ($\neg_2 {\times}L$), ($\neg_2 {\times}L$), ($\neg {\times}^\inv L$), ($\neg_\cap {\times}L$), ($\neg {\times}_\cap L$), ($\neg_1 {\times}L$), ($\neg {\times}_1L$) and ($\neg \emptyset$) are never used, either because the predicate never reaches the form of the premise or because they can be replaced by other rules that lead to a shorter proof. \todo{}{Begründen für die einzelnen Regeln}
+For the remaining rules in \cite{Gru+26}, we show why they will not be used in the proofs that we translate. The rules ($\neg_2 {\times}L$), ($\neg {\times}_2L$), ($\neg_\cap {\times}L$), ($\neg {\times}_\cap L$), ($\neg_1 {\times}L$), ($\neg {\times}_1L$) and ($\neg \emptyset$) and all their right side counterparts are never used because the predicates never reach the form of their premise.
+For ($\neg_2 {\times}L$), ($\neg {\times}_2L$), ($\neg_\cap {\times}L$), ($\neg{\times}_\cap L$), ($\neg_1 {\times}L$) and ($\neg {\times}_1 L$) this holds because the syntax of rational CAT allows for the cross product only to be used with base relations.  
+
+
+ or because they can be replaced by other rules that lead to a shorter proof. \todo{}{Begründen für die einzelnen Regeln}($\neg_{\cdot_{1,2}}L$), ($\neg_{\cdot_{2,1}}L$), ($\neg \cap_1 L$)
 
 For the remaining rules of Grünke et al., we will now give translations into our rules.
 We will start with the positive reasoning and explain what our proof system needs to provide in order to mimic the behavior of Grünke et al.'s. 
@@ -1649,6 +1647,7 @@ We translate the proof up to the first occurrence of the ($*L$) or ($*R$) rule i
 As we know from \Cref{lem:properties} the branches for proofs for the properties \textbf{(P2)} and \textbf{(P3)} will be finite.
 \end{proof}
 
+\pagebreak
 \section{Evaluation}\label{sec:evaluation}
 In this section we evaluate the capabilities of this proof system. We can compare memory models that are defined in rational CAT, a fragment of the CAT language of which the definition is found in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis at al. and KATI \cite{Kou+24} by Koutsouridis at al.. \\
 The flip side of this fact is that we were not able to expand the capabilities to non-monotonic operators (complement and difference). In order to expand the proof system to all of CAT, one would need to adjust rules to include non-monotonic operators. This would mean that every implication in \Cref{sec:implications} handles only base relations and no relational terms. Furthermore, the weakening and strengthening rules would only work on whole terms and not on subterms. \\
