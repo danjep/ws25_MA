@@ -1195,7 +1195,7 @@ The splitting and branching in \cite{Gru+26} is furthermore important to provide
 \begin{figure}[htpb]\label{fig:rules}
 \centering
 \include{includes/JanRules.tex}
-\caption{The rules for RAT-CAT-SAT proofs in \cite{Gru+26}. Any rule featuring a $L$ in it's name has a variant with $R$ where the event appears on the right side. As an example, rule ($aR$) is shown here.}
+\caption{The rules for RAT-CAT-SAT proofs in \cite[p. 13]{Gru+26}. Any rule featuring a $L$ in it's name has a variant with $R$ where the event appears on the right side. As an example, rule ($aR$) is shown here.}
 \end{figure}
 
 
@@ -1235,7 +1235,6 @@ In the former case, we know that base set appear in rational CAT only in cross p
 ($\neg \top_1$) has in it's premise $\neg p[\top_1]$ and in it's conclusion $\neg p[\top_1],\neg[e]$. This is basically the same case as ($\neg A$) since $\top_1$ is the full set of events ($E$ in our system) and $e$ is any event which is automatically in $\top_1$.
 \end{proof}
 
-\todo{bis hier rechte Regeln hinzugefügt}{}
 \begin{lemma}[Branching Lemma]\label{lem:branching}
 Whenever $\pi$ creates new branches like this:
 \begin{mathpar} \inferrule*[left=$\pi$:]{\pi_1}{\C_1 \\ \mid \\ \C_2}
@@ -1249,28 +1248,36 @@ A union in the positive term essentially means, that a counterexample to the inc
 This corresponds closely to branching a union in the included term with ($\cup_L$), because it argues that both subrelations need to be included, i.e. there is no counterexample to the induction in either.
 For the Kleene-star rule ($*L$) the branching is based on a union too, since $\relr^* = \id \cup \relr^+$. \\
 In negative reasoning, branching occurs whenever there is an intersection or a cross product.
-For intersections, the ($\cap_2L$) rule distributes the preceding event to both terms on either side of the intersection. Those two terms will be decomposed into the events $f_1,f_2$. This is only possible, if either relation is the full relation or if they exist at the same position in the included term.
-Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}R$) or the ($\neg eL$) rule can be applied. The intuition for the former case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. This would mean, that it is no counterexample. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
-In the relational proof, the premise of ($\neg {\cap_1}$) equates to a term $\relr \subseteq (\rels \cap \rels')$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \rels'$. \\
+For intersections, we observe this behavior for ($\neg eL$) and ($\neg \cap_1 L$) and their right-sided counterparts. \\
+Depending on whether this is the outermost operator of that literal, either the ($\neg {\cap_1}L$) or the ($\neg eL$) rule can be applied. The intuition for the first case is, that if both branches end in \false, the counterexample candidate would have to be in both terms and therefore in the intersection. If this holds, then it is no counterexample to the inclusion. If one or both branches cannot be closed, the candidate is only in one term or none and can therefore be a counterexample to the inclusion. \\
+In the relational proof, the premise of ($\neg {\cap_1}L$)/($\neg {\cap_1}R$) equates to a term $\relr \subseteq (\rels \cap \rels')$. Here, we can use the ($\cap_R$) rule, branching the term into $\relr \subseteq \rels$ and $\relr \subseteq \rels'$. \\
 In the case of the ($\neg eL$) rule, the intersection can be anywhere in the including term.
-From RISF and the rules of Grünke et al., we can deduce that the proof $\pi$ resolves the including term from left to right. Since the rules for decomposing terms require a concatenated event, and in RISF an event is concatenated only at the left end, we can assume that only terms concatenated on the right side are appended to the current term. This could only change due to an inverted term. However, since this must be a base relation according to \Cref{lem:inversion}, the ($\neg aR$) rule can also be applied after applying the ($\cdot^\inv L$) rule. More details on this follow in \Cref{sec:negreasoning}. \\
-Furthermore, we know from \Cref{lem:splitting} that the predicate will be union-free and we can assume that there is no intersection around this one, since in that case the rule ($\neg eL$) should have been applied to that term before. Then, $\pi$ would have created a new branch where the ($\neg \cap_1 L$) rule would be applicable. \\
-Following our arguments, we know that the current intersection term cannot have a concatenation on the left side, cannot be part of a union or an intersection and therefore has to be of the form $\neg p[(\rels \cap \Rels').\relt]$. \\
-As both branches will be closed in the future and could not be closed before, both terms that result from the branching have the potential for a contradiction. \\
-For the $\Gamma, \neg f_1 \cap f_2 \neq \emptyset$ branch it holds that it will yield the predicate $\neg f_1 = f_2$ and as this predicate will induce a contradiction, the predicate $f_1 = f_2$ has to exist in the cube, originating from positive reasoning. Since the events mark the position in the relational term, this implicates that the exact same intersection term has to exist at the same position in the included term.\\
-Therefore we can apply the ($._{LR}$) rule in our system:
+We need to keep in mind, that the occurrence of this term and the fact that the inclusion will be true imply that either relation is the full relation or that they exist at the same position in the included term.
+%Since the rules for decomposing terms require a concatenated event, and in RISF an event is concatenated only at the left end, we can assume that only terms concatenated on the right side are appended to the current term. This could only change due to an inverted term. However, since this must be a base relation according to \Cref{lem:inversion}, the ($\neg aR$) rule can also be applied after applying the ($\cdot^\inv L$) rule. More details on this follow in \Cref{sec:negreasoning}. \\
+Therefore, the branching effectively creates one branch where the intersection itself needs to be in the included term and one branch where the remaining context is further decomposed.
+We know from \Cref{lem:splitting} that the predicate will be union-free and we can assume that there is no intersection around this one, since in that case the rule ($\neg eL$)/($\neg eR$) should have been applied to that term before. Then, $\pi$ would have created a new branch where the ($\neg {\cap_1} L$) rule would be applicable. \\
+Following our arguments, we know that the current intersection term can only have a concatenation on either side, cannot be part of a union or an intersection and therefore has to be of the form $\neg \relt.(e \cap e'.\rels).\relt'$ for ($\neg eL$) and $\relt.(e.\rels \cap e')\relt'$ for ($\neg eR$) where $\relt$ or $\relt'$ could be $\id$ if there is no concatenation on that side. \\
+For the $\Gamma, \neg e \cap \color{orange}{s}$ $ \neq \emptyset$ branch it holds that it will yield the predicate $\neg e = f$ for some $f \in \color{orange}{s}$ and as this predicate will induce a contradiction, the predicate $e = f$ has to exist in the cube, originating from positive reasoning. Since the events mark the position in the relational term, this implicates that the exact same intersection term has to exist at the same position in the included term.\\
+Therefore we can apply the ($._{LR}$) rule twice in our system:
 \begin{mathpar}
-\inferrule*[left=($._{LR}$)]{\relr_\Gamma \subseteq \relt_\Gamma \\ \rels \cap \rels' \subseteq \rels \cap \rels'}{(\rels \cap \rels').\relr_\Gamma \subseteq (\rels \cap \rels').\relt_\Gamma}
+\inferrule*[left=($._{LR}$)]{\relr \subseteq \relt \\ 
+	\inferrule*[Right=($._{LR}$)]{\rels \cap \Rels' \subseteq \Rels \cap \rels' \\ \relr' \subseteq \relt'}{(\rels \cap \rels').\relr' \subseteq (\rels \cap \rels').\relt'}
+}{\relr.(\rels \cap \rels').\relr' \subseteq \relt.(\rels \cap \rels').\relt}
 \end{mathpar}
+Since the branches for $\relr \subseteq \relt$ and $\Relr'\subseteq \relt'$ will be closed if and only if the branch for $\Gamma, \relt.e.\relt'$ will be closed, we can have an additional branch in our system. In the case that the terms do not exactly match, we can always use the (\textsc{strength}) rule in any context. \\
 
-If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg \times L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
+If $\rels = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$ and the ($\neg {\times} L$) rule is used in $\pi$, then the proof branches into one cube containing $\neg e_1 \cap A_1 \neq \emptyset$ and one cube containing $\neg p[A_2]$. The former predicate can only be transformed with ($\neg A$) and ($\neg\cap_e$) into the atomic predicate $\neg e_1 = f_1$, ending the decomposition. This requires the predicate $f_1 \in A_1$ from positive reasoning, meaning that $A_1$ exists at the same position in the included term. Because the branch needs to be closed through these predicates and the only new predicate is $\neg e_1 = f_1$, there has to be the predicate $e_1 = f_1$ in the cube to create a contradiction and close the branch with the ($\bot_0$) rule. \\
 The latter predicate retains the context and after applying ($\neg A$) to it, yields a positive event $f_2$ for the decomposition as demanded by \Cref{lem:decomposition}. Once more, this requires a predicate $f_2 \in A_2$ originating from the positive reasoning. \\
-A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be applied using all concatenated relations as $\relr$ (\textcolor{red}{\Relr{}} in the context of the rule from \cite{Gru+26}) and $e_2$ as the intersected event $e$. Either way, the set would have to be decomposed into an event and therefore we assume the first rule to be applicable. \\
-Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and another with the remaining term. \\
+A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be applied using all concatenated relations as $\relr$ (\textcolor{red}{\Relr{}} in the context of the rule from \cite{Gru+26}) and $e_2$ as the intersected event $e$. Either way, the set would have to be decomposed into an event and therefore we assume the first rule to be applicable. 
+The argument is analogous for ($\neg {\times}R$). \\
+Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and two more for the remaining term. \\
+
+The last two rules that create branches are ($\neg_1 {\times} L$) and ($\neg {\times_1}L$) (and their right-sided counterparts). Starting with ($\neg_1 {\times} L$), we can assume $\color{orange}{s_1}$ to be a term $e_1.\rels$ or $\rels.e_1$ and $\color{red}{s_2}$ to be a base relation $A$, because of the syntax of rational CAT. \\
+The rule creates one branch with $\Gamma, \neg e_1.\rels \cap e \neq \emptyset$ which can only be closed with decomposition of $\Rels$ yielding an event $f$ with $(e_1,f) \in \rels$ and a contradiction using $\neg f = e$. This requires $e_1.\rels.(e \times A)$ to be in the included term as well. For the translation, we must take into account that our rules are context-sensitive. However, if the context is an intersection, then we can apply the procedure from ($\neg eL$). For concatenations, we can again use ($._{LR}$) as we did previously with ($\neg {\times}L$).
+For ($\neg {\times_1}L$) the procedure is exactly the same. \\
 
 Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep the semantics the same. 
 \end{proof}
-
 
 \subsection{Finite Proofs}\label{sec:finiteproofs}
 
@@ -1290,12 +1297,12 @@ which is equivalent to the definition of $\semsof{\relr~ \cap \sim \rels} \neq \
 We will see that any formula $\phi'$ that is a decomposition from a RISF formula is equivalent to such an inclusion.
 
 \begin{lemma}[Decomposition Lemma]\label{lem:decomposition}
-Let $l[e_1.\relt]$ be a literal in a cube. Eventually, every proof $\pi$ will either decompose the predicate to $l[f]$ or close the branch with $\bot_0$.
+Let $l[e_1.\relt]$ and $l[\relt.e_1]$ be literals in a cube. Eventually, every proof $\pi$ will either decompose the literals to $l[f]$ or close the branch with $\bot_0$.
 \end{lemma}
 
 To prove the lemma, we will divide the rules that can be applied to the literal into two groups:
 
-\paragraph{Decomposing Rules: } These rules directly transform $l[e_1.\relt]$ into $l[f]$ or close the branch. In this group are ($aL$), ($\id L$), ($\neg aL$), ($\top_2$), ($\cdot^\inv L$) and the Kleene star rules ($*L$) and ($\neg *L$). The last two are also another group, since they only yield $l[f]$ in one branch or new predicate. 
+\paragraph{Decomposing Rules: } These rules directly transform $l[e_1.\relt]$ or $l[\relt.e_1]$ into $l[f]$ or close the branch. In this group are ($aL$), ($aR$), ($\id L$), ($\id R$), ($\neg aL$), ($\neg aR$), ($\top_2$), ($\cdot^\inv L$), ($\cdot^\inv R$), ($\neg_1 {\times}L$), ($\neg_1 {\times}R$) and the Kleene star rules ($*L$), ($*R$), ($\neg *R$) and ($\neg *L$). The last four are also another group, since they only yield $l[f]$ in one branch or new predicate. 
 
 \paragraph{Structural Rules: } The structural rules do not decompose $e_1.\relt$ but handle the relational term $\relt$ and place the event $e_1$ in the correct position for further decomposition.
 In this category we have ($\cap_2L$), ($._{2,2}L$), ($\cup_2L$), ($\neg \cup_2 L$) and the remaining branch of ($*L$) and the second predicate of ($\neg *L$). 
@@ -1304,11 +1311,13 @@ In this category we have ($\cap_2L$), ($._{2,2}L$), ($\cup_2L$), ($\neg \cup_2 L
 Any decomposing rule either directly transforms $\acontextof{\anode_1\flexcomp \relt}$ into $\acontextof{\anodep}$ or in combination with directly following rules.
 \end{lemma}
 \begin{proof}
-The ($aL$), ($\neg aL$), ($\id L$), ($*L$) and ($\neg *L$) rules directly yield $p[f]$.
-($\top_2$) does the transformation in connection with ($\top_1$) and ($\neg \top_1$), ($\cdot^\inv L$) in connection with ($aL$) or ($\neg aL$).
+The ($aL$), ($\neg aL$), ($\id L$), ($*L$) and ($\neg *L$) rules and their right-side counterparts directly yield $p[f]$.
+($\top_2 L$) does the transformation in connection with ($\top_1$) and ($\neg \top_1$), ($\cdot^\inv L$) in connection with ($aL$) or ($\neg aL$). The right-sided rules do it analogously.
 For the (${\times}L$) rule the lemma holds, considering that the ($A$) rule will be applied to the resulting set. \\
 
-For the ($\neg {\times}L$) rule we use the same argument with the ($\neg A$) rule. The precondition of $e \in A$ will always be met. \\
+For the ($\neg_1 {\times}$) rules, the lemma holds, considering that one branch will be closed very soon afterwards and has no influence on the long term decomposition and the other branch yields $\neg p[A]$ for a set $A$, which will have to be resolved with ($\neg A$).\\
+
+For the ($\neg {\times}L$) and ($\neg {\times}R$) rules we use the same argument with the ($\neg A$) rule. The precondition of $e \in A$ will always be met. \\
 For a term $\Gamma, \neg p[e.(A \times B)]$ in the premise, the rule creates two branches $\Gamma, \neg e \cap A \neq \emptyset$ and $\Gamma, \neg p[B]$ that will both be closed.
 For the former branch, it can only be closed with $f_1 \in A, \neg e = f_1$, since otherwise either the cube could have been closed before the branching or $\pi$ would not be the shortest proof.
 The latter branch will always result in a term of the form $B \cap f$ if no $f_2 \in B$ is available. The reason is, that any context will result in this term. If the context is $B.\relt \cap e_2$, the ($\neg_{\cdot_{1,2}}R$) rule enables a decomposition of \relt{} from the right side. Let $f$ be the event resulting from that decomposition with $(f,e_2) \in \relt$. This transforms the predicate into $B \cap f$.
@@ -1318,7 +1327,7 @@ The ($\cap_e$) rule is the only rule that yields a new negated atomic predicate.
 For ($\bot_2 L$) we consider that in positive reasoning the following rule ($\bot_1$) will close the branch and in negative reasoning, the rule would never be used. \\
 The reason for this argument is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. 
 
-For ($\cdot^\inv L$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation is a base relation and any cross product of base relations would have been inverted via the ($\neg {\times}^\inv L$) rule. Furthermore, the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
+For ($\cdot^\inv L$) and ($\cdot^\inv R$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation to be a base relation and any cross product of base sets would have been inverted via the ($\neg {\times}^\inv L$) rule. Furthermore, the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
 Towards a contradiction, we assume that the precondition $(f,e) \in \relr$ does not exist. If we look at the term as a whole, then $e.\relr^\inv$ has to be concatenated to another term on the right side, in an intersection with another term or the only term left. In all three cases ($(\relr.e).\relt$ or $(\relr.e) \cap (e.\relt)$ or $(\relr.e) \cap e_2$), there is no rule applicable now that wasn't before. Therefore either the branch must be closed or $(f,e) \in \relr$ has to exist. For the branch to be closed, the same predicate (with $\relr.e$) has to appear positively. Because the positive term can always be decomposed into atomic predicates according to \cite{Gru+26}, this is not possible and the branch cannot be closed and furthermore, $(f,e) \in \relr$ has to exist.
 \end{proof}
 
@@ -1335,6 +1344,8 @@ If the last base relation is connected via concatenation, the term we have to re
 For a union, the branching reduces the term into two terms of length $n$ which according to the hypothesis will be decomposed into an event. \\
 A Kleene star can be transformed into arbitrarily many concatenations and therefore the argument follows the one for ($._{2,2}L$) 
 \end{proof}
+
+\todo{bis hier rechte Regeln hinzugefügt}{}
 
 The decomposition lemma thus gives us the set of rules that is applied to terms in RISF.
 Besides the rules that are applied to $p[e_1.\relr]$ or $\neg p[e_1.\rels]$ respectively, the proof mentions ($\bot_1$), ($\top_1$), ($\neg \top_1$), ($A$), ($\neg A$), ($\neg {\times}^\inv L$). Moreover, the rules ($\neg {\equiv} L$), ($\neg \cap_e$), ($\neg eL$), ($\cup_1$), ($\neg \cup_1$), ($\bot_0$) and ($\neg =$) can be applied on the resulting terms.
