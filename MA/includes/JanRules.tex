@@ -227,13 +227,13 @@
     \begin{bprooftree}
         \LeftLabel{$(\neg{{}_1\times}\lrule)$}
         \AxiomC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}\flexcomp(\anode\times{\color{orange} {\color{red} \asetexpr_2}})}$}
-        \UnaryInfC{$\acube,\neg\acontextof{{\color{red} \asetexpr_2}} \rulespace \neg({\color{orange} \asetexpr_1}\cap\anode\neq\emptyset)$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{red} \asetexpr_2}} \rulespace \acube,\neg({\color{orange} \asetexpr_1}\cap\anode\neq\emptyset)$}
     \end{bprooftree}
     
     \begin{bprooftree}
         \LeftLabel{$(\neg{\times_1}\lrule)$}
         \AxiomC{$\acube,\neg\acontextof{(\anode \times{\color{orange} \asetexpr_1})\flexcomp{\color{red} \asetexpr_2}}$}
-        \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \neg({\color{orange} \asetexpr_1}\cap{\color{red} \asetexpr_2}\neq\emptyset)$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \acube,\neg({\color{orange} \asetexpr_1}\cap{\color{red} \asetexpr_2}\neq\emptyset)$}
     \end{bprooftree}
 \end{rulebox}
 \begin{rulebox}{Predicate Rules}
