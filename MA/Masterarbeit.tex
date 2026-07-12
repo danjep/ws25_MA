@@ -29,7 +29,10 @@
 
 \thispagestyle{empty}
 \section*{Abstract}
-\todo{Write}{The Abstract}
+In this Master's thesis we construct a new type of proof system for comparing memory consistency models that are defined in the CAT language. At the heart of it is a set of rules which construct proofs for relational inclusions.
+Our proof system directly handles inclusions and does not resolve relations to event-level and we use invariants to deal with Kleene-star expressions. The possibility of using arbitrary invariants comes at the cost of not being able to automatize the proofs.
+We show soundness by proving the rules to be valid implications or equivalences and show completeness by translating the rules of Grünke et al. (\cite{Gru+26}) into our system.
+In comparison to Grünke et al. we produce smaller proof tableaus on the same fragment of CAT that is called rational CAT.
 \pagebreak
 
 {
