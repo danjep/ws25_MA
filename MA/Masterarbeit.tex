@@ -76,9 +76,9 @@ This shows, that MCMs give developers certain guarantees for how the program wil
 The memory consistency model of a CPU architecture describes how the hardware will behave if it runs the instructions of the compiled program. For the program to have the intended semantics, the code needs to respect the rules of the language MCM and the compiler has to comply with both the language MCM and the hardware MCM.
 Essentially, the MCMs  determine which update to the shared memory is seen by which thread at what time.
 
-As can be seen in the example, the memory consistency model can restrict the possible outcomes of a program. But the presence of a MCM may not guarantee the behavior that it's developers intended. 
+As can be seen in the example, the memory consistency model can restrict the possible outcomes of a program. Nevertheless, the presence of a MCM may not guarantee the behavior that it's developers intended. 
 MCMs are defined by humans and can have bugs. They may not capture the behavior of the architecture correctly or be insufficiently defined. 
-Consequently there is research on how MCMs can be verified and how the verification can be done effectively. \\
+Consequently, there is research on how MCMs can be verified and how the verification can be done effectively. \\
 The succeeding pages are dedicated to explaining the concepts of MCMs and the CAT language, before we explain what the contribution of this master's thesis will be.
 
 
@@ -206,10 +206,10 @@ Since simulation \cite{Mad+10} and verification \cite{Alg+13} are substantially 
 Axiomatic models are defined in three stages: Map each instruction onto a mathematical object and defining relations on the events. Then, enumerate all candidate executions like in \Cref{fig:examplegraph,fig:storebuffering}. Finally, decide which executions are valid according to the constraints on the relations. \\
 To validate that a program is executed according to a given MCM is called \textit{consistency checking} and can be reduced to a certain depth-first search on the execution graph \cite{Kok+23}. A program is consistent with a model if it fulfills all constraints of the model. \\
 For consistency checking there exist many automated tools like HERD \cite{Alg+14}, GenMC \cite{KokVaf21} and Dartagnan \cite{Pon+18}. 
-The issue this master's thesis deals with is verification of memory consistency models which is a very different problem. According to Grünke et al. \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
+The issue this master's thesis deals with is verification of memory consistency models, which is a different problem. According to Grünke et al. \cite{Gru+26} it consists of five tasks that an automated verification tool should ideally cover:
 The first task is to check generic properties of MCMs like permitting no out-of-thin-air values. The second task is to review properties referring to operation's semantics like \textit{barrier monotonicity} (there are fewer possible executions when inserting synchronizations). The next task is to compare models and determine which is stronger. Task four is to create litmus tests that check whether a language or architecture implements a model. The last task is to verify compiler transformations. \\
 Since we want to verify the models and not a program, it is important to check properties for every program that could be executed under the model.
-For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26} which both are not able to handle every possible MCM but only a fragment.
+For this task there exist two automated tools, KATER \cite{Kok+23} and RAT \cite{Gru+26}, which both are not able to handle every possible MCM but only a fragment.
 
 Besides Lamport's Sequential Consistency, there are models that are less restrictive like \textit{SC per Location} (also known as \textit{Coherence} or \textit{UNIPROC}) and \textit{Total Store Order} (TSO)\cite{SPA92} which were developed to allow for more optimization. Besides these rather theoretical models, there exists MCMs that describe the behavior of hardware like Power \cite{Mad+12}, of a programming language like Java Memory Model \cite{Man+05} or of an operating system like Linux Kernel Memory Model (LKMM) \cite{Alg+18,LKM25} and many more types for various applications.
 
@@ -218,9 +218,9 @@ Besides Lamport's Sequential Consistency, there are models that are less restric
 
 In 2014 Alglave et al. proposed an axiomatic framework for modelling weak memory and the corresponding language CAT \cite{Alg+14} which has since then become the standard for writing axiomatic memory consistency models. In this case, weakness is defined as accepting a larger number of possible executions of a program than stronger models. 
 The CAT language uses base sets which are the events of an execution. There are the set of all events $E$, the initial writes $IW$, all reads $R$, writes $W$ and fences $F$, the branch events $B$ and the memory events $M$ which are the reads and writes \cite{Alg+16}.
-CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext{} which includes all pairs of events that originate from different threads, the \textit{coherence order} \co{} which is a total order of writes on the same memory location, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 
-\begin{figure}[H]
+\begin{figure}[b]
+\vspace*{-0.5cm}
 \begin{align*}
 \langle cat\rangle &:= \bangle{constraint}~ \bangle{rel} \mid \langle cat \rangle~ \langle cat\rangle \\
 \bangle{constraint} &:= \texttt{acyclic} \mid \texttt{irreflexive} \mid \texttt{empty} \\
@@ -233,6 +233,7 @@ The \textcolor{teal}{teal}-colored part is what differentiates CAT from rational
 \label{fig:cat}
 \end{figure}
 
+CAT has some built-in base relations which include the already mentioned \po{} and \rf. Besides those, there are the \textit{same location} relation \loc, which connects all events of one particular memory location, the \textit{external} relation \ext{} which includes all pairs of events that originate from different threads, the \textit{coherence order} \co{} which is a total order of writes on the same memory location, the \textit{read-modify-write} relation \rmw{} that relates a read event with a write event of the same memory location that can be interpreted as an atomic operation and the \textit{identity} and empty relations \texttt{id} and $0$. Furthermore it provides the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} which are sufficient for expressing every desired model and property. 
 Besides the given base relations, one can define derived relations in the CAT language like \textit{from-read} (\fr), connecting reads to those writes that occur after the write operation from which they read or \textit{happens-before} (\hb) which relates each event to the ones that occurred before \cite{Lam78}. The derivations can be written with the keyword \texttt{let} and using the operations in \Cref{fig:cat} like this:
 \[\texttt{let } \fr = \text{\rf}^{-1}\text{.\co} \qquad \texttt{let } \text{\hb}=\textsf{po}\cup \text{\co}\cup \text{\rf} \cup \text{\fr}\]
 The language also includes some base sets of events. These include the set of all events E, all reads (R) and writes (W), initial writes IW and fences F. \\
@@ -243,8 +244,8 @@ The Memory Models from the last section can be formalized according to \cite{Gru
 &\text{(SC per Location)} \hfill &\texttt{acyclic } (\po \cap \loc) \cup (\rf \cup \co \cup \fr)
 \end{align*}  
 
-With the definition of SC we can show now why the execution in \Cref{fig:storebuffering} is not allowed by the memory model. For this we add the \c{}~ and \fr{} to the graph:
-\begin{figure}[H]
+With the definition of SC we can show now why the execution in \Cref{fig:storebuffering} is not allowed by the memory model. For this we add \co{}~ and \fr{} to the graph (\Cref{fig:SCexample}).
+\begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
 \centering
 \begin{tikzpicture}[node distance=1.5cm and 3cm]
@@ -298,19 +299,20 @@ With the definition of SC we can show now why the execution in \Cref{fig:storebu
 \end{minipage}
 \caption{On the left we have the execution of the example program in \Cref{fig:example} in case 4 (\Cref{fig:storebuffering}) with all relations of \hb{} in the graph. On the right side, we can see the cycle that makes the execution inconsistent with \texttt{acyclic }\hb.} \label{fig:SCexample}
 \end{figure} 
-Now, we can see that the relations in \hb{} form a cycle (marked in red on the right side) and therefore the execution is not allowed.
-
+\noindent Now, we can see that the relations in \hb{} form a cycle (marked in red on the right side) and therefore the execution is not allowed.
 
 \subsection{Contribution}
-This master's thesis will present a new proof-system for comparing memory consistency models that directly handles relations and uses invariants to handle potentially infinite decompositions of Kleene-star terms.
-At the center of this proof system is a set of rules that transform relational inclusion terms like $\Relr \subseteq \Rels$ and produce the implication $\true \impl \relr \subseteq \rels$ which makes the inclusion a logical tautology.
+This master's thesis will present a new proof-system for comparing memory consistency models, that directly handles relations and uses invariants to handle potentially infinite decompositions of Kleene-star terms.
+At the heart of this proof system is a set of rules that transform relational inclusion terms like $\Relr \subseteq \Rels$ and produce the implication $\true \impl \relr \subseteq \rels$ which makes the inclusion a logical tautology.
 By adding relation-specific rules, assumptions and definitions of derived relations (in the literature usually hypotheses) and handling the constraints to the relations that CAT expression use, we expand the results to memory consistency models defined in the CAT language.
 \Cref{sec:kontext} will show what current lines of research exist in the field of weak memory and especially the work that has been done in verification of MCMs, before \Cref{sec:preliminaries} gives some preliminaries for a better understanding of this text and \Cref{sec:proofsys} shows the proof system that is at the center of this thesis. In \Cref{sec:constraints} we will see how any inclusion between CAT expressions for MCMs can be transformed into a relational inclusion. Following in \Cref{sec:implications,sec:transformations} are the rules that can proof any relational inclusion term that is confined to the syntax of rational CAT. The transformations and axioms in \Cref{sec:relationspecific,sec:assumptions} expand the capabilities of the proof system to include knowledge about the base relations and base sets of CAT.  \\
 In \Cref{sec:soundness} we show the soundness of the proof system by proving each rule to be a valid implication or equality. \\
-The Completeness in \Cref{sec:completeness} is shown via a translation of a cyclic proof system \cite{Gru+26} into ours. This includes translating every rule that is needed into a rule or a sequence of rules in our system and transforming the infinite cyclic proofs into finite ones using invariants. 
+The Completeness in \Cref{sec:completeness} is shown via a translation of a cyclic proof system \cite{Gru+26} into ours. This includes translating every rule that is needed into a rule or a sequence of rules in our system and transforming the infinite cyclic proofs into finite ones using invariants. \\
+We will discuss limitations and benefits of the proof system in \Cref{sec:evaluation} before summarizing the work in \Cref{sec:conclusion}.
 
+\pagebreak
 \section{Related Work}\label{sec:kontext}
-There are currently several established lines of research in the field of weak memory. One obvious issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools that were developed in the last decade already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
+There are currently several established lines of research in the field of weak memory. One undeniable issue is the \textit{consistency checking} of programs under a given memory model \cite{Tun+23,KokVaf21}. Several automated tools, that were developed in the last decade, already handle this issue well. Examples are GenMC \cite{KokVaf21}, DARTAGNAN \cite{Pon+18} and HERD \cite{Alg+14}.
 Furthermore, there is research on refining stateless model checking \cite{Jon+25}.
 %In the realm of verification this would be on the program verification level. 
 Some research groups instead examine the models themselves and their attributes \cite{LahBok22} and others the already mentioned operational models \cite{Ior+23,Doh+22}. Additionally, researchers are looking at ways of comparing \cite{Wic+17,Sha+23} and verifying \cite{Kok+23,And+25,Kir+20} memory consistency models which are closely related problems.
@@ -318,16 +320,16 @@ Some research groups instead examine the models themselves and their attributes 
 The first tool to verify MCMs was KATER \cite{Kok+23} which covered only a fragment of CAT that could be transformed into Kleene Algebra with Tests (KAT). This fragment excluded set difference, complement, intersections, converses and the construction of relations from sets. \\
 Since a lot of MCMs like SC, TSO, Power and Arm8 could be defined without the use of these operations, KATER was already very useful and through the exclusion of complement and intersections the verification becomes PSPACE-complete instead of EXPSPACE-complete with intersection \cite{KozSmi97,Nak17} or undecidable with complement \cite{TarGiv87}.
 Notably, the fragment of \cite{Kok+23} excludes the definitions of C11 and the Linux Kernel Memory Model (LKMM) \cite{Kou+24}. To include these models and others, intersections are needed.
-The next year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
+The following year Koutsouridis et al. presented KATI \cite{Kou+24} which is able to handle converses and some intersections but was not implemented.
 
 The first tool that addressed all intersections as well as inverses and construction of relations from sets (called rational CAT, see \Cref{fig:cat}) was RAT (Relational Algebra with Tableaus) which was developed by the supervisors of this master's thesis in 2025 \cite{Gru+26}. Their tool is able to handle the first four tasks of the verification with only the compiler transformations being left as an open issue. In their yet to be published work, they present a logical theory of relations where the unsatisfiability of a formula is equivalent to the model fulfilling a set of assertions.
-By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and then a formula $ \phi_M \land \neg \phi_{M_{prop}}$ it proves whether the given model is stronger than the condition that is to be tested.
+By transforming the question of $\llbracket M\rrbracket \subseteq \semsof{M_{prop}}$ into $\semsof{M} \cap \overline{\semsof{M_{prop}}} = \emptyset$ and afterwards into a formula $ \phi_M \land \neg \phi_{M_{prop}}$, it proves whether the given model is stronger than the condition that is to be tested.
 The formula is then decomposed until there exists a satisfying model for the formula or it is deemed unsatisfiable. 
 
-Today there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
+Today, there are many open questions in this field of research. Is it possible to automatically verify  more than the rational CAT fragment?
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
-This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. The improvements will be in terms of the length of proofs, size of proof-nodes and in terms of eliminating infinite branches.
+This master's thesis will be about the issue of whether the proof system in \cite{Gru+26} can be improved while sustaining the soundness and completeness. The improvements will be in terms of the length of proofs, size of proof-nodes and in terms of eliminating infinite branches by replacing them with finite ones.
 
 \pagebreak
 \section{Preliminaries} \label{sec:preliminaries}
@@ -356,7 +358,7 @@ Let $M$ be a memory consistency model, $\bangle{cat}_1,\bangle{cat}_2$ be CAT ex
 \end{definition}
 For the relational subterms of the CAT expressions, the semantics differ in the regard that they are sets of edges in the execution graphs.
 \begin{definition}[Semantics of Relational Expressions] \label{def:sem}
-Let $\rel, \rel_1, \rel_2 \subseteq (E \times E)$ be relations. $\bangle{base\_rel}$ and $\bangle{base\_set}$ are as defined in \Cref{fig:cat}.
+Let $\rel, \rel_1, \rel_2 \subseteq (E \times E)$ be relations. $\bangle{base\_rel}$ and $\bangle{base\_set}$ are as defined in \Cref{fig:cat}. \small
 \begin{align*}
 \semsof{\bangle{rel}_1 \subseteq \bangle{rel}_2} &:= \forall (e,e'):(e,e') \in \bangle{rel}_1 \impl (e,e') \in \bangle{rel}_2 \\
 \semsof{\bangle{rel}_1.\bangle{rel}_2} &:= \{(e_1,e_2) \mid \exists e' \in E: (e_1,e') \in \semsof{\bangle{rel}_1} \land (e',e_2) \in \semsof{\bangle{rel}_2}\} \\
@@ -366,16 +368,16 @@ Let $\rel, \rel_1, \rel_2 \subseteq (E \times E)$ be relations. $\bangle{base\_r
 \semsof{\sim \bangle{rel}} &:= \{(e_1,e_2) \mid (e_1,e_2) \notin \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^{-1}} &:= \{(e_1,e_2) \mid (e_2,e_1) \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}^+} &:= \{(e,e') \mid \exists e_1,\dots e_n \in E: e = e_1 \land e'=e_n \land \forall i\in [1,n-1]:\\
-& (e_i,e_{i+1}) \in \semsof{\bangle{rel}}\} \\
+& \qquad (e_i,e_{i+1}) \in \semsof{\bangle{rel}}\} \\
 \semsof{\bangle{rel}?} &:= \semsof{\bangle{rel}} \cup \id \\
 \semsof{\bangle{rel}^*} &:= \semsof{\bangle{rel}^+} \cup \id \\
 \semsof{\bangle{base\_set}_1 \times \bangle{base\_set}_2} &:= \{(e,e') \mid e \in \bangle{base\_set}_1, e' \in \bangle{base\_set}_2\} \\
 \semsof{\bangle{base\_rel}} &:= \{ (e,e') \in \bangle{base\_rel} \}
 \end{align*}
 \end{definition}
-To give a clear understanding of what the base relations are, we give definitions that are derived from those in Alglave et al. \cite{Alg+16,Alg+14}.
-\begin{definition}[Semantics of Base Relations]
-Let $E$ be the set of all events, $R$ the set of all read operations and $W$ the set of all write operations.
+To give a clear understanding of what the base relations are, we give definitions that are derived from those in Alglave et al. \cite{Alg+16,Alg+14} in \Cref{def:baserelations}.
+\begin{definition}[Semantics of Base Relations]\label{def:baserelations}
+Let $E$ be the set of all events, $R$ the set of all read operations and $W$ the set of all write operations. \small
 \begin{align*}
 \semsof{\0} := \quad & \emptyset \times \emptyset \\
 \semsof{\id} := \quad & \{(e,e) \mid e \in E\} \\
@@ -416,19 +418,19 @@ Let $M,M'$ be CAT expressions constituting sets of executions on a domain of eve
 Hence, the proof derives the implication $\true \impl M \subseteq M'$.
 \end{definition}
 
-These proofs need rules to handle the CAT constraints which are given in the next subsection (\Cref{sec:constraints}). 
+These proofs need rules to handle the CAT constraints, which are given in the next subsection (\Cref{sec:constraints}). 
 
-When the constraints are eliminated, all that is left is a relational inclusion term.  We can then apply transformations (\Cref{sec:transformations}) and relational implications (\Cref{sec:implications}) on the relational terms. By transformations we mean rules that are based on equivalences like the commutativity of union and intersection. With the rules of the mentioned two subsections we can construct a \textit{Relational Inclusion Proof} $\prf$ for this inclusion term which is part of the CAT Inclusion Proof $\prf^{CAT}$.
+When the constraints are eliminated, all that is left is a relational inclusion term.  We can then apply transformations (\Cref{sec:transformations}) and relational implications (\Cref{sec:implications}) on the relational terms. We use the term transformations for rules that are based on equivalences like the commutativity of union and intersection. With the rules of the mentioned two subsections we can construct a \textit{Relational Inclusion Proof} $\prf$ for this inclusion term which is part of the CAT Inclusion Proof $\prf^{CAT}$.
 
 \begin{definition}[Relational Inclusion Proofs]
-Let $\relr,\rels \subseteq (E \times E)$ be two relations on a domain $E$. A Relational Inclusion Proof $\prf$ for the inclusion $\relr \subseteq \rels$ is a closed derivation tree that starts with the inclusion at the root and ends at potentially several leafs with \true{} using the rules in \Cref{sec:implications,sec:transformations}. The proof derives the implication $\true \impl \relr \subseteq \rels$. 
+Let $\relr,\rels \subseteq (E \times E)$ be two relations on a domain $E$. A Relational Inclusion Proof $\prf$ for the inclusion $\relr \subseteq \rels$ is a closed derivation tree, that starts with the inclusion at the root and ends at potentially several leafs with \true{} using the rules in \Cref{sec:implications,sec:transformations}. The proof derives the implication $\true \impl \relr \subseteq \rels$. 
 \end{definition}
 This is the core element of the proof system. Putting the memory consistency models aside, this part of the rules allows us to prove any inclusion of relations that is universally true, like for example $a^* \subseteq (aa)^* \cup a(aa)^*$. 
-Since the proof system we design, will handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations given in \Cref{sec:relationspecific}. Furthermore, there is a need to incorporate assumptions about the base relations and definitions of derived relations into the rules. We show this in \Cref{sec:assumptions}.
+Since the proof system we design, will handle CAT expressions and not just arbitrary relations, there are rules to capture the properties of the CAT base relations given in \Cref{sec:relationspecific}. Furthermore, we incorporate assumptions about the base relations and definitions of derived relations into the rules in \Cref{sec:assumptions}.
 
 
 \subsection{Eliminating the Constraints}\label{sec:constraints}
-One important aspect that one has to keep in mind when comparing models is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
+One important aspect, that one has to keep in mind when comparing models, is that the constraints \texttt{acyclic}, \texttt{irreflexive} and \texttt{empty} inverse the inclusion of relations.
 This means the following:
 \begin{lemma}\label{lem:elimination}
 Let $\relr_1, \relr_2 \subseteq (E \times E)$ be two relational terms. For any inclusion $\relr_1 \subseteq \relr_2$ it holds that $\bangle{constraint}~ \relr_2 \subseteq \bangle{constraint}~ \relr_1$ if the constraint is the same for each relation.
@@ -465,8 +467,8 @@ Let the constraint be \texttt{empty}:
 \inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
 \inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
 \end{rules}
-
-Since not every inclusion offers the comfort of having both models use the same constraint, they need to be converted. For this purpose there are some rules:
+\pagebreak
+Since not every inclusion offers the comfort of having both models using the same constraint, they need to be converted. For this purpose we construct rules from the following lemmata:
 
 \begin{lemma}\label{lem:irracy}
 For any relational term $\relr$, it holds that $\semsof{\mathtt{irreflexive}~ \relr^+} = \semsof{\mathtt{acyclic}~ \relr}$.
@@ -510,7 +512,7 @@ For any relational term $\relr$ it holds that $\semsof{\mathtt{empty}~ \sf r} = 
 &=& \semsof{\texttt{acyclic}~ \sf r \cup r^{-1}} \reason{\defof \semsof{\texttt{acyclic}}}
 \end{eqnarray*}
 \end{proof}
-
+\pagebreak
 The \cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} give us the following four rules:
 \begin{rules}{Constraint Transformation}
 \inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
@@ -523,7 +525,7 @@ These will be needed to eliminate the constraint from the term and to be able to
 
 
 \subsection{Relational implications}\label{sec:implications}
-The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like union there is only one version of each rule since there is no different effect when interchanging the relations. Furthermore, in \Cref{sec:transformations} we state rules for commutativity and others. \\
+The most basic rules are those which are always true for any relations. We list them here and sort them by the contributing operators. For commutative operators like union there is only one version of each rule, as there is no different effect when interchanging the relations. Furthermore, in \Cref{sec:transformations} we state rules for commutativity and others. \\
 Let $\Delta[t]$ be a relation term that includes the subterm $t$. 
 
 \begin{rules}{No Operator}
@@ -568,7 +570,7 @@ At the same time, the alternative rule offers the same capabilities and could th
 %\inferrule*[left=($._{LL}$)]{\sf r \subseteq \id}{\sf r.s \subseteq s}} \and
 \inferrule*[left=($._{LR}$)]{\relr \subseteq \relr' \\ \rels \subseteq \rels'}{\relr.\rels \subseteq \relr'.\rels'}
 \end{rules}
-For concatenation we can use one general rule where we can construct many special cases with the help of the \id{} relation. Using the ($\id_{conc}$) rule that we introduce in a later section, we can construct cases for $\rels' = \id, \relr' = \id, \relr = \id$ or $\rels= \id$. This builds upon the fact that \id{} is a neutral element for concatenation. %$\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
+For concatenation we present use one general rule that offers many special cases, which we can construct with the help of the \id{} relation. Using the ($\id_{conc}$) rule that we introduce in a later section, we may construct cases for $\rels' = \id, \relr' = \id, \relr = \id$ or $\rels= \id$. This builds upon the fact that \id{} is a neutral element for concatenation. %$\relr.\rels \subseteq \relr'(.\id)$, $\relr.\rels \subseteq (\id.)\rels'$, $\relr(.\id) \subseteq \relr'.\rels$ and $(\id.)\rels \subseteq \relr'.\rels'$.
 \begin{rules}{Transitive Closure}
 \inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf r^+ \subseteq s} %\and
 %\inferrule*[left=($+_{LR}$)]{\sf r \subseteq s^+}{\sf r^+ \subseteq s^+} \and
@@ -578,7 +580,7 @@ For the transitive closure we need only one rule. In the case of $\relr \subsete
 The ($+_L$) rule uses an invariant \relI{} which is a fixed point under concatenation with \relr.
 The choice of $\relI$ is not deterministic and can therefore not be automated. So far it has been sufficient to use $\relI = \Rels$ in most cases. \\
 
-We can ignore the \textit{inversion} operator in the implications since according to \Cref{lem:inversion} every relation that features this operation can be transformed into an expression that features only inverted base relations. For this transformation we need the rules in \Cref{rule:inversion}. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unions of other relations according to their definition.
+We ignore the \textit{inversion} operator in the implications since, according to \Cref{lem:inversion}, every relation that features this operation can be transformed into an expression that features only inverted base relations. For this transformation we need the rules in \Cref{rule:inversion}. Similarly, we can ignore the Kleene-star (transitive closure) and the reflexive closure, since they are only unions of other relations according to their definition.
 
 
 \begin{lemma}[Inversion Lemma]\label{lem:inversion}
@@ -605,7 +607,7 @@ While testing the proof system, this rule was repeatedly needed to shorten the p
 \subsection{Transformations}\label{sec:transformations}
 Another part of the rules are transformations which are based on equalities of terms (e.g. $\relr~ \cup~ \rels= \rels~ \cup~ \relr$) instead of inclusion between terms. Therefore, the transformations can be used in either direction and terms on either side of the inclusion can be replaced.
 
-The empty relation \0{} functions as a neutral element for union and absorbing element for concatenation and intersection, while the the full relation $(E \times E)$ is the neutral element for the intersection and the identity relation \id{} the neutral element for concatenation. This means, additionally, that \id{} is symmetric and transitive. Since this holds for any subrelation of \id{}, we can give generalizations of those rules for any relation \relr. For the following rules, let $\Omega[\dots]$ be a relational inclusion term.
+The empty relation \0{} functions as a neutral element for union and absorbing element for concatenation and intersection, while the full relation $(E \times E)$ is the neutral element for the intersection and the identity relation \id{} the neutral element for concatenation. This means, additionally, that \id{} is symmetric and transitive. Since this holds for any subrelation of \id{}, we can give generalizations of those rules for any relation \relr. For the following rules, let $\Omega[\dots]$ be a relational inclusion term.
 \begin{rules}{Neutral and Absorbing Element}
 \inferrule*[left=($\0_{\cup}$)]{\Omega[\sf r]}{\Omega[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Omega[\0]}{\Omega[\sf r \cap \0]} \and
@@ -648,7 +650,7 @@ To incorporate the capabilities these properties offer, they will be added to th
 %\inferrule*[left=($._{\cap distL}$)]{\Omega[\sf s.r \cap s'.r]}{\Omega[\sf(s \cap s').r]} 
 \end{rules}
 
-The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a union operator. Therefore we do not need explicit rules for these operators, but can rely on the rules for union. 
+The Kleene star $*$ and reflexive closure $?$ can be resolved into a term consisting of two subterms connected through a union operator. Therefore, we do not need explicit rules for these operators, but can rely on the rules for union. 
 There are still some transformations for these operators based on their definition:
 \begin{rules}{Operator Definitions}
 \inferrule*[left=($+$)]{\Omega[\sf r.r^*]}{\Omega[\sf r^+]} \and
@@ -680,7 +682,7 @@ Let $\relr \subseteq (E \times E)$ be a relation. $\relr^+ = \relr^{+^+}$ holds.
 \begin{lemma}\label{lem:+cap+}
 Let $\relr,\rels \subseteq (E \times E)$ be relations. Then $\sf r^+ \cap s^+ = (r^+ \cap s^+)^+$ holds. 
 \end{lemma}
-\begin{proof} The $\impl$ direction is very intuitive and easy to show:
+\begin{proof} The $\impl$ direction is quite intuitive:
 \begin{eqnarray*}
 \edgein \relr^+ \cap \rels^+ &\Leftrightarrow & \edgein (\relr^+ \cap \rels^+)^1 \\
 &\impl & \exists n \in \N: \edgein (\relr^+ \cap \rels^+)^n \\
@@ -732,7 +734,7 @@ Let $\relr \subseteq (E\times E)$ be a relation. Then $\sf r^* = r^*.r^*$ holds.
 \end{proof}
 
 As mentioned in the previous section in \Cref{lem:inversion}, it is possible to transform any inclusion term into one that uses inversion only on base relations. The proof in \Cref{sec:inversionproof} for this lemma therefore provides some useful transformations:
-\begin{rules}{Inversiontransformations}\label{rule:inversion}
+\begin{rules}{Inversion Transformations}\label{rule:inversion}
 %\begin{mathpar}
 \inferrule*[left=($-1_{\cup}$)]{\Omega[\sf r^{-1} \cup s^{-1}]}{\Omega[\sf (r \cup s)^{-1}]} \and
 \inferrule*[left=($-1_{\cap}$)]{\Omega[\sf r^{-1} \cap s^{-1}]}{\Omega[\sf (r \cap s)^{-1}]} \and
@@ -859,7 +861,7 @@ We use definitions like \texttt{let r = s} as a rule
 \pagebreak
 
 With the ability to eliminate constraints, a proof system for relational inclusions and rules for incorporating basic CAT theory and assumptions and definitions, the proof system can handle inclusions between memory consistency models. At least, when they are defined in rational CAT.
-An example for such a proof is in \Cref{fig:sctso} where we prove that SC stronger than TSO or in \Cref{sec:example2} where we prove the inclusion $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$.
+An example for such a proof is in \Cref{fig:sctso} where we prove that SC stronger than TSO or in \Cref{sec:example2} of the appendix where we prove the inclusion $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$.
 
 \begin{figure}[H]
 \begin{mathpar}
@@ -901,13 +903,12 @@ An example for such a proof is in \Cref{fig:sctso} where we prove that SC strong
 %\todo{was tun bei allen anderen Termen?}
 %For terms where the recursion is not isolated, i.e. $\Upsilon$ is not recursion-free, it is more difficult to find rules. Here we need to use cyclic proofs with a progression rule.
 %The progression rule is the following:
-\pagebreak
+\vfill
 \section{Soundness}\label{sec:soundness}
-To prove soundness of the proof system, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
-The transformations are proven in the corresponding section or in the appendix. 
-
+For soundness of the proof system, soundness of all rules is necessary. Most of the rules can easily be proven through logical implications. For strengthening and weakening, the rules need to be proven with monotonicity of each operator. This follows in the next subsections.
+The transformations are proven in the corresponding section or in the appendix. \\
 Using the \Cref{lem:implications,lem:bmono,lem:umono}, it is clear that every proof $\prf$ that uses only these rules is sound and therefore the inclusion at the root of $\prf$ holds.
-
+\pagebreak
 \subsection{Weakening and Strengthening}
 To prove the weakening and strengthening rules, we need to prove monotinicity for each operator. Starting with the binary operators, this guarantees that for union, intersection and concatenation, it holds that replacing a subterm with a stronger one will not weaken the term and replacing a subterm with a weaker one will not strengthen the term.
 \begin{lemma}[Binary Monotinicity]\label{lem:bmono} Let $\star: (E\times E) \times (E \times E) \rightarrow (E \times E)$ be any binary operator in rational CAT. It holds that if $\sf r \subseteq s$, then $\sf t \star r \subseteq t \star s$ and $\sf r \star t \subseteq s \star t$ \end{lemma} 
@@ -919,7 +920,7 @@ We will start with the union operator:
 & \impl & (e,e') \in \relt \lor (e,e') \in \sf s \reason{r \subseteq s} \\
 &\impl & (e,e') \in \relt \cup \rels \reason{\defof \rel_1 \cup \rel_2}
 \end{eqnarray*}
-Just as simple as for union is the proof for intersection:
+Just as intuitive as for union is the proof for intersection:
 \begin{eqnarray*}
 (e,e') \in \sf t \cap r &\impl & (e,e') \in \relt \land (e,e') \in \relr \reason{\defof \rel_1 \cap \rel_2}\\
 & \impl & (e,e') \in \relt \land (e,e') \in \sf s \reason{r \subseteq s} \\
@@ -938,7 +939,9 @@ Since the first two operators were commutative, the order of the relations was n
 \end{eqnarray*}
 This proves monotonicity for every binary operator of rational CAT.
 \end{proof}
-The unary operators of rational CAT are inversion, reflexive closure, transitive closure and reflexive-transitive closure. The next step is to show monotonicity for these aswell.
+\noindent The unary operators of rational CAT are inversion, reflexive closure, transitive closure and reflexive-transitive closure. The next step is to show monotonicity for these aswell.
+
+\pagebreak
 \begin{lemma}[Unary Monotonicity]\label{lem:umono} Let $f:(E\times E) \rightarrow (E \times E)$ be a unary operator (function) of rational CAT. It holds that for any $\relr,\rels \subseteq E \times E$, if $\sf r \subset s$, then $f(\relr) \subseteq f(\rels)$.
 \end{lemma}
 \begin{proof}
@@ -959,7 +962,8 @@ For the unary operators reflexive closure the monotonicity is given through its 
 For the reflexive-transitive closure the monotonicity is given through their definition and the monotonicity of the union operator and the transitive closure:
 \[\relr^* = \relr^+ \cup \id \subseteq \rels^+ \cup \id = \rels^*\]
 \end{proof}
-With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and strengthening rules.
+
+\noindent With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and strengthening rules.
 \begin{itemize}
 \item $(\textsc{weak}):~ \Delta[\relr] \subseteq \rels \land {\sf t \subseteq r} \impl \Delta[\relt] \subseteq \rels$
 \begin{eqnarray*}
@@ -973,7 +977,7 @@ With \Cref{lem:bmono,lem:umono} at hand, we can now prove the weakening and stre
 \end{eqnarray*}
 \end{itemize}
 
-
+\pagebreak
 \subsection{Proving Soundness of the Rules}\label{sec:prvrelimp}
 Since the transformations are either based on definitions of operators or proven in \Cref{sec:transformations}, we will only need to prove the implications from \Cref{sec:implications}.
 
@@ -1081,19 +1085,19 @@ Since $\relI \subseteq \rels$ and as we have shown $\relr^+ \subseteq \relI$, we
 %\end{eqnarray*}
 \end{itemize}
 \end{proof}
-
+\pagebreak
 \begin{lemma}\label{lem:rulessoundness}
 For every rule from the \Cref{sec:implications,sec:transformations} it holds that the premise implicates the conclusion and the rule is therefore sound.
 \end{lemma}
 \begin{proof}
-For the rules in \Cref{sec:implications} we can use \Cref{lem:implications}. For the rules in \Cref{sec:transformations} the argument is that the Rules "Neutral and Absorbing Element", "Operator Properties" and "Operator Definitions" are based on the definitions of the relations and operators and require no proof. For the "Transitive Closure Simplification Rules", \Cref{lem:++,lem:+cap+,lem:*cup*,lem:*.*} show their correctness as does \Cref{lem:inversion} for the "Inversiontransformations".
+For the rules in \Cref{sec:implications} we can use \Cref{lem:implications}. For the rules in \Cref{sec:transformations} the argument is that the rules "Neutral and Absorbing Element", "Operator Properties" and "Operator Definitions" are based on the definitions of the relations and operators and require no proof. For the "Transitive Closure Simplification Rules", \Cref{lem:++,lem:+cap+,lem:*cup*,lem:*.*} show their correctness as does \Cref{lem:inversion} for the "Inversiontransformations".
 \end{proof}
 
 \begin{theorem}[Soundness]\label{thm:soundness}
 Let $\relr, \rels \subseteq (E\times E)$ be two relational terms. If there is a proof $\prf$ for the inclusion $\relr \subseteq \rels$, then the inclusion holds.
 \end{theorem}
 \begin{proof}
-Let $\prf_n$ be any proof for a relational inclusion $\Relr \subseteq \rels$ of length $n \in \N$, meaning that $\prf_n$ uses $n$ rules in the longest branch. We prove the soundness of $\prf$ via induction on $n$. To that end, let $n=1$. $\prf_1$ only uses one rule and from \Cref{lem:rulessoundness} we know that this rule is sound.\\
+Let $\prf_n$ be any proof for a relational inclusion $\Relr \subseteq \rels$ of length $n \in \N$, meaning that $\prf_n$ uses $n$ rules in the longest branch. We prove the soundness of $\prf$ via induction on $n$. To that end, let $n=1$. $\prf_1$ only uses one rule and by \Cref{lem:rulessoundness} this rule is sound.\\
 We assume as induction hypothesis that any $\prf_n$ is sound for a particular $n$. \\
 A proof of length $n+1$, which we call $\prf_{n+1}$ consists of a proof of length $n$ and one more rule that has $\relr \subseteq \rels$ as conclusion. By the induction hypothesis we know the first part of the proof to be sound and by \Cref{lem:rulessoundness} this also holds for the last rule. 
 Hence, $\prf_{n+1}$ is sound and by the principle of the induction this holds for every proof $\prf$ of any length.
@@ -1108,8 +1112,8 @@ Let $M_1 = \bangle{constraint}~ \relr_1$, $M_2 = \bangle{constraint}~ \relr_2$ b
 \end{theorem}
 \begin{proof}
 We have a CAT inclusion proof $\catprf$ for the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ that uses a relational inclusion proof $\prf$. 
-From \Cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} we know that any two CAT expressions can be transformed to use the same constraint. The constraint transformation rules thus yield $M_1' = \bangle{constraint}~ \relr_1', M_2' = \bangle{constraint}~ \relr_2'$ with $\semsof{M_1} = \semsof{M_1'}$ and $\semsof{M_2} = \semsof{M_2'}$ where the constraints are the same. \\
-With \Cref{lem:elimination} we know that if $\relr_2' \subseteq \relr_1'$ holds, then the CAT inclusion holds as well. Since any CAT inclusion proof $\catprf$ contains a relational inclusion proof $\prf$ and we know from \Cref{thm:soundness} that these are sound, the inclusion $\relr_2' \subseteq \relr_1'$ holds. Together with \Cref{lem:elimination} it is clear that $\semsof{M_1} = \semsof{M_1'} \subseteq \semsof{M_2'} = \semsof{M_2}$ holds and hence the CAT inclusion proof $\catprf$ is sound.
+By \Cref{lem:irracy,lem:emptyirr,lem:irrempty,lem:emptyacy} we know that any two CAT expressions can be transformed to use the same constraint. The constraint transformation rules thus yield $M_1' = \bangle{constraint}~ \relr_1', M_2' = \bangle{constraint}~ \relr_2'$ with $\semsof{M_1} = \semsof{M_1'}$ and $\semsof{M_2} = \semsof{M_2'}$ where the constraints are the same. \\
+\Cref{lem:elimination} yields the implication that if $\relr_2' \subseteq \relr_1'$ holds, then the CAT inclusion holds as well. Since any CAT inclusion proof $\catprf$ contains a relational inclusion proof $\prf$ and we know by \Cref{thm:soundness} that these are sound, the inclusion $\relr_2' \subseteq \relr_1'$ holds. Together with \Cref{lem:elimination} it is clear that $\semsof{M_1} = \semsof{M_1'} \subseteq \semsof{M_2'} = \semsof{M_2}$ holds and hence the CAT inclusion proof $\catprf$ is sound.
 \end{proof}
 
 
@@ -1122,7 +1126,7 @@ If the inclusion $\semsof{M_1} \subseteq \semsof{M_2}$ holds, there exists a pro
 \end{theorem}
 
 To prove the completeness of this proof system on the rational CAT fragment we will transform any proof of a relational inclusion by Grünke et al. \cite{Gru+26}, where completeness was proven, into one of ours.  
-Since RAT-CAT-SAT argues directly about events and we do not, we lose some expressiveness in comparison to Grünke et al.. Therefore, we reduce the number of proofs that RAT-CAT-SAT can express to only those that show inclusions between relations. \\
+Since RAT-CAT-SAT argues directly about events and we do not, we lose some expressiveness in comparison to Grünke et al.. Therefore, we reduce the number of proofs that RAT-CAT-SAT can express to only those, which show inclusions between relations. \\
 We can justify this with the Lemmata in \Cref{sec:constraints}. Any inclusion between CAT expressions can be transformed into an inclusion between two relations where the CAT inclusion is true if and only if the relational inclusion holds.
 Since the procedure of Grünke et al. \cite{Gru+26} is complete for any unsatisfiable cube, a proof $\pi$ has to exist and if any proof of a relational inclusion that is confined to the syntax of rational CAT can be translated into a relational inclusion proof $\prf_\pi$ in our system, then we can construct a proof for any CAT inclusion. \\
 The approach of Grünke et al. transforms an inclusion of the form $\relr \subseteq \rels$ into a logical formula $\phi_{\relr \subseteq \rels} = \phi_{\relr} \land \neg \phi_{\rels}$ where the unsatisfiability of the formula corresponds to the inclusion term being true. Unsatisfiability in \cite{Gru+26} is defined with the help of $\Sigma$-structures, which are basically the domain of events and an interpretation of the sets, functions and relations. Furthermore, $\mathcal{T}_\Sigma$ is the set of all $\Sigma$-structures and $\mathcal{T}_\Sigma$-unsatisfiability is defined as there being no $\Sigma$-structure that satisfies the formula.
@@ -1138,14 +1142,16 @@ If a RAT-CAT formula $\phi_{\relr \subseteq \rels}$ is $\mathcal{T}_\Sigma$-unsa
 
 
 The proof system of Grünke et al. starts with the formula $\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels$ and transforms it until the tableau is \textit{closed} with a set of rules. 
-A closed tableau is one where every branch in it is closed, meaning that every branch is either infinite or contains $\bot_0$. Here, $\bot_0$ functions as a symbol representing a contradiction and essentially meaning \textit{false}. \\ 
+A tableau is closed tableau if every branch in it is closed, meaning that every branch is either infinite or contains $\bot_0$. Here, $\bot_0$ functions as a symbol representing a contradiction and essentially meaning \textit{false}. \\ 
 The decomposition of the formula $\phi_\relr$ in \cite{Gru+26} results in a number of atomic predicates ($e \in A, \edgein \relr, e = e', e \neq \emptyset$) that events need to fulfill to form an edge in \relr. The negated rules only decompose the the negative part of the formula $\neg \varphi_\rels$ to give predicates that describe the complement of \rels. If there exist events that fulfill all of these properties, then there exists a counterexample to the inclusion.
-Hence, unsatisfiability of the formula is equivalent to the inclusion being true. \\
-Furthermore, these inclusions have a standard form as a RAT-CAT formula: An inclusion $\relr \subseteq \rels$ is
+Hence, unsatisfiability of the formula is equivalent to the inclusion being true. 
+
+\pagebreak
+\noindent Furthermore, these inclusions have a standard form as a RAT-CAT formula: An inclusion $\relr \subseteq \rels$ is
 \[\phi_{\relr \subseteq \rels} = \phi_\relr \land \neg \phi_\rels = (e_1.\relr \cap e_2) \neq \emptyset \land \neg((e_1.\rels \cap e_2) \neq \emptyset)\]
 We call this the \textit{Relational Inclusion Standard Form (RISF)}.
 We prove completeness by showing that for every formula $\phi_{\relr \subseteq \rels}$ in RISF that has a proof $\pi$, $\relr \subseteq \Rels$ can be proven by $\prf_\pi$ in our system. \\
-Besides the RISF we can also assume that $\pi$ is the shortest proof for unsatisfiability of $\phi_{\relr \subseteq \rels}$. In Grünke et al.'s system, rules can be applied unnecessarily for example when for $\relr \subseteq \relr \cup \rels$ the term $\rels$ is decomposed.
+Besides the RISF we can also assume that $\pi$ is the shortest proof for unsatisfiability of $\phi_{\relr \subseteq \rels}$. In Grünke et al.'s system rules can be applied unnecessarily. An example is the term $\relr \subseteq \relr \cup \rels$ if the subterm $\rels$ is decomposed instead of $\relr$.
 Assuming $\pi$ to be the shortest proof will give us the information that every applied rule makes progress towards a contradiction and restricts the number of cases we need to cover for our translation. It also means, that whenever a rule is applied to a certain predicate, the decomposition of that predicate will yield the contradiction to close the branch. \\
 Furthermore, we can assume that base sets will only be used in cross products to form relations according to the syntax of CAT (see \Cref{fig:cat}).
 The notation from \cref{sec:notation} can be written as $[A].\relr.[B] = \relr \cap (A \times B)$.
@@ -1209,9 +1215,9 @@ Whenever $\pi$ splits a non-atomic literal $l$ into the non-atomic literals $l_1
 \end{lemma}
 \begin{proof}
 In $\pi$ many rules split a literal into multiple ones. The atomic literals $(\neg) e_1 = e_2, e \in A, (e,e') \in \relr$ and $e \neq \emptyset$ keep information about the relational term that has already been decomposed and are not of concern for this lemma.
-We only look at the non-atomic literals where one literal turns into two new ones.
 The rules that we care about are the following: 
 \[(\neg aL), (\neg aR), (\neg {*}L), (\neg {*}R), (\neg {\cup_2}L), (\neg {\cup_2}R), (\neg {\equiv}L), (\neg {\equiv}R), (\neg A), (\neg \cup_1), (\neg \top_1)\]
+We only concern ourselves with the non-atomic literals where one literal turns into two new ones.
 Since this only appears in negative reasoning, we can assume that the literal in the premise has the form $\neg p[\dots]$. Furthermore, this gives us the knowledge that only the including term $\rels$ in $\relr \subseteq \rels$ is concerned in $\prf_\pi$. \\
 Two literals in the same cube are always connected by a conjunction, meaning that both have to be true in order to fulfill the cube. Seeing that $\pi$ will show the unsatisfiability of the cube, the conjunction can be interpreted as two options to create a contradiction. This translates to being two terms that can prove the inclusion $\relr \subseteq \rels$. In relational inclusion proofs the equivalent term would be a union $\relr \subseteq \rels_1 \cup \rels_2$ where each $\rels_i$ represents one of the literals.
 We can make this more explicit: The rules we consider all have the form 
@@ -1221,7 +1227,7 @@ We can make this more explicit: The rules we consider all have the form
 where $\Gamma$ are more predicates which may describe more including or included relational terms and $p[\dots]$ is the context of $\Rels$. For the translation in our system, we denote the context as $\Delta[\dots ]$ and let $\relr_\Gamma$ and $\relt_\Gamma$ be the included and including terms described by $\Gamma$ respectively. Given these translations, we get: 
 \begin{mathpar}\inferrule*[]{\relr_\Gamma \subseteq \relt_\Gamma \cup \Delta[\rels_1] \cup \Delta[\rels_2]}{\relr_\Gamma \subseteq \relt_\Gamma \cup \Delta[\rels]}
 \end{mathpar}
-If there is a way to get $\Delta[\rels_1 \cup \rels_2]$ from $\Delta[\rels]$ then we can use ($\cap_{\cup dist}$), ($._{\cup distL}$) and ($._{\cup distR}$) to factor out the union from $\Delta$.
+If there is a sequence of rules that transforms $\Delta[\rels]$ into $\Delta[\rels_1 \cup \rels_2]$, then we can use ($\cap_{\cup dist}$), ($._{\cup distL}$) and ($._{\cup distR}$) to factor out the union from $\Delta$.
 Now, we only need to show that we can get $\rels_1 \cup \rels_2$ from $\rels$ with our rules for every splitting rule in \cite{Gru+26}. \\
 
 ($\neg {*}L$) has $\Gamma, \neg p[e.\Rels^*]$ as premise and $\Gamma, \neg p[e], p[(e.\rels).\rels^*]$ as a conclusion. With the ($*$) rule, we can get $\id \cup \rels^+$ inside any context and with ($+$) we can transform $\rels^+$ to $\rels.\rels^*$.
@@ -1229,7 +1235,7 @@ For ($\neg {*}R$) the same holds. \\
 
 ($\neg {\cup_2}L$) and ($\neg {\cup_2}R$) have $\neg p[e.(\rels_1 \cup \rels_2)]$ or $\neg p[(\rels_1 \cup \rels_2).e]$ respectively in the premise and $\neg p[\Rels_1], \neg p[\Rels_2]$ in the conclusion. Thus, the term in the premise already has the desired form and no more transformations are necessary. \\
 
-($\neg \cup_1$) has $\neg p[A_1 \cup A_2]$ in the premise and $\neg p[A_1], \neg p[A_2]$ in the conclusion. The notion of sets of events in \cite{Gru+26} is that it can be either a base set or the possible results of $e.\rels$. In the latter case, there must have been a union of relations in the term and we can use the procedure for the ($\neg {\cup_2}L$) rule.
+($\neg \cup_1$) has $\neg p[A_1 \cup A_2]$ in the premise and $\neg p[A_1], \neg p[A_2]$ in the conclusion. The notion of sets of events in \cite{Gru+26} is that they can be either a base set or the possible results of a relational expression like $e.\rels$. In the latter case, there must have been a union of relations in the term and we can use the procedure for the ($\neg {\cup_2}L$) rule.
 In the former case, we know that base set appear in rational CAT only in cross products $A \times B$. So if the rule is applied and we have $(A_1 \cup A_2) \times B$, we can use the ($\times_{\cup distL}$) and ($\times_{\cup distR}$) rules to factor out the union and then proceed as for ($\neg \cup_2 L$). \\
 
 ($\neg aL$) and ($\neg aR$) have $(e_1,e_2) \in \Rels$ in their premise together with either $\neg p[e_1.\rels]$ or $p[\rels.e_2]$ and $\neg p[e_1.\rels], \neg p[e_2], (e_1,e_2) \in \Rels$ respectively $\neg p[\rels.e_2], \neg p[e_1], (e_1,e_2) \in \rels$ in the conclusion. The predicate $(e_1,e_2) \in \rels$ tells us that the relation $\Rels$ appears at the same position in the included term. Therefore, the rule will eliminate that relation in one of the resulting terms and keep it in the other. In \Cref{sec:negreasoning} we will see how exactly the rule handles this. As far as the splitting is concerned, we can simply duplicate the term $\rels$ with (\textsc{strength}), ($\cup_L$) and (\textsc{reflexivity}) and continue with the procedure from \Cref{sec:negreasoning} in only one of the terms. \\
@@ -1239,7 +1245,7 @@ In the former case, we know that base set appear in rational CAT only in cross p
 
 ($\neg \top_1$) has in it's premise $\neg p[\top_1]$ and in it's conclusion $\neg p[\top_1],\neg[e]$. This is basically the same case as ($\neg A$) since $\top_1$ is the full set of events ($E$ in our system) and $e$ is any event which is automatically in $\top_1$.
 \end{proof}
-
+\pagebreak
 \begin{lemma}[Branching Lemma]\label{lem:branching}
 Whenever $\pi$ creates new branches like this:
 \begin{mathpar} \inferrule*[left=$\pi$:]{\pi_1}{\C_1 \\ \mid \\ \C_2}
@@ -1249,7 +1255,7 @@ where $\pi_1$ is the preceding proof of a branching rule and $\C_1$ and $\C_2$ a
 
 \begin{proof}
 For unions and Kleene-stars the positive rules create new \textit{branches}. To prove the lemma and emulate the behavior of $\pi$, the branching in $\prf_\pi$ needs to have the same effect on the semantics.
-A union in the positive term essentially means, that a counterexample to the inclusion needs to be in one of the unioned relations and to prove the inclusion true it has to be shown that there cannot be a counterexample in either.
+A union in the positive term essentially means, that a counterexample to the inclusion needs to be in one of the unioned relations and to prove the inclusion it has to be shown that there cannot be a counterexample in either.
 This corresponds closely to branching a union in the included term with ($\cup_L$), because it argues that both subrelations need to be included, i.e. there is no counterexample to the induction in either.
 For the Kleene-star rule ($*L$) the branching is based on a union too, since $\relr^* = \id \cup \relr^+$. \\
 In negative reasoning, branching occurs whenever there is an intersection or a cross product.
@@ -1277,10 +1283,10 @@ A different way would be to use the ($\neg_{\cdot 1,2}R$) rule which can be appl
 The argument is analogous for ($\neg {\times}R$). \\
 Essentially this eliminates the cross product from the term, since we know that the same cross product must be present at the same position in the included term. Again, we can use the ($._{LR}$) rule to mimic the branching in $\pi$ and create a branch with $(A_1 \times A_2) \subseteq (A_1 \times A_2)$ and two more for the remaining term. \\
 
+\pagebreak
 The last two rules that create branches are ($\neg_1 {\times} L$) and ($\neg {\times_1}L$) (and their right-sided counterparts). Starting with ($\neg_1 {\times} L$), we can assume $\color{orange}{s_1}$ to be a term $e_1.\rels$ or $\rels.e_1$ and $\color{red}{s_2}$ to be a base relation $A$, because of the syntax of rational CAT. \\
 The rule creates one branch with $\Gamma, \neg e_1.\rels \cap e \neq \emptyset$ which can only be closed with decomposition of $\Rels$ yielding an event $f$ with $(e_1,f) \in \rels$ and a contradiction using $\neg f = e$. This requires $e_1.\rels.(e \times A)$ to be in the included term as well. For the translation, we must take into account that our rules are context-sensitive. However, if the context is an intersection, then we can apply the procedure from ($\neg eL$). For concatenations, we can again use ($._{LR}$) as we did previously with ($\neg {\times}L$).
 For ($\neg {\times_1}L$) the procedure is exactly the same. \\
-
 Hence, we can use branching in $\prf_\pi$ whenever it occurs in $\pi$ and keep the semantics the same. 
 \end{proof}
 
@@ -1330,7 +1336,8 @@ If the context is $B \cap (e.\relt)$, the decomposition of $e.\relt$ can, again,
 The ($\cap_e$) rule is the only rule that yields a new negated atomic predicate. Such a predicate is needed to close the branch and therefore the term $B \cap f$ can only be resolved when $f_2 \in B$ exists. Due to $\pi$ being the shortest proof, the branch has to be closed with this predicate and $f_2 \in B$ exists and therefore the ($\neg A$) rule is applicable directly after the ($\neg {\times}L$) rule. 
 
 For ($\bot_2 L$) we consider that in positive reasoning the following rule ($\bot_1$) will close the branch and in negative reasoning, the rule would never be used. \\
-The reason for this argument is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. The only reason why this predicate might be decomposed would be when the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. 
+The reason for this argument is, that since $\pi$ is the shortest possible proof for the inclusion, no rule will be invoked unnecessarily. The ($\bot_2$) rule yields the empty set $\bot_1$ as a distinguished predicate, which in negative reasoning means that in the including term, there is an empty relation that is unified with other relations. 
+The sole reason why this predicate might be decomposed is that the included term is the empty relation too. In that case, the branch would have been already closed via the ($\bot_2$) and ($\bot_1$) rules in positive reasoning. 
 
 For ($\cdot^\inv L$) and ($\cdot^\inv R$) the lemma holds because we can assume according to \Cref{lem:inversion} the relation to be a base relation and any cross product of base sets would have been inverted via the ($\neg {\times}^\inv L$) rule. Furthermore, the resulting $\relr.e$ can be converted to $f$ via ($aR$) in positive reasoning and ($\neg aR$) in negative reasoning. Again, the precondition of $(f,e) \in \relr$ is met. \\
 Towards a contradiction, we assume that the precondition $(f,e) \in \relr$ does not exist. If we look at the term as a whole, then $e.\relr^\inv$ has to be concatenated to another term on the right side, in an intersection with another term or the only term left. In all three cases ($(\relr.e).\relt$ or $(\relr.e) \cap (e.\relt)$ or $(\relr.e) \cap e_2$), there is no rule applicable now that wasn't before. Therefore either the branch must be closed or $(f,e) \in \relr$ has to exist. For the branch to be closed, the same predicate (with $\relr.e$) has to appear positively. Because the positive term can always be decomposed into atomic predicates according to \cite{Gru+26}, this is not possible and the branch cannot be closed and furthermore, $(f,e) \in \relr$ has to exist.
@@ -1363,8 +1370,8 @@ The same goes for the subsequent application of the ($eL$) rule.
 \paragraph{Concatenation} If $\relr = \relr_1.\relr_2$, the ($._{2,2}L$) rule is applied and the result is
 \[p[(e_1.\relr_1).\relr_2]\]
 Here, the decomposition of Grünke et al. would continue with $e_1.\relr_1$ before it continues at some point in the future with $f.\relr_2$. \\
-This rule sets the order in which the decomposition continues. It changes nothing of the structure of the term and thus there is no need to translate it. \\
-
+This rule sets the order in which the decomposition continues. It changes nothing in the structure of the term and thus there is no need to translate it. 
+\pagebreak
 %-------------------------------- r_1 \cup r_2
 \paragraph{Union} If $\relr = \relr_1 \cup \relr_2$ then Grünke et al. will apply ($\cup_2L$) and branch the tableau. The result are these two terms:
 \begin{mathpar}
@@ -1377,13 +1384,13 @@ The resulting terms preserve the form of the predecessor and the decomposition c
 \end{mathpar}
 
 \noindent In both systems, the reasoning continues for the two relational terms that were unified before. The correctness of this translation originates from \Cref{lem:branching}. \\
-Since we need the union to be the outermost operator for the branching, we may need to use the ($._{\cup dist}$) or ($\cap_{\cup dist}$) rules. This is how we can take the context with us into the branches. \\
+Since we need the union to be the outermost operator for the branching, we may need to use the ($._{\cup dist}$) or ($\cap_{\cup dist}$) rules. This is how we can take the context into the branches. 
 
 %------------------------------ r_1 \cap r_2
 \paragraph{Intersection} If $\relr = \relr_1 \cap \relr_2$, Grünke et al. apply the ($\cap_2L$) rule resulting in 
 \[p[(e_1.\relr_1) \cap (e_1.\relr_2)]\]
 The decomposition continues for $e_1.\relr_1$ and $e_1.\relr_2$. At the end of either decomposition new events $f_1,f_2$ take the places of each of these terms according to \Cref{lem:decomposition} and the ($eL$) rule can be applied, resulting in one of these events being passed on to the surrounding term and producing $f_1 = f_2$.
-Again, this term does not change the structure of the term and needs no translation.\\
+Again, this term does not change the structure of the term and needs no translation.
 
 \paragraph{Kleene-star}
 In the case that $\relr = \relr_1^*$, Grünke et al.'s proof would use the ($*L$) rule which branches the tableau into one branch pursuing a counterexample where $r=\id$ and one branch where $r = r^+$.
@@ -1401,30 +1408,30 @@ By using the ($*$) transformation, making the union the outermost operator and u
 The outermost operator means that the whole term $\relr$ is of the form $\relr_1 \cup \relr_2$. For any union, we can always make it the outermost operator by applying the ($\cap_{\cup dist}$), ($._{\cup distL}$) and ($._{\cup distR}$) rules which distribute other binary operators into a union.
 
 %------------------------------- e x A
-\paragraph{Cross Product} If $\relr = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$, Grünke et al. would apply the (${\times} L$) rule preceded by the ($A$) rule which produces $f_1 \in A_1, e_1 = f_1, f_2 \in A, p[f_2]$, again passing a new event onto the surrounding term. Once more, this would not change the relational term and therefore no action is needed in our system. However, if one of the sets is a union of multiple sets the situation is different: \\
+\paragraph{Cross Product} If $\relr = (A_1 \times A_2)$ with $A_1,A_2 \subseteq E$, Grünke et al. would apply the (${\times} L$) rule preceded by the ($A$) rule which produces $f_1 \in A_1, e_1 = f_1, f_2 \in A, p[f_2]$, again passing a new event onto the surrounding term. Once more, this would not change the relational term and therefore no action is needed in our system. However, if one of the sets is a union of multiple sets the situation is different.
 
 %In the case that $\relr= (B \times A)$, the ($A$) rule can be applied, yielding the demanded form of $(e_3 \times A)$. In the case that $\relr = (A \times e_3)$, $\pi$ would again first use the ($A$) rule and then continue as described above.
 %Since in rational CAT the use of union is restricted to relations, there cannot be a set $A_1 = A_1' \cup A_1''$ and the rule ($\cup_1$) will never be applied in $\pi$.
 \paragraph{Set Union} If $A_1 = A_1' \cup A_1''$, then the ($\cup_1$) rule would branch the tableau before applying the ($A$) rule.
-To do this in our proof system, we need to transform $(A_1' \cup A_1'') \times A_2$ into $(A_1' \times A_2) \cup (A_1'' \times A_2)$ via ($\times_{\cup distR}$) or ($\times_{\cup distL}$), if the union concerns $A_2$. After that we can simply use the procedure for translating the ($\cup_2L$) rule to split our tableau. \\
+To do this in our proof system, we need to transform $(A_1' \cup A_1'') \times A_2$ into $(A_1' \times A_2) \cup (A_1'' \times A_2)$ via ($\times_{\cup distR}$) or ($\times_{\cup distL}$), if the union concerns $A_2$. After that we can simply use the procedure for translating the ($\cup_2L$) rule to split our tableau. 
 
 %------------------------------- id
-\paragraph{Identity} If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend very much on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
+\paragraph{Identity} If $\relr = \id$, the ($\id L$) rule will transform $e_1.\id$ into $e_1$. This eliminates \id{} from the formula. The consequences of this rule depend strongly on the context. If the context is $\relr'.\id.\relr''$, the rule truly eliminates \id{} since it has no effect on the term. Equivalently, we can use the ($\id_{conc}$) rule in our proof system.
 If the context is $\relr' \cap \id$, the rule preserves \id{} by decomposing it not into a new event but into $e_1$. In this case, we do not apply a rule in our system.
-If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule in $\pi$ would have been applied before and in our system the ($\cup_L$) rule. \\
+If the context is $e_1.(\id \cup \relr')$, the ($\cup_2L$) rule in $\pi$ would have been applied before and in our system the ($\cup_L$) rule. 
 
 %------------------------------- \bot2
 \paragraph{Empty Relation} If $\relr = \bot_2$ ($= \0$) and the ($\bot_2L$) rule is applied, the result is $\bot_1$ which is the empty set $\emptyset$. As any positive predicate that includes $\bot_1$ will be turned into $\bot_0$ via the ($\bot_1$) rule, this would close the branch. 
 We would write \0{} instead of $\bot_2$ and use the ($\0_\cap$) and ($\0_{conc}$) rules depending on the context. \\
 Because we can assume that any union would have been branched before, ($\0_\cup$) is not needed. Instead we would have a branch where the included term consists only of \0{} and we can apply the (\textsc{empty}) rule to close the branch. \\
-For intersection and concatenation our rules result in the elimination of the context, leaving only \0. Again, we can use the (\textsc{empty}) rule and close the branch. \\
+For intersection and concatenation our rules result in the elimination of the context, leaving only \0. Again, we can use the (\textsc{empty}) rule and close the branch. 
 
 %------------------------------ \top2
 \paragraph{Full Relation} If $\relr = \top_2$ ($= (E \times E)$) and Grünke et al. apply the ($\top_2L$) rule, the term $e_1.\top_2$ is replaced by $\top_1$ which is the full set of events $E$. In positive reasoning, Grünke et al. would apply the ($\top_1$) rule next and with that create a fresh event $f$ that is not constricted to being part of any relation.
 In our system, we need to be more aware of the context. For an intersection $(E\times E) \cap \relr'$ this equates to the ($\textsc{full}_\cap$) rule, which eliminates the full relation.
 For a concatenation, the full relation would stay and we would not apply any rule.
 
-\paragraph{Inversion} If $\relr = \relr'^{-1}$ then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, the ($aR$) rule can be used, yielding a fresh event $f$ as demanded by the decomposition lemma.
+\paragraph{Inversion} If $\relr = \relr'^{-1}$, then we can assume that $\relr'$ cannot be decomposed any further according to \cref{lem:inversion}. Therefore, after applying the ($\cdot^{-1}L$) rule, the ($aR$) rule can be used, yielding a fresh event $f$ as demanded by the decomposition lemma.
 Since the inversion is still in the term as an inverted edge $(f,e)$, we do not need to apply any rule in the corresponding relational inclusion proof.
 
 \subsubsection{Negative Reasoning}\label{sec:negreasoning}
@@ -1490,9 +1497,9 @@ For ($\neg_2 {\times}L$) and ($\neg {\times}_2L$) we will need no translation as
 For ($\neg_\cap {\times}L$) and ($\neg {\times}_\cap L$) we use the inversion of the ($A_\cap$) rule. Where $\pi$ factors in an intersection between a cross product and a relation, $\prf_\pi$ does the same. \\
 For ($\neg_1 {\times}L$) and ($\neg{\times}_1 L$) we proceed according to the proof of \Cref{lem:branching} where for the context being an intersection, we use the procedure for ($\neg eL$) and for the context being a concatenation we use the ($._{LR}$) rule.
 
-\paragraph{Set Union} If the ($\neg \cup_1$) rule is used in $\pi$, the predicate is split. As in rational CAT, sets are only used in cross products, this would only be applied to terms where one set of the cross product is a union like for example $p[(A_1 \cup A_2) \times A_3]$. Like in positive reasoning, for $\prf_\pi$ we can use the transformations ($\times_{\cup distL}$) and ($\times_{\cup distR}$) to distribute the cross product into $p[(A_1 \times A_3) \cup (A_1 \times A_3)]$. From \Cref{lem:splitting}, we know that this union, when we make it the outermost operator, is equal to splitting the predicates and we can continue with the procedure as stated in the paragraph on regular unions.
+\paragraph{Set Union} If the ($\neg \cup_1$) rule is used in $\pi$, the predicate is split. As in rational CAT, sets are only used in cross products, this would only be applied to terms where one set of the cross product is a union like for example $p[(A_1 \cup A_2) \times A_3]$. Like in positive reasoning, for $\prf_\pi$ we can use the transformations ($\times_{\cup distL}$) and ($\times_{\cup distR}$) to distribute the cross product into $p[(A_1 \times A_3) \cup (A_1 \times A_3)]$. From \Cref{lem:splitting}, we know that this union, when we factor it out, is equal to splitting the predicates and we can continue with the procedure as stated in the paragraph on regular unions.
 
-\paragraph{Elimination ($\neg aL$):} If \rels{} in $e_1.\rels$ is simply a base relation, Grünke et al. would want to apply ($\neg aL$). This is only possible if the positive reasoning provides an atomic predicate $(e_1,f_1) \in \rels$ as a premise. This corresponds to the existence of a term $\rels$ or $\rels \cap \rels'$ at the same position in the included term. The ($\neg aL$) rule produces $\neg p[e_1.\rels] \land (e_1,f_1) \in \rels \land \neg p[f_1]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use again the ($._{LR}$) rule.\\
+\paragraph{Elimination ($\neg aL$):} If \rels{} in $e_1.\rels$ is simply a base relation, Grünke et al.'s proof would apply ($\neg aL$). This is only possible if the positive reasoning provides an atomic predicate $(e_1,f_1) \in \rels$ as a premise. This corresponds to the existence of a term $\rels$ or $\rels \cap \rels'$ at the same position in the included term. The ($\neg aL$) rule produces $\neg p[e_1.\rels] \land (e_1,f_1) \in \rels \land \neg p[f_1]$. Since this essentially eliminates a concatenated relation at the start of the term we need to apply a rule in $\prf_\pi$ that does the same. For this purpose, we use again the ($._{LR}$) rule.\\
 While this rule opens a new branch in $\prf_\pi$, it can be closed immediately by applying either the (\textsc{reflexivity}) rule or the ($\cap_L$) rule.
 
 \paragraph{Event intersection ($\neg \cap_e$):} The ($\neg \cap_e$) will be applied in $\pi$ if all relations were decomposed and only $f_n \cap e_2 \neq \emptyset$ is left. After applying the rule, $\neg f_n = e_2$ is all that remains from the predicate and if there exists $f_n = e_2$ from positive reasoning, $\pi$ would apply ($\bot_0$) rule, closing the cube and branch. Since the rule is only applied if it changes the cube towards a contradiction, the predicate from positive reasoning has to exist.
@@ -1502,7 +1509,7 @@ In $\prf_\pi$, when all relations were decomposed and eliminated, this results i
 Since in $\prf_\pi$ we can use the commutativity rules and ($\cap_L$), we can prevent this from happening.
 
 \paragraph{Closing the Branch:}
-The rules in \cite{Gru+26} that close a branch with $\bot_0$ are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We have seen in the preceding paragraphs how these rules might be applied and what their counterparts in our proof system are. \\
+The rules in \cite{Gru+26}, that close a branch with $\bot_0$, are the \textit{Predicate Rules} and the set rule $(\bot_1)$. We have seen in the preceding paragraphs how these rules might be applied and what their counterparts in our proof system are. \\
 The ($\neg \emptyset$) does not occur, since the decomposition of a term in RISF never yields the premise $\neg e \neq \emptyset$. The decomposition either starts with $\neg (e_1.\rels \cap e_2) \neq \emptyset$ or with $\neg (e_1.\rels \cap \rels'.e_2) \neq \emptyset$ and in both cases the intersection will not be resolved until the end. \\
 For the other rules we can state that ($\bot_0$) corresponds to (\textsc{reflexivity}) or ($\cap_L$) depending on the context, ($\bot_1$) corresponds to (\textsc{empty}) and ($\neg =$) corresponds to (\textsc{full}). \\
 If we had chosen to use the alternative definition of ($\cap_L$) in \Cref{sec:implications}, only the (\textsc{reflexivity}) rule would be the translation of ($\bot_\0$).
@@ -1529,6 +1536,7 @@ Although we do not have a rule to create arbitrary unions, we can produce the sa
 The hypotheses in \cite{Gru+26} correspond to the relation-specific rules in \Cref{sec:relationspecific} and the assumptions and definitions in \Cref{sec:assumptions}. One can see in the preceding tableau, how we can integrate these to mimic the behavior of $\pi$. For the definitions we can simply use the according transformation instead of the (\textsc{weak}) rule.
 The extra rule in \cite{Gru+26} for the case $\relr \subseteq \id$ produces $\neg p[e.\relr'], \neg p[(e.\relr).\relr']$ which is equivalent to adding duplicated terms where $\relr$ is placed in front of any other relation where it seems necessary for the inclusion. The procedure in $\prf_\pi$ allows for this behavior since \id{} can be inserted at these positions via the inverted ($\id_{conc}$) transformation. After that, the procedure is the same. \\
 
+We have shown that any rule that may be used in $\pi$ can be translated into a rule or set of rules used in $\prf_\pi$. This translation can be expanded to the level of whole proofs through an induction on the proof length which is trivial and therefore omitted.
 In summary, we have shown that we can translate any finite RAT-CAT proof $\pi$ for a relational inclusion $\relr \subseteq \Rels$ into a relational inclusion proof $\prf_\pi$.
 
 \subsection{Infinite Proofs}
@@ -1549,6 +1557,7 @@ To be able to transform the infinite branches into cyclic ones, Grünke et al. i
 
 The (\textsc{SUBST}) rule applies a renaming $\sigma$ to the events in $\Gamma$ in order to detect isomorphic proof nodes that only differ in the names of the events. As we do not use events in our proof system, there is no need to translate this rule. \\
 The (\textsc{W}) rule is a weakening that forgets a literal. Depending on the side of the inclusion, we can use the (\textsc{strength}) rule and (\textsc{weak}) rule for the same purpose. \\
+\pagebreak
 The (\textsc{CUT}) rule introduces a case distinction and branches the tableau. Translating the terms into relational inclusions according to \Cref{lem:splitting} we get a rule like this:
 \begin{mathpar} \inferrule*[]{\relr \cap \relt \subseteq \rels \\ \relr \subseteq \rels \cup \relt}{\relr \subseteq \rels} \end{mathpar}
 We can construct this rule with (\textsc{weak}) and (\textsc{strength}):
@@ -1609,7 +1618,9 @@ We give an example of an infinite branch in \Cref{fig:infleft} where the $\pi$ w
 \end{mathpar}
 \caption{An example of an infinite branch $\pi_\infty$ in a RAT-CAT proof $\pi$ that has been translated into a branch $\B_\infty$ of a relational inclusion proof $\prf_\pi$. To make the structure clearer, the labels are still the rules of Grünke et al. \cite{Gru+26}. The backlinks are marked with \textcolor{red}{$\bullet$} and \textcolor{blue}{$\circ$}} \label{fig:infleft}
 \end{figure}
-To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
+
+\pagebreak
+\noindent To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
 They mention that if intersections were allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use those as invariants.
 
 We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a progressing Kleene-star rule (($*L$),($*R$)) infinitely often and is therefore cyclic. 
@@ -1631,6 +1642,7 @@ We know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds for a
 \paragraph{(P2)} $\relr.\left( \bigcap_{i = 1}^n \rels_i \right) \subseteq \bigcap_{i = 1}^n \rels_i$
 \begin{proof}
 From $\pi$ being a closed tableau we know that $\relr^+ \subseteq \rels_i$ holds for every $i \in [1,n]$ and since we will receive $\relr^* \subseteq \rels_i$ from $\relr^+ \subseteq \rels_i$, we know that any $s_i$ can be resolved to $\relr.\rels_i$. Applying this to the invariant, we can deduce that it can be transformed to $\bigcap_{i = 1}^n \relr.\rels_i$.
+
 \begin{eqnarray*}
 \edgein \relr.(\bigcap_{i = 1}^n \rels_i) &\impl & \exists e_1: (e,e_1) \in \relr \land (e_1,e') \in \bigcap_{i = 1}^n \rels_i \\
 & \impl & \exists e_1: (e,e_1)\in \relr \land \bigwedge_{i=1}^n (e_1,e') \in s_i \\
@@ -1660,11 +1672,10 @@ We translate the proof up to the first occurrence of the ($*L$) or ($*R$) rule i
 As we know from \Cref{lem:properties} the branches for proofs for the properties \textbf{(P2)} and \textbf{(P3)} will be finite.
 \end{proof}
 
-\pagebreak
+
 \section{Evaluation}\label{sec:evaluation}
-In this section we evaluate the capabilities of this proof system. We can compare memory models that are defined in rational CAT, a fragment of the CAT language of which the definition is found in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis at al. and KATI \cite{Kou+24} by Koutsouridis at al.. \\
-The flip side of this fact is that we were not able to expand the capabilities to non-monotonic operators (complement and difference). In order to expand the proof system to all of CAT, one would need to adjust rules to include non-monotonic operators. This would mean that every implication in \Cref{sec:implications} handles only base relations and no relational terms. Furthermore, the weakening and strengthening rules would only work on whole terms and not on subterms. \\
-Our proofs, if used correctly, feature no infinite tableaus or cyclic proofs but instead use invariants which need to be found by the human using the proof system. This is a disadvantage in comparison with the other proof systems, since we cannot yet automatize our rules and implement the system in a tool. 
+In this section we evaluate the capabilities of this proof system. We can compare memory models that are defined in rational CAT, a fragment of the CAT language of which the definition is found in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis at al. and KATI \cite{Kou+24} by Koutsouridis at al..\\
+The flip side of this fact is that we were not able to expand the capabilities to non-monotonic operators (complement and difference). In order to expand the proof system to all of CAT, one would need to adjust rules to include non-monotonic operators. This would mean that every implication in \Cref{sec:implications} handles only base relations and no relational terms. Furthermore, the weakening and strengthening rules would only work on whole terms and not on subterms. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \vspace*{-1.5cm}
@@ -1676,10 +1687,14 @@ Our proofs, if used correctly, feature no infinite tableaus or cyclic proofs but
 \end{mathpar}
 \caption{If we apply rules inconsiderately, infinite branches like this one can occur.}
 \end{wrapfigure}
+Our proofs, if used correctly, feature no infinite tableaus or cyclic proofs but instead use invariants which need to be found by the human using the proof system. This is a disadvantage in comparison with the other proof systems, since we cannot yet automatize our rules and implement the system in a tool. 
 For that to be possible, we would furthermore need a set of rules which specify which rule should be applied at which point, since arbitrary application of rules might lead to infinite branches that yield no progress. \\
 Another limitation of our proof system is that we cannot explicitly handle recursive definitions. These can implicate infinite branches too, if the definition is repeatedly applied. \\ 
 One benefit that our system offers is that proofs may be significantly shorter than for example those of Grünke et al. An extreme case is shown in \Cref{fig:shorterexample}.\\
+Since we handle the same fragment of CAT, it can be beneficial in many cases to use our proof system. 
+The reason for the reduction in length is that Grünke et al. decompose both terms into atomic predicates which describe each position in the term while we decompose only when it's necessary. 
 \begin{figure}[H]
+\vspace*{-0.5cm}
 \begin{minipage}{0.2\textwidth}
 \begin{mathpar}
 \inferrule*[left=($\cap_L$)]{true}{\Relr \cap \rels \subseteq \rels}
@@ -1699,9 +1714,6 @@ One benefit that our system offers is that proofs may be significantly shorter t
 \end{minipage}
 \caption{Proof tableaus for the inclusion $\relr \cap \rels \subseteq \rels$ in our system on the left and in Grünke et al.'s system on the right. Literals that were not needed anymore were replaced by $\dots$.} \label{fig:shorterexample}
 \end{figure}
-Since we handle the same fragment of CAT, it can be beneficial in many cases to use our proof system. 
-The reason for the reduction in length is that Grünke et al. decompose both terms into atomic predicates which describe each position in the term while we decompose only when it's necessary. 
-
 
 \section{Conclusion}\label{sec:conclusion}
 The task for this master's thesis was to create a new proof system for comparing Memory Consistency Models that does not resolve relations to event-level, is neither cyclic nor infinite and creates proofs that are shorter then the ones in \cite{Gru+26}. We wanted the proof system to work reasonably well, prove it's soundness and completeness and have the system to cover all of CAT. Optimally, we wanted to make the proof system work automatically. \\
@@ -1709,7 +1721,7 @@ In the end, we have developed a new proof system for inclusions between relation
 The proof system does not resolve the relations to event level and uses invariants instead of cyclic proofs. \\
 While we have shown completeness, automation of the proof system is not possible yet, since this would require a deterministic choice of invariants and of a sufficient order in which the rules are to be applied.
 One could for example apply the ($\cup_{comm}$) rule indefinitely to a term $\relr \cup \Rels$ without ever yielding a proof. Applying the rules therefore still requires knowledge about the relations and what actions can produce actual results. \\
-Furthermore, we have not been able to handle recursive definitions in CAT and were not able to show any new results that would not have been possible with Grünke et al's system. One reason for the latter is, that we could not expand the system to include differences $\relr \setminus \Rels$ and complements $\sim \Relr$. \\
+Furthermore, we were not able to handle recursive definitions in CAT or to show any new results that would not have been possible with Grünke et al's system. One reason for the latter is, that we could not expand the system to include differences $\relr \setminus \Rels$ and complements $\sim \Relr$. \\
 Armed with knowledge about how to handle the rules though, users will be able to proof inclusions in a more intuitive and straightforward fashion.
 As we have seen in \Cref{sec:finiteproofs} many rules for the decomposition in \cite{Gru+26} do not require any action in our system because we use no event constants. This fact can shorten the proofs substantially as we have seen in \Cref{sec:evaluation}. \\
 

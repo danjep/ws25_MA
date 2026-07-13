@@ -6,6 +6,8 @@
 %\usepackage{fontspec}
 %\setmainfont{Times New Roman}
 \usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{graphicx}
 \input{insbox}
 
 % Mathesymbole und Ähnliches
@@ -21,6 +23,12 @@
 \usepackage{float}
 \renewcommand{\phi}{\varphi}
 \usepackage{forest}
+
+\DeclareCaptionFormat{Master}
+{	
+	\textbf{#1#2}\textsl{\small #3}
+}
+\captionsetup{format=Master}
 
 \forestset{
   tableau/.style={
