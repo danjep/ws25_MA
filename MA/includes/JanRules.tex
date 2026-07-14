@@ -25,23 +25,22 @@
     \end{bprooftree}
     
     \begin{bprooftree}
-        \LeftLabel{$({\arel}\rrule)$}
-        \AxiomC{$\acube,\acontextof{\arel\flexcomp\anode}$}
-        \UnaryInfC{$\acube,(\anodep,\anode)\in\arel,\acontextof{\anodep}$}
+        \LeftLabel{$(\neg{\arel}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel,\neg\acontextof{\anode_2}$}
     \end{bprooftree}
-    
+%    \begin{bprooftree}
+%        \LeftLabel{$({\arel}\rrule)$}
+%        \AxiomC{$\acube,\acontextof{\arel\flexcomp\anode}$}
+%        \UnaryInfC{$\acube,(\anodep,\anode)\in\arel,\acontextof{\anodep}$}
+%    \end{bprooftree}
+
     \begin{bprooftree}
         \LeftLabel{$({\id}\lrule)$}
         \AxiomC{$\acube,\anycontextof{\anode\flexcomp\id}$}
         \UnaryInfC{$\acube,\anycontextof{\anode}$}
     \end{bprooftree}
     \\\\
-    \begin{bprooftree}
-        \LeftLabel{$(\neg{\arel}\lrule)$}
-        \AxiomC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel$}
-        \UnaryInfC{$\acube,\neg\acontextof{\anode_1\flexcomp\arel}, (\anode_1,\anode_2)\in\arel,\neg\acontextof{\anode_2}$}
-    \end{bprooftree}
-    
     \begin{bprooftree}
         \LeftLabel{$({\bot_2}\lrule)$}
         \AxiomC{$\acube,\anycontextof{\anode\flexcomp\bot_2}$}
@@ -53,13 +52,13 @@
         \AxiomC{$\acube,\anycontextof{\anode\flexcomp\top_2}$}
         \UnaryInfC{$\acube,\anycontextof{\top_1}$}
     \end{bprooftree}
-     \\\\
+   
     \begin{bprooftree}
         \LeftLabel{$({\comp_{2,2}}\lrule)$}
         \AxiomC{$\acube,\anycontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\flexcomp{\color{red}\arelexpr_2})}$}
         \UnaryInfC{$\acube,\anycontextof{(\anode\flexcomp{\color{orange} \arelexpr_1})\flexcomp{\color{red}\arelexpr_2}}$}
     \end{bprooftree}
-    
+    \\\\
     \begin{bprooftree}
         \LeftLabel{$({*}\lrule)$}
         \AxiomC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr}^{*}}$}

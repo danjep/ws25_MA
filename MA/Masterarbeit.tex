@@ -40,6 +40,7 @@ We show soundness by proving the rules to be valid implications or equivalences 
 In comparison to Grünke et al. we produce smaller proof tableaus and smaller proof nodes on the same fragment of CAT that is called rational CAT. The syntactics we can handle is therefore more comprehensive than the one used by Kokologiannakis et al. \cite{Kok+23} or Koutsouridis et al. \cite{Kou+24}.
 \pagebreak
 
+\emptypage
 
 {
 \thispagestyle{empty}
@@ -50,7 +51,7 @@ In comparison to Grünke et al. we produce smaller proof tableaus and smaller pr
 \pagebreak
 \vfill
 
-\emptypage
+
 
 \emptypage
 
@@ -1214,7 +1215,8 @@ The splitting and branching in \cite{Gru+26} is furthermore important to provide
 \begin{figure}[htpb]\label{fig:rules}
 \centering
 \include{includes/JanRules.tex}
-\caption{The rules for RAT-CAT-SAT proofs in \cite[p. 13]{Gru+26}. Any rule featuring a $L$ in it's name has a variant with $R$ where the event appears on the right side. As an example, rule ($aR$) is shown here.}
+\vspace*{-0.5cm}
+\caption{The rules for RAT-CAT-SAT proofs in \cite[p. 13]{Gru+26}. Any rule featuring a $L$ in it's name has a variant with $R$ where the event appears on the right side.}
 \end{figure}
 
 
@@ -1741,6 +1743,7 @@ In the future, one could expand the proof system to all of CAT or develop a mech
 
 \pagebreak
 \pagenumbering{Roman}
+\renewcommand{\bibfont}{\small}
 \addcontentsline{toc}{section}{References}
 \printbibliography
 \pagebreak
@@ -2077,7 +2080,17 @@ Through the ($\cup_L$) rule, we can split the calculation and do it for each of 
 %\end{mathpar}
 
 \end{appendix}
-\includepdf{includes/Eigenständigkeitserklärung.pdf}
+\pagebreak
+\thispagestyle{empty}
+\noindent \textbf{\large Eidesstattliche Erklärung} \\
+\vspace{1.5cm} 
+
+\noindent Hiermit erkläre ich an Eides statt, dass ich die vorliegende Masterarbeit \setquotestyle[quotes]{german}\enquote{An Inclusion based Proof System for Memory Consistency Models} selbstständig und ohne unzulässige fremde Hilfe erstellt habe. Ich habe nur die angegebenen Quellen und Hilfsmittel verwendet. Außerdem wurde diese Arbeit noch nicht für eine andere Prüfung vorgelegt.\\
+
+\vspace{2cm}
+
+\noindent Braunschweig, den 19.07.2026 \hfill Danje Petersen \hspace{1cm}
+%\includepdf{includes/Eigenständigkeitserklärung.pdf}
 
 \includepdf{includes/gedruckteAusgabe.pdf}
 
