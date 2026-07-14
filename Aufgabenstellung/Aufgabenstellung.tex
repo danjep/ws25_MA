@@ -1,12 +1,12 @@
-\documentclass[a4paper,12pt,twoside, english]{article}
-\usepackage[a4paper, left=2.7cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+\documentclass[a4paper,11pt,twoside, english]{article}
+\usepackage[a4paper, left=2.5cm, right=1.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
 \usepackage[onehalfspacing]{setspace}
 \usepackage{comment} % Zum Auskommentieren ganzer Codeblöcke
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\ttfamily \leftmark}
-\cfoot{\thepage}
+%\cfoot{\thepage}
 \raggedbottom
 
 \input{includes/commenting}
@@ -17,7 +17,7 @@
 \begin{document}
 
 %\includepdf{includes/Titelseite/build/title.pdf}
-
+\thispagestyle{empty}
 \title{Task for the Master's Thesis: \\ \textbf{An Inclusion-based Proof System for Memory Consistency Models}}
 \author{Danje Petersen}
 \date{\small January 19, 2026}
@@ -26,7 +26,7 @@
 %\noindent \begin{Huge}\textbf{Aufgabenstellung zur Masterarbeit}\end{Huge} \\
 %Danje Petersen
 
-
+\thispagestyle{empty}
 \section{Motivation}
 Almost every computer that is in use today provides multiple simultaneously running processors to satisfy the surging demand for computational power. In order to reap the benefits that multiple processors provide, developers have to design their programs to use concurrently running threads.
 Since multiple threads may operate on the same memory, it is possible that on some memory location one thread writes a value that another thread wants to use, but never sees. In \Cref{fig:example} two threads each write a value on a memory location that the other one reads. Multiple different executions are possible: If thread $T_1$ is executed completely before $T_2$ the result is different to when $T_2$ is executed completely before $T_1$. The situation where two or more threads access the same memory space and at least one of them uses a write operation is called a \textit{data race}. This is what makes the different executions possible. 
@@ -94,7 +94,7 @@ Today there are many open questions in this field of research. Is it possible to
 Can the popular models written in CAT be transformed into ones that are written in rational CAT?
 Is it possible to verify compiler transformations?
 This master's thesis will be about the issue of whether the proof system in \cite{GruMey25} can be improved while sustaining the soundness and completeness. 
-
+\pagebreak
 \section{Task} \label{sec:task}
 The decomposition used in \cite{GruMey25} might result in infinite paths when unrolling Kleene stars. This leads to the authors using a cyclic proof system that returns to a node in the decomposition tree when it is equal to the current one. Even though the proofs might not be infinite, they can still get very large. 
 The task for this master's thesis is to replace this cyclic proof system with one that directly handles inclusions between relations and does not resolve them to event-level. Additionally the new proof system is supposed to be neither cyclic nor infinite, while the underlying objective is to create smaller proofs.
@@ -111,7 +111,7 @@ While being able to automatically verify MCMs would be optimal, even if complete
 \noindent \hfill Danje Petersen
 
 \pagebreak
-
+\renewcommand{\bibfont}{\footnotesize}
 \printbibliography
 
 \end{document}
