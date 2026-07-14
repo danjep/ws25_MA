@@ -1,0 +1,96 @@
+% HINT: add option aspectratio=169 for 16:9 aspect ratio
+% HINT: add 'handout' to activate handout mode (without overlays for printing)
+\documentclass[t,english,aspectratio=169,handout]{beamer}
+
+% include package import and macro defintions
+\input{includes/preamble}
+\input{includes/commenting}
+
+% add (multiple) bibliography sources for biblatex
+
+
+% Set authorinfo={0,1} to (de)activate short author and short title in footer
+% Set progress={0,1} to switch between x and x/total display of pages in the bottom right corner
+% Set outline={0,1} to (de)activate outline slides at the beginning of each section
+\usetheme[authorinfo=1, progress=0, outline=0]{AIM}
+
+% metadata
+\title{An Inclusion-based Proof System \\for Memory Consistency Models}
+\author{Danje Petersen}
+\institute{TU Braunschweig}
+\date{14. August 2026}
+
+
+
+%%% NOTE: do not remove the following marker. We use it for automatic compilation of multiple versions
+%%% of the slides (e.g., handout, presentation with overlays) via compile.py
+%%%pythonmarker
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\addtocounter{framenumber}{-1}
+
+\begin{frame}{Introduction}
+\begin{itemize}[<+->]
+	\item X
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Memory Consistency Models}
+
+\end{frame}
+
+\begin{frame}{The CAT Language}
+\begin{itemize}
+	\item Defined by Alglave et al. (\cite{Alg+14})
+	\item Used for expressing axiomatic Memory Models
+	\item[] \begin{figure}\vspace*{-0.5cm}\footnotesize
+\begin{align*}
+\langle cat\rangle &:= \bangle{constraint}~ \bangle{rel} \mid \langle cat \rangle~ \langle cat\rangle \\
+\bangle{constraint} &:= \texttt{acyclic} \mid \texttt{irreflexive} \mid \texttt{empty} \\
+\bangle{rel} &:= \bangle{base\_rel} \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{teal}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
+\bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \co \mid \loc \mid \ext \mid \textsf{id} \mid \textsf{0} \\
+\bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
+\end{align*}
+\end{figure}
+\item The \color{teal}{teal}-colored part distinguishes rational CAT
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Related Work}
+
+\end{frame}
+
+\begin{frame}{The Proof System}
+
+\end{frame}
+
+\begin{frame}{The Proof System}
+
+\end{frame}
+
+\begin{frame}{Soundness}
+
+\end{frame}
+
+\begin{frame}{Completeness}
+
+\end{frame}
+
+\begin{frame}{Completeness}
+
+\end{frame}
+
+\begin{frame}{Evaluation}
+
+\end{frame}
+
+\begin{frame}{Conclusion}
+
+\end{frame}
+
+\end{document}

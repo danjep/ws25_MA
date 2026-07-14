@@ -1,0 +1,148 @@
+% Math
+\usepackage{amsmath}
+\usepackage{upgreek}
+
+% Miscelaneous
+\usepackage{pgfpages}
+\usepackage{csquotes}
+\usepackage{placeins}
+\usepackage[onehalfspacing]{setspace}
+
+% Captions
+\usepackage[labelformat=empty]{caption}
+
+% Colors
+\usepackage{xcolor}
+
+% Requirements
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows,shapes,positioning}
+
+% For \smiley{} and \frowney{}
+\usepackage{wasysym}
+
+% Pseudocode
+\usepackage[vlined, linesnumbered, ruled]{algorithm2e}
+\SetKwComment{Comment}{/* }{*/}
+\SetKwInput{KwData}{Input}
+\SetKwInput{KwResult}{Output}
+\IncMargin{1.5em}
+
+% nice icons
+%\usepackage{fontawesome}
+
+% IMPORTANT NOTE: outputdir needs to be equal to output/aux dir of xelatex
+%\usepackage[outputdir=output]{minted}
+\usepackage{appendixnumberbeamer}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% Date formatting
+\usepackage[short,nodayofweek]{datetime}
+
+% Für Vektoren
+\newcommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+\def\spvec#1{\left(\vcenter{\halign{\hfil$##$\hfil\cr \spvecA#1;;}}\right)}
+\def\spvecA#1;{\if;#1;\else #1\cr \expandafter \spvecA \fi}
+
+% Hyperlinks
+\definecolor{citeblue}{rgb}{0,0.3,0.55}
+\RequirePackage{hyperref}
+\hypersetup{colorlinks,linkcolor={lightgray},citecolor={citeblue},urlcolor={citeblue}}
+\let\oldciteauthor=\citeauthor
+\def\citeauthor#1{\hypersetup{citecolor=white}\oldciteauthor{#1}}
+
+% Added
+\usepackage{circuitikz}
+\usepackage{grfext}
+
+
+% Custom Makros
+\newcommand{\bangle}[1]{\langle #1 \rangle}
+\newcommand{\semsof}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand{\impl}{\Rightarrow}
+\newcommand{\reason}[1]{\qquad \mid #1}
+\newcommand{\edge}{\ensuremath{(e,e')}}
+\newcommand{\edgein}{\ensuremath{(e,e') \in }}
+\newcommand{\egdein}{\ensuremath{(e',e) \in }}
+\newcommand{\defof}{\text{Def. of }~}
+\newcommand{\inv}{\ensuremath{{-1}}}
+\newcommand{\prf}{\mathcal{P}}
+\newcommand{\catprf}{\ensuremath{\mathcal{P}^{CAT}}}
+\newcommand{\I}{\mathcal{I}}
+
+% Reelle, Natürliche, Ganze, Rationale Zahlen
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+\newcommand{\B}{\ensuremath{\mathfrak{B}}}
+\newcommand{\C}{\ensuremath{\mathfrak{C}}}
+
+
+% Kürzel für Basisrelationen
+\definecolor{rfgreen}{rgb}{0.2,0.55,0.2}
+\newcommand{\0}{\textsf{\upshape 0}} % \upshape ensures that the relations remain their look in lemmata and inferrules
+\newcommand{\po}{\textsf{\upshape po}}
+\newcommand{\co}{\textsf{\textcolor{orange}{\upshape co}}}
+\newcommand{\rf}{\textsf{\textcolor{rfgreen}{\upshape rf}}}
+\newcommand{\ext}{\textsf{\upshape ext}}
+\newcommand{\rmw}{\textsf{\upshape rmw}}
+\newcommand{\hb}{\textsf{\textcolor{purple}{\upshape hb}}}
+\newcommand{\loc}{\textsf{\upshape loc}}
+\newcommand{\fr}{\textsf{\textcolor{violet}{\upshape fr}}}
+\newcommand{\id}{\textsf{\upshape id}}
+\newcommand{\true}{\textit{true}}
+\newcommand{\false}{\textit{false}}
+\newcommand{\rel}{\bangle{rel}}
+
+%\newcommand{\rel}[1]{\textsf{#1}}
+\newcommand{\relI}{\textsf{\upshape I}}
+\newcommand{\relW}{\textsf{\upshape [W]}}
+\newcommand{\relR}{\textsf{\upshape [R]}}
+\newcommand{\relr}{\textsf{\upshape r}}
+\newcommand{\Relr}{\relr}
+\newcommand{\rels}{\textsf{\upshape s}}
+\newcommand{\Rels}{\rels}
+\newcommand{\relt}{\textsf{\upshape t}}
+
+
+% Definitionsboxen
+\usepackage[most]{tcolorbox}
+%\definecolor{darkgray}{RGB}{70,90,70}
+\definecolor{examblue}{rgb}{0,0.2,0.55}
+\newenvironment{defi}[1]{%
+\begin{tcolorbox}[blanker, before skip=5pt, after skip = 5pt, colback=darkgray!5!white, colframe=darkgray!75!black, title={{\sffamily} \textbf{#1}}]
+}{
+\end{tcolorbox}}
+
+
+\usetikzlibrary{decorations.pathreplacing,calc}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+\newcommand*{\AddNote}[5]{%
+	\begin{tikzpicture}[overlay, remember picture]
+		\draw [decoration={brace,amplitude=0.5em},decorate,ultra thick,color=#4]
+		($(#3)!(#2.south)!($(#3)-(0,1)$)$) --
+		($(#3)!(#1.north)!($(#3)-(0,1)$)$)
+		node [align=center, text width=0.5cm, pos=0.5, anchor=east] {#5};
+	\end{tikzpicture}
+}%
+
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+%\usepackage{algorithm}% http://ctan.org/pkg/algorithm
+
+% captions for subfigures.
+\usepackage{subcaption}
+
+
+% Clever references.
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{amssymb}
