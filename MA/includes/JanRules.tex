@@ -63,7 +63,7 @@
     \begin{bprooftree}
         \LeftLabel{$({*}\lrule)$}
         \AxiomC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr}^{*}}$}
-        \UnaryInfC{$\acube,\acontextof{\anode} \rulespace \acontextof{(\anode\flexcomp{\color{orange}\arelexpr})\flexcomp{\color{orange}\arelexpr}^{*}}$}
+        \UnaryInfC{$\acube,\acontextof{\anode} \rulespace \acube,\acontextof{(\anode\flexcomp{\color{orange}\arelexpr})\flexcomp{\color{orange}\arelexpr}^{*}}$}
     \end{bprooftree}
     
     \begin{bprooftree}
@@ -136,7 +136,7 @@
     \begin{bprooftree}
         \LeftLabel{$({\cup_1})$}
         \AxiomC{$\acube,\acontextof{{\color{orange} \asetexpr_1}\cup{\color{red} \asetexpr_2}}$}
-        \UnaryInfC{$\acube,\acontextof{{\color{orange} \asetexpr_1}} \rulespace \acontextof{{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\acontextof{{\color{orange} \asetexpr_1}} \rulespace \acube,\acontextof{{\color{red} \asetexpr_2}}$}
     \end{bprooftree}
     
     \begin{bprooftree}
@@ -188,6 +188,7 @@
         \AxiomC{$\acube,\neg(\anode\cap({\color{orange} \asetexpr_1}\cap{\color{red} \asetexpr_2})\neq\emptyset)$}
         \UnaryInfC{$\acube,\neg(\anode\cap{\color{orange} \asetexpr_1}\neq\emptyset) \rulespace \acube,\neg(\anode\cap{\color{red} \asetexpr_2}\neq\emptyset)$}
     \end{bprooftree}
+    
     \begin{bprooftree}
         \LeftLabel{$(\neg{\cap_\anode})$}
         \AxiomC{$\acube,\neg(\anode_1\cap\anode_2\neq\emptyset)$}

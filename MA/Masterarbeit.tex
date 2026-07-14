@@ -9,6 +9,11 @@
 \fancyhead[OR]{\small \ttfamily \leftmark}
 \cfoot{\thepage}
 \raggedbottom
+\newcommand{\emptypage}{\thispagestyle{empty}
+\null
+\vfill
+\pagebreak
+}
 
 \input{includes/commenting}
 \input{includes/preamble}
@@ -21,19 +26,20 @@
 
 \includepdf{includes/Titelseite/build/title.pdf}
 
-%\pagebreak
-%\thispagestyle{empty}
-%\null
-%\vfill
-%\pagebreak
+\pagebreak
+\emptypage
+\includepdf[pages=1-5]{includes/Aufgabenstellung.pdf}
+\emptypage
 
 \thispagestyle{empty}
 \section*{Abstract}
-In this Master's thesis we construct a new type of proof system for comparing memory consistency models that are defined in the CAT language. At the heart of it is a set of rules which construct proofs for relational inclusions.
-Our proof system directly handles inclusions and does not resolve relations to event-level and we use invariants to deal with Kleene-star expressions. The possibility of using arbitrary invariants comes at the cost of not being able to automatize the proofs.
+In this Master's thesis we construct a new type of proof system for comparing memory consistency models that are defined in the CAT language. At the heart of it is a set of rules which construct proofs for arbitrary relational inclusions for which we present transformations based on equivalences of relational expressions and implications which are not always invertible.\\
+For the expansion to memory consistency models, we show how to eliminate the constraints and give rules for CAT base theory. \\
+Our proof system directly handles inclusions and does not resolve relations to event-level. Furthermore, we use invariants to deal with Kleene-star expressions and thus avoid unrolling that can lead to infinite branches. The possibility of using arbitrary invariants comes at the cost of not being able to automatize the proofs.
 We show soundness by proving the rules to be valid implications or equivalences and show completeness by translating the rules of Grünke et al. (\cite{Gru+26}) into our system.
-In comparison to Grünke et al. we produce smaller proof tableaus on the same fragment of CAT that is called rational CAT.
+In comparison to Grünke et al. we produce smaller proof tableaus and smaller proof nodes on the same fragment of CAT that is called rational CAT. The syntactics we can handle is therefore more comprehensive than the one used by Kokologiannakis et al. \cite{Kok+23} or Koutsouridis et al. \cite{Kou+24}.
 \pagebreak
+
 
 {
 \thispagestyle{empty}
@@ -41,11 +47,13 @@ In comparison to Grünke et al. we produce smaller proof tableaus on the same fr
 \tableofcontents
 \thispagestyle{empty} %yeet
 }
-
+\pagebreak
 \vfill
 
+\emptypage
 
-\pagebreak
+\emptypage
+
 \setcounter{page}{1}
 
 \section{Introduction}\label{sec:intro}
@@ -1674,11 +1682,11 @@ As we know from \Cref{lem:properties} the branches for proofs for the properties
 
 
 \section{Evaluation}\label{sec:evaluation}
-In this section we evaluate the capabilities of this proof system. We can compare memory models that are defined in rational CAT, a fragment of the CAT language of which the definition is found in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis at al. and KATI \cite{Kou+24} by Koutsouridis at al..\\
+In this section we evaluate the capabilities of this proof system. We can compare memory models that are defined in rational CAT, a fragment of the CAT language of which the definition is found in \Cref{fig:cat}. In this respect we offer the same possibilities as Grünke et al and therefore a bigger fragment than KATER \cite{Kok+23} by Kokologiannakis et al. and KATI \cite{Kou+24} by Koutsouridis et al..\\
 The flip side of this fact is that we were not able to expand the capabilities to non-monotonic operators (complement and difference). In order to expand the proof system to all of CAT, one would need to adjust rules to include non-monotonic operators. This would mean that every implication in \Cref{sec:implications} handles only base relations and no relational terms. Furthermore, the weakening and strengthening rules would only work on whole terms and not on subterms. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
-\vspace*{-1.5cm}
+\vspace*{-0.5cm}
 \begin{mathpar}
 \inferrule*[Left=($\cup_{comm}$)]{\dots}{
 	\inferrule*[Left=($\cup_{comm}$)]{\rels \cup \relr \subseteq \relt}{
@@ -1691,8 +1699,9 @@ Our proofs, if used correctly, feature no infinite tableaus or cyclic proofs but
 For that to be possible, we would furthermore need a set of rules which specify which rule should be applied at which point, since arbitrary application of rules might lead to infinite branches that yield no progress. \\
 Another limitation of our proof system is that we cannot explicitly handle recursive definitions. These can implicate infinite branches too, if the definition is repeatedly applied. \\ 
 One benefit that our system offers is that proofs may be significantly shorter than for example those of Grünke et al. An extreme case is shown in \Cref{fig:shorterexample}.\\
+In the same proof it becomes clear that our system uses significantly smaller proof nodes because it  omits event constants completely. \\
 Since we handle the same fragment of CAT, it can be beneficial in many cases to use our proof system. 
-The reason for the reduction in length is that Grünke et al. decompose both terms into atomic predicates which describe each position in the term while we decompose only when it's necessary. 
+The reason for the reduction in length and node size is that Grünke et al. decompose both terms into atomic predicates which describe each position in the term while we decompose only when it's necessary. 
 \begin{figure}[H]
 \vspace*{-0.5cm}
 \begin{minipage}{0.2\textwidth}
@@ -1737,8 +1746,9 @@ In the future, one could expand the proof system to all of CAT or develop a mech
 \pagebreak
 
 \begin{appendix}
-\addcontentsline{toc}{part}{Appendix}
-\section{Proof of the Inversion lemma}\label{sec:inversionproof}
+%\addcontentsline{toc}{section}{Appendix}
+\section{Appendix}
+\subsection{Proof of the Inversion lemma}\label{sec:inversionproof}
 \Cref{lem:inversion}:
 Let $\relr$ be a relational expression that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to base relations with $\semsof{\relr} = \semsof{\relr'}$. 
 \begin{proof}
@@ -1801,7 +1811,7 @@ When it can be shown for each operation in CAT that the inversion of the whole e
 %\include{includes/Rulesproofs.tex}
 \pagebreak
 
-\section{Example: $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$} \label{sec:example2}
+\subsection{Example: $(\rf \cup \co \cup \fr)^+ \subseteq \rf \cup (\co \cup \fr).\rf ?$} \label{sec:example2}
 For the ($+_L$) rule we choose $\relI = \rf\cup (\co \cup \fr).\rf?$ as the invariant. 
 \begin{mathpar} \footnotesize
 \inferrule*[left=($+_L$)]{
@@ -2067,7 +2077,9 @@ Through the ($\cup_L$) rule, we can split the calculation and do it for each of 
 %\end{mathpar}
 
 \end{appendix}
-%\includepdf{includes/eidesstattlichevers.pdf}
+\includepdf{includes/Eigenständigkeitserklärung.pdf}
+
+\includepdf{includes/gedruckteAusgabe.pdf}
 
 \end{document}
 
