@@ -1,0 +1,285 @@
+% Umlaute in der Datei erlauben, auf deutsch umstellen
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+%\usepackage[nottoc,numbib]{tocbibind}
+%\usepackage{mathptmx} % Hier steckt Times drin
+%\usepackage{fontspec}
+%\setmainfont{Times New Roman}
+%\usepackage{xcolor}
+%\usepackage{subcaption}
+%\usepackage{graphicx}
+\input{insbox}
+
+% Mathesymbole und Ähnliches
+%\usepackage{amsmath}
+%\usepackage{mathpartir}
+%\usepackage{mathtools}
+%\usepackage{amssymb}
+%\usepackage{amsthm}
+%\usepackage{mdframed}
+%%\usepackage{microtype}
+%\usepackage{stmaryrd}
+%\newcommand{\blitz}{\textcolor{red}{\lightning}}
+%\usepackage{float}
+%\renewcommand{\phi}{\varphi}
+%\usepackage{forest}
+%
+%\DeclareCaptionFormat{Master}
+%{	
+%	\textbf{#1#2}\textsl{\small #3}
+%}
+%\captionsetup{format=Master}
+
+%\forestset{
+%  tableau/.style={
+%    for tree={
+%      grow'=south,
+%      draw=none,
+%      edge={thick},
+%      anchor=center,
+%      align=center,
+%      l=12mm,
+%      s sep=6mm,
+%      inner sep=0.5pt,
+%    }
+%  }
+%}
+
+
+% Für Code
+%\usepackage{listings}
+%\lstset{frame=l,
+%  language=Java,
+%  basicstyle={\small\ttfamily},
+%  numberstyle=\tiny\color{blue},
+%  keywordstyle=\color{purple},
+%  commentstyle=\small\color{gray},
+%  stringstyle=\color{orange},
+%  breaklines=true,
+%  tabsize=2
+%}
+
+% Pseudocode
+%\usepackage[vlined, linesnumbered, ruled]{algorithm2e}
+%\SetKwComment{Comment}{/* }{*/}
+%%\SetKwInput{KwData}{Input}
+%%\SetKwInput{KwResult}{Output}
+%\IncMargin{1.5em}
+
+% Abbildungen
+\usepackage{tikz}
+\usetikzlibrary{arrows,calc,shapes,positioning}
+%\usepackage{wrapfig}
+%\usepackage[labelfont=bf]{caption}
+
+% quotation
+%\definecolor{citeblue2}{RGB}{44,107,165}
+%\definecolor{citeblue}{rgb}{0,0.25,0.5}
+%\RequirePackage{csquotes}
+%%\usepackage[backend=biber, style=numeric]{biblatex}
+%%\usepackage[citecolor=black, urlcolor=black, linkcolor=black]{hyperref}
+%\usepackage[citecolor=citeblue, urlcolor=citeblue, linkcolor=citeblue]{hyperref}
+%\hypersetup{colorlinks=true}
+%\usepackage[english, nameinlink, noabbrev]{cleveref}
+
+% Custom Makros
+\newcommand{\bangle}[1]{\langle #1 \rangle}
+\newcommand{\semsof}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand{\impl}{\Rightarrow}
+\newcommand{\reason}[1]{\qquad \mid #1}
+\newcommand{\edge}{\ensuremath{(e,e')}}
+\newcommand{\edgein}{\ensuremath{(e,e') \in }}
+\newcommand{\egdein}{\ensuremath{(e',e) \in }}
+\newcommand{\defof}{\text{Def. of }~}
+\newcommand{\inv}{\ensuremath{{-1}}}
+\newcommand{\prf}{\mathcal{P}}
+\newcommand{\catprf}{\ensuremath{\mathcal{P}^{CAT}}}
+\newcommand{\I}{\mathcal{I}}
+
+% Reelle, Natürliche, Ganze, Rationale Zahlen
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+\newcommand{\B}{\ensuremath{\mathfrak{B}}}
+\newcommand{\C}{\ensuremath{\mathfrak{C}}}
+
+
+% Kürzel für Basisrelationen
+\definecolor{rfgreen}{rgb}{0.2,0.55,0.2}
+\newcommand{\0}{\textsf{\upshape 0}} % \upshape ensures that the relations remain their look in lemmata and inferrules
+\newcommand{\po}{\textsf{\upshape po}}
+\newcommand{\co}{\textsf{\textcolor{orange}{\upshape co}}}
+\newcommand{\rf}{\textsf{\textcolor{rfgreen}{\upshape rf}}}
+\newcommand{\ext}{\textsf{\upshape ext}}
+\newcommand{\rmw}{\textsf{\upshape rmw}}
+\newcommand{\hb}{\textsf{\textcolor{purple}{\upshape hb}}}
+\newcommand{\loc}{\textsf{\upshape loc}}
+\newcommand{\fr}{\textsf{\textcolor{violet}{\upshape fr}}}
+\newcommand{\id}{\textsf{\upshape id}}
+\newcommand{\true}{\textit{true}}
+\newcommand{\false}{\textit{false}}
+\newcommand{\rel}{\bangle{rel}}
+
+%\newcommand{\rel}[1]{\textsf{#1}}
+\newcommand{\relI}{\textsf{\upshape I}}
+\newcommand{\relW}{\textsf{\upshape [W]}}
+\newcommand{\relR}{\textsf{\upshape [R]}}
+\newcommand{\relr}{\textsf{\upshape r}}
+\newcommand{\Relr}{\relr}
+\newcommand{\rels}{\textsf{\upshape s}}
+\newcommand{\Rels}{\rels}
+\newcommand{\relt}{\textsf{\upshape t}}
+
+
+% Definitionsboxen
+%\usepackage[most]{tcolorbox}
+%%\definecolor{darkgray}{RGB}{70,90,70}
+%\definecolor{examblue}{rgb}{0,0.2,0.55}
+%\newenvironment{defi}[1]{%
+%\begin{tcolorbox}[blanker, before skip=5pt, after skip = 5pt, colback=darkgray!5!white, colframe=darkgray!75!black, title={{\sffamily} \textbf{#1}}]
+%}{
+%\end{tcolorbox}}
+
+%Regelboxen
+\tcbset{
+  mybox/.style={
+    colback=white,
+    colframe=gray!70,
+    colbacktitle=white,
+    boxrule=2.5pt,
+    coltitle=gray,
+    arc=0pt,
+    %before skip=0pt,
+    %after skip=0pt,
+    enhanced,
+    left=6pt, right=6pt, top=6pt, bottom=6pt,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={
+    size=title,
+    colback=white,
+    colframe=white,
+    boxrule=0.1pt
+  }
+  }
+}
+\newenvironment{rules}[1]{%
+\begin{tcolorbox}[mybox, title={ \textbf{#1}}]
+\begin{mathpar}
+}{
+\end{mathpar}
+\end{tcolorbox}}
+
+% Formelboxen
+%\newenvironment{formel}[1]{%
+%\begin{tcolorbox}[colback=white, colframe=violet!85!black, title={\sffamily \textbf{#1}}]
+%}{
+%\end{tcolorbox}}
+
+
+%\theoremstyle{definition}
+%\newtheorem{theorem}{Theorem}%[section]
+%
+%\newtheorem{proposition}[theorem]{Proposition}%[section]
+%\crefname{proposition}{Proposition}{Propositions}
+%
+%\newtheorem{property}[theorem]{Eigenschaft}%[section]
+%\crefname{property}{Eigenschaft}{Eigenschaften}
+%
+%\newtheorem{lemma}[theorem]{Lemma}%[section]
+%\crefname{lemma}{Lemma}{Lemmata}
+%
+%%\newtheorem{definition}{Definition}
+%\mdfdefinestyle{theoremstyle}{%
+%linecolor=red,middlelinewidth=2pt,%
+%frametitlerule=true,%
+%frametitlebackgroundcolor=darkgray!60,
+%frametitlerulewidth=1pt,
+%innertopmargin=\topskip,
+%}
+%\mdfsetup{skipabove=\topskip , skipbelow=\topskip}
+%\mdfdefinestyle{defistyle}{linecolor=darkgray, linewidth=2pt, roundcorner=15pt, frametitlebackgroundcolor=gray!40, frametitlefont=\bfseries, theoremtitlefont=\bfseries, innertopmargin=5pt}
+%\mdtheorem[style=defistyle, nobreak=true]{definition}[theorem]{Definition}%[section]
+%\crefname{definition}{definition}{definitions}
+%\let\olddefinition\definition
+%\renewcommand{\definition}{\crefalias{theorem}{definition}\olddefinition}
+%
+%
+%
+%% Beispiele
+%\newcounter{excount}
+%%\theoremstyle{definition}
+%\newtheorem{exi}[excount]{Beispiel}
+%\crefname{example}{Beispiel}{Beispiele}
+%\newenvironment{example}[2]{%
+%\begin{tcolorbox}[colback=white, colframe=examblue!85!black, title={\begin{exi}\label{#2} \textbf{#1}\end{exi}}]
+%}{
+%\end{tcolorbox}}
+
+
+
+
+% Für Vektoren
+%\newcommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+%\def\spvec#1{\left(\vcenter{\halign{\hfil$##$\hfil\cr \spvecA#1;;}}\right)}
+%\def\spvecA#1;{\if;#1;\else #1\cr \expandafter \spvecA \fi}
+
+\usepackage{lipsum}
+
+% PDFs includen
+\usepackage{pdfpages}
+
+\usetikzlibrary{positioning}
+\tikzstyle{white} = [circle, minimum width=0.4cm, text centered, draw=black, fill=white]
+\tikzstyle{blank} = [minimum width=0.6cm, text centered]
+\tikzstyle{gray} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=darkgray]
+\tikzstyle{blue} = [circle, minimum width=0.6cm, text centered, text=black, draw=black, fill=cyan]
+\tikzstyle{purple} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=purple]
+\tikzstyle{edge} = [thick,>=stealth]
+\tikzstyle{arrow} = [thick,-stealth]
+
+% Alles für Jans Regeln
+\usepackage[tableaux]{prooftrees}
+\usepackage{bussproofs}
+\newenvironment{bprooftree}%
+    {\leavevmode\hbox\bgroup}%
+    {\DisplayProof\egroup}
+%\usepackage{forest}
+%\useforestlibrary{prooftrees}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,raster}
+\DeclareTColorBox{Box}{ m }{
+    enhanced,
+    sharp corners,
+    colback=white,
+    colframe=lightgray,
+    %
+    coltitle=gray,
+    title=#1,
+    fonttitle=\bfseries,
+    attach boxed title to top left={yshift=-0.5\baselineskip-0.4pt,xshift=2mm},
+    boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm,colback=white,before upper=\strut},
+    %
+    left=0pt,
+    right=0pt,
+    before upper={\setlength{\abovedisplayskip}{0pt}},
+} 
+
+%Symbole
+\newcommand{\acube}{\Gamma}
+\newcommand{\arel}{a}
+\newcommand{\acontextof}[1]{p[#1]}
+\newcommand{\anycontextof}[1]{l[#1]}
+\newcommand{\anode}{e}
+\newcommand{\anodep}{f}
+\newcommand{\lrule}{L}
+\newcommand{\rrule}{R}
+\newcommand{\flexcomp}{.}
+\newcommand{\comp}{.}
+\newcommand{\aset}{s}
+\newcommand{\asetexpr}{s}
+\newcommand{\arelexpr}{r}
+\newcommand{\rulespace}{\quad \mid \quad}
+\newcommand{\apredexpr}{p}
+\newcommand{\allnodes}{\Omega}
