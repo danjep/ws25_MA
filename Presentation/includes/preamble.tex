@@ -7,6 +7,7 @@
 \usepackage{csquotes}
 \usepackage{placeins}
 \usepackage[onehalfspacing]{setspace}
+\usepackage{mathpartir}
 
 % Captions
 \usepackage[labelformat=empty]{caption}
@@ -18,6 +19,16 @@
 \RequirePackage{tikz}
 \usetikzlibrary{calc}
 \usetikzlibrary{arrows,shapes,positioning}
+
+\usetikzlibrary{positioning}
+\tikzstyle{white} = [circle, minimum width=0.4cm, text centered, draw=black, fill=white]
+\tikzstyle{blank} = [minimum width=0.6cm, text centered]
+\tikzstyle{gray} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=darkgray]
+\tikzstyle{blue} = [circle, minimum width=0.6cm, text centered, text=black, draw=black, fill=cyan]
+\tikzstyle{purple} = [circle, minimum width=0.6cm, text centered, text=white, draw=black, fill=purple]
+\tikzstyle{edge} = [thick,>=stealth]
+\tikzstyle{arrow} = [thick,-stealth]
+
 
 % For \smiley{} and \frowney{}
 \usepackage{wasysym}
@@ -57,60 +68,21 @@
 \let\oldciteauthor=\citeauthor
 \def\citeauthor#1{\hypersetup{citecolor=white}\oldciteauthor{#1}}
 
+\DeclareCiteCommand{\parencite}
+  {\usebibmacro{prenote}}
+  {%
+    \ifnameundef{labelname}
+      {}
+      {\printnames{labelname}%
+       \setunit{\nameyeardelim}}%
+    \printtext[bibhyperref]{\printfield{year}}%
+  }
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
 % Added
 \usepackage{circuitikz}
 \usepackage{grfext}
-
-
-% Custom Makros
-\newcommand{\bangle}[1]{\langle #1 \rangle}
-\newcommand{\semsof}[1]{\ensuremath{\llbracket #1 \rrbracket}}
-\newcommand{\impl}{\Rightarrow}
-\newcommand{\reason}[1]{\qquad \mid #1}
-\newcommand{\edge}{\ensuremath{(e,e')}}
-\newcommand{\edgein}{\ensuremath{(e,e') \in }}
-\newcommand{\egdein}{\ensuremath{(e',e) \in }}
-\newcommand{\defof}{\text{Def. of }~}
-\newcommand{\inv}{\ensuremath{{-1}}}
-\newcommand{\prf}{\mathcal{P}}
-\newcommand{\catprf}{\ensuremath{\mathcal{P}^{CAT}}}
-\newcommand{\I}{\mathcal{I}}
-
-% Reelle, Natürliche, Ganze, Rationale Zahlen
-\newcommand{\R}{\ensuremath{\mathbb{R}}}
-\newcommand{\N}{\ensuremath{\mathbb{N}}}
-\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
-\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
-\newcommand{\E}{\ensuremath{\mathbb{E}}}
-\newcommand{\B}{\ensuremath{\mathfrak{B}}}
-\newcommand{\C}{\ensuremath{\mathfrak{C}}}
-
-
-% Kürzel für Basisrelationen
-\definecolor{rfgreen}{rgb}{0.2,0.55,0.2}
-\newcommand{\0}{\textsf{\upshape 0}} % \upshape ensures that the relations remain their look in lemmata and inferrules
-\newcommand{\po}{\textsf{\upshape po}}
-\newcommand{\co}{\textsf{\textcolor{orange}{\upshape co}}}
-\newcommand{\rf}{\textsf{\textcolor{rfgreen}{\upshape rf}}}
-\newcommand{\ext}{\textsf{\upshape ext}}
-\newcommand{\rmw}{\textsf{\upshape rmw}}
-\newcommand{\hb}{\textsf{\textcolor{purple}{\upshape hb}}}
-\newcommand{\loc}{\textsf{\upshape loc}}
-\newcommand{\fr}{\textsf{\textcolor{violet}{\upshape fr}}}
-\newcommand{\id}{\textsf{\upshape id}}
-\newcommand{\true}{\textit{true}}
-\newcommand{\false}{\textit{false}}
-\newcommand{\rel}{\bangle{rel}}
-
-%\newcommand{\rel}[1]{\textsf{#1}}
-\newcommand{\relI}{\textsf{\upshape I}}
-\newcommand{\relW}{\textsf{\upshape [W]}}
-\newcommand{\relR}{\textsf{\upshape [R]}}
-\newcommand{\relr}{\textsf{\upshape r}}
-\newcommand{\Relr}{\relr}
-\newcommand{\rels}{\textsf{\upshape s}}
-\newcommand{\Rels}{\rels}
-\newcommand{\relt}{\textsf{\upshape t}}
 
 
 % Definitionsboxen

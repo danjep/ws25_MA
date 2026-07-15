@@ -1,13 +1,15 @@
 % HINT: add option aspectratio=169 for 16:9 aspect ratio
 % HINT: add 'handout' to activate handout mode (without overlays for printing)
 \documentclass[t,english,aspectratio=169,handout]{beamer}
-
+\setbeamerfont{frametitle}{family=\rmfamily }
+\usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
 % include package import and macro defintions
 \input{includes/preamble}
+\input{includes/preambleMA}
 \input{includes/commenting}
 
 % add (multiple) bibliography sources for biblatex
-
+\addbibresource{includes/quellen.bib}
 
 % Set authorinfo={0,1} to (de)activate short author and short title in footer
 % Set progress={0,1} to switch between x and x/total display of pages in the bottom right corner
@@ -15,7 +17,7 @@
 \usetheme[authorinfo=1, progress=0, outline=0]{AIM}
 
 % metadata
-\title{An Inclusion-based Proof System \\for Memory Consistency Models}
+\title{\textbf{\rmfamily An Inclusion-based Proof System \\for Memory Consistency Models}}
 \author{Danje Petersen}
 \institute{TU Braunschweig}
 \date{14. August 2026}
@@ -36,41 +38,157 @@
 
 \begin{frame}{Introduction}
 \begin{itemize}[<+->]
-	\item X
+	\item The use of concurrent threads is very common
+	\item Consider multiple concurrent threads that share memory
+	\begin{itemize}
+		\item They may interfere with each other's stored values
+		\item Interleaving and reordering may create multiple executions with different results
+	\end{itemize}
+	\item Memory Consistency Models describe restrictions to how they can be executed
+	\item It is important to verify and compare these models
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Introduction}
+\vspace{0.5cm}
+\begin{minipage}{0.7\textwidth}
+\begin{itemize}[<+->]
+	\item Programs may not be executed in the order they were written in
+	\item Multiple Threads may get interleaved
+	\item Different executions are possible
+	\begin{itemize}
+		\item Either thread is completely executed before the other ($a=0,b=1$ or $a=1,b=0$)
+		\item Both write before the reads ($a=b=1$)
+		\item Both reads before writes ($a=b=0$)
+	\end{itemize}
+\end{itemize}
+\end{minipage}\begin{minipage}{0.3\textwidth} \centering
+	\begin{figure} \begin{tabular}{c||c}
+\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
+%\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
+ $T_1$ & $T_2$ \\[2mm]
+
+\texttt{x=1;} & \texttt{y=1;} \\
+\texttt{a=y;} & \texttt{b=x;} \\
+\end{tabular} \end{figure}
+\end{minipage}
+\end{frame}
+
 \begin{frame}{Memory Consistency Models}
+\begin{minipage}{0.7\textwidth}
+\begin{itemize}
+	\item Memory Consistency Models describe restrictions to the possible executions
+	\item One Example is Sequential Consistency (\cite{Lam79})
+	\begin{itemize}
+		\item Operations are executed as if they were in some sequential order
+		\item Operations of each thread follow the order in which they were written (program order (\po))
+	\end{itemize}
+	\item Forbids the $a=b=0$ execution
+\end{itemize}
+\end{minipage}\begin{minipage}{0.3\textwidth}
+\begin{figure} \small
+	\begin{tikzpicture}[node distance=1.5cm and 1cm]
+\node[blank] (Init) {\texttt{W:x=0,y=0}};
+\node[blank, below left= 0.8cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
+\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+
+\node[blank, below right= 0.8cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
+\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+
+\draw[arrow] (Init) --node[above] {\po} (x<-1);
+\draw[arrow] (Init) --node[above] {\po} (y<-1);
+\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+\draw[arrow] (Rx) --node[right] {\po} (b<-x);
+\end{tikzpicture}
+	\end{figure}
+\end{minipage}
+
 
 \end{frame}
 
+
 \begin{frame}{The CAT Language}
 \begin{itemize}
-	\item Defined by Alglave et al. (\cite{Alg+14})
+	\item Defined by \cite{Alg+14}
 	\item Used for expressing axiomatic Memory Models
 	\item[] \begin{figure}\vspace*{-0.5cm}\footnotesize
 \begin{align*}
 \langle cat\rangle &:= \bangle{constraint}~ \bangle{rel} \mid \langle cat \rangle~ \langle cat\rangle \\
 \bangle{constraint} &:= \texttt{acyclic} \mid \texttt{irreflexive} \mid \texttt{empty} \\
-\bangle{rel} &:= \bangle{base\_rel} \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{teal}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
+\bangle{rel} &:= \bangle{base\_rel} \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
 \bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \co \mid \loc \mid \ext \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*}
 \end{figure}
-\item The \color{teal}{teal}-colored part distinguishes rational CAT
+\item The \textcolor{red}{red}-colored part distinguishes rational CAT
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The CAT Language}
+\begin{itemize}
+	\item Sequential Consistency in CAT: $\texttt{acyclic } \po \cup \co \cup \rf \cup \fr$ \quad ($\fr = \rf^\inv.\co$) \\
+	\begin{figure}\centering \includegraphics[scale=0.45]{includes/Figures/SCgraph.jpg}
+	\end{figure}
+	\item \po{} and \fr{} form a cycle
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Related Work}
-
+\begin{itemize}
+	\item KATER by \cite{Kok+23}
+	\item KATI by \cite{Kou+24}
+	\item RAT CAT SAT by \cite{Gru+26}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{The Proof System}
-
+\begin{itemize}
+	\item Produces implications of the form $\true \impl M_1 \subseteq M_2$ to prove this inclusion
+	\item Start at the bottom with the inclusion term
+	\item Transforms the inclusion and branches out to end at (possibly multiple) leafs which are \true 
+%	\item[] \begin{figure} \small
+%	\begin{mathpar}
+%		\inferrule*[]{
+%			\inferrule*[]{
+%				\inferrule*[]{
+%					\inferrule*[]{
+%						\inferrule*[]{true}{\dots}
+%					}{\dots}
+%					\\
+%					\inferrule*[]{
+%						\inferrule*[]{true}{\dots}
+%					}{\dots}				
+%				}{\relr \subseteq \Rels}			
+%			}{\dots}
+%		}{M_1 \subseteq M_2}
+%	\end{mathpar}
+%	\end{figure}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{The Proof System}
-
+\begin{itemize}
+	\item Every one of the constraints can be transformed into any other
+%	\begin{itemize}
+%		\item[] \begin{rules}{Constraint Transformation}
+%\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
+%\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
+%\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
+%\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
+%\end{rules}  
+%	\end{itemize}
+	\item Constraints can be eliminated when they are the same on both sides \\
+%	\begin{rules}{Constraint Elimination} 
+%\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
+%\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
+%\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
+%\end{rules}
+	
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Soundness}
@@ -93,4 +211,8 @@
 
 \end{frame}
 
+\begin{frame}{References}
+\renewcommand{\bibfont}{\small}
+\printbibliography
+\end{frame}
 \end{document}

@@ -471,7 +471,7 @@ Let the constraint be \texttt{empty}:
 \end{eqnarray*}
 \end{proof}
 \noindent From \Cref{lem:elimination} we can generate the following three rules:
-\begin{rules}{Restraint Elimination} 
+\begin{rules}{Constraint Elimination} 
 \inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
 \inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
 \inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
