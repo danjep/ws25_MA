@@ -1596,6 +1596,38 @@ We can construct this rule with (\textsc{weak}) and (\textsc{strength}):
 }{\Relr \subseteq \Rels}
 \end{mathpar}
 Now, we can translate any step that Grünke et al. might take in $\pi_\infty$. \\
+First we will examine infinite proofs with just one recurring including term. Thus, we have an inclusion $\relr^* \subseteq \rels$ and a proof $\pi_\infty$ that uses a progressing Kleene-star rule infinitely often.
+We will replace this infinite proof with our ($+_L$) rule which uses an invariant $\relI$ which is a fixed point of $\relr^+$.
+Grünke et al.'s infinite proof $\pi_\infty$ branches infinitely often by applying ($*L$) or ($*R$) and transforming $\relr^+$ back into $\relr^*$. In every branch that is created they prove $\relr^k \subseteq \rels$ for ascending $k \in \N_0$. Assuming that $\relr$ does not include further Kleene-stars, this branch would be finite. By applying this to every nesting level of Kleene-stars, there will always be finite branches. To that end, we assume $\relr$ to be Kleene-star free without loss of generality. \\
+In order to apply our ($+_L$) rule we need to determine an invariant $\relI$ and prove that if the inclusion holds, than the premises of our rule hold.
+These premises are: 
+\[
+\textbf{(P1)}~ \relr \subseteq \relI \qquad
+\textbf{(P2)}~ \relr.\relI \subseteq \relI \qquad
+\textbf{(P3)}~ \relI \subseteq \rels
+\]
+
+\todo{Das kann alles noch falsch sein}{
+To determine our invariant we need to find a term that fulfills all of these premises and show that the proof tableaus for the premises will be finite.
+We will distinguish two cases:
+\[(1) \quad \exists n \in \N: \relr^+ \subseteq \relr^n \hspace*{0.3\textwidth} (2) \quad \nexists n \in \N: \relr^+ \subseteq \relr^n\]}
+\paragraph{Case (1):}
+In this case we choose $\relI = \relr^n$ as the invariant. Clearly, $\relr^n$ is the smallest fixed point of $\relr^+$ and \propl{} holds because of $\relr \subseteq \relr^+ \subseteq \relr^n$. \\
+The proof for $\relr \subseteq \relr^n$ will be finite because 
+For \propz{} we have:
+\[\relr.\Relr^n \subseteq \Relr^+ \subseteq \relr^n\]
+And for \prope{} we know that 
+\[\relr^n \subseteq \relr^+ \subseteq \rels\]
+The invariant is valid, but it remains to be proven that the following branches are finite.
+
+\paragraph{Case (2):}
+Let $\relt$ be a transitive subterm of $\Rels$ with $\relt \subseteq \Rels$, $\relt^+ \subseteq \relt$ and $\relr^+ \subseteq \relt$. Because the $n \in \N: \Relr^+ \subseteq \Relr^n$ does not exist, $\relt$ has to exist. Without a $\Relr^n$, the transitive closure would grow with every concatenation of $\relr$. It is not possible to capture this in $\rels$ without a transitive closure or transitive base relation. \\
+In this case we choose $\relI = \relt$ as the invariant. \\
+\propl : $\relr \subseteq \relt$ is given through $\relr^+ \subseteq \relt$. The proof is finite because one can simply factor out a single occurrence of $\relt$ and prove $\Relr \subseteq \relt $. \\
+\propz : $\relr.\relt \subseteq \relt$ holds because $\relr.\relt \subseteq \relt.\relt \subseteq \relt$. The finite proof can be done along these exact steps. \\
+\prope : $\relt \subseteq \rels$ is given via the definition of $\relt$. The proof tableau is finite since $\relt$ occurs in a union in $\Rels$ since a concatenation would nicht vereinbar mit $\relr \subseteq \relt$ und Intersection kann mit in $\Relt$ sein. The tableau for $\relt \subseteq \Relt \cup \relt'$ is definitely finite.
+
+\paragraph{Multiple Invariants}
 As there might exist multiple terms $\rels_i$ that induce a backlink, we need an invariant that holds for everyone of these terms.
 We give an example of an infinite branch in \Cref{fig:infleft} where the $\pi$ was already translated into a relational inclusion proof with the procedure in the previous section.
  
@@ -1613,7 +1645,7 @@ We give an example of an infinite branch in \Cref{fig:infleft} where the $\pi$ w
 				\inferrule*[]{
 					\inferrule*[]{
 						\inferrule*[left=($*L$)]{
-						\inferrule*[]{\dots}{\id \subseteq \rels_1}
+							\inferrule*[]{\dots}{\relr \subseteq \rels_1}
 						\\
 							\inferrule*[]{
 								\inferrule*[]{\dots}{\relr^* \subseteq \textcolor{blue}{\rels_2 \qquad \circ}}
@@ -1631,46 +1663,39 @@ We give an example of an infinite branch in \Cref{fig:infleft} where the $\pi$ w
 
 \pagebreak
 \noindent To transform the backlinks in $\pi$ into an invariant for $\prf_\pi$ we use a procedure that is inspired by the one by Das, Doumane and Pous \cite{Das+18}. In their work, they prove completeness of left-handed Kleene Algebra by transforming cyclic proofs of HKA \cite{DasPou17} into $\ell$KA proofs using invariants.
-They mention that if intersections were allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use those as invariants.
+They mention that if intersections were allowed in Kleene Algebra, they would choose the intersection of the including terms of any occurrence of a backlink as the invariant. Since rational CAT allows for intersections, we can use the intersection of the individual invariants.
 
-We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a progressing Kleene-star rule (($*L$),($*R$)) infinitely often and is therefore cyclic. 
-In $\prf_\pi$ we would replace the infinite branch $\B_\infty$ with the rule ($+_L$) where we use an invariant $\I$ that is an intermediate term between \Relr{} and \Rels{} and a fixed point for $\relr^+$.
-As mentioned, we choose the intersection of the including terms as the invariant:
+We let $\pi$ be a RAT-CAT proof and $\pi_\infty$ the branch that applies a progressing Kleene-star rule (($*L$),($*R$)) infinitely often. Translating this into our system, we get an infinite branch $\B_\infty$ in $\prf_\pi$. We replace the infinite branch with the rule ($+_L$) where we use an invariant $\relI$ that is an intermediate term between $\Relr^+$ and \Rels{} and a fixed point for $\relr^+$. 
+As mentioned, we choose for proofs where $\Relr^+$ is included in different terms $\rels_i$ the intersection of the invariants $\relI_i$ as the invariant $\I$:
 Let $s_i, i \in [1,n]$ be the terms that are supposed to include $\relr^+$
-\[\I = \bigcap_{i=1}^n \rels_i\]
-The invariant $\I$ has to fulfill three properties according to our invariant rule:
-\[
-\textbf{(P1)}~ \relr \subseteq \I \qquad
-\textbf{(P2)}~ \relr.\I \subseteq \I \qquad
-\textbf{(P3)}~ \forall i \in [1,n]: \I \subseteq \rels_i 
-\]
-We know that $\pi$ is a closed proof and $\relr^+ \subseteq \rels_i$ holds for all $i \in [1,n]$. Furthermore, we can assume that every $s_i$ can be transformed into $\relr.\rels_i$, since between the occurrences of the term a $\relr$ term that is concatenated on the left side (since we can assume only ($*L$) is used according to \Cref{lem:decomposition}) can be split off. Using this information we can prove the properties:
+\[\I = \bigcap_{i=1}^n \relI_i\]
 
-\paragraph{(P1)} $\relr \subseteq \bigcap_{i = 1}^n \rels_i $
-\begin{proof}As we have just mentioned, we know that $\relr \subseteq \rels_i$ holds for every $\rels_i$. The conjunction of these facts is exactly the definition of the intersection of all the $\rels_i$ terms. \end{proof}
+Using this information we need to prove the properties of an invariant:
 
-\paragraph{(P2)} $\relr.\left( \bigcap_{i = 1}^n \rels_i \right) \subseteq \bigcap_{i = 1}^n \rels_i$
+\paragraph{(P1)} $\relr \subseteq \bigcap_{i = 1}^n \relI_i $
+\begin{proof}As we have just mentioned, we know that $\relr \subseteq \relI_i$ holds for every $\relI_i$. The conjunction of these facts is exactly the definition of the intersection of all the $\relI_i$ terms. \end{proof}
+
+\paragraph{(P2)} $\relr.\left( \bigcap_{i = 1}^n \relI_i \right) \subseteq \bigcap_{i = 1}^n \relI_i$
 \begin{proof}
-From $\pi$ being a closed tableau we know that $\relr^+ \subseteq \rels_i$ holds for every $i \in [1,n]$ and since we will receive $\relr^* \subseteq \rels_i$ from $\relr^+ \subseteq \rels_i$, we know that any $s_i$ can be resolved to $\relr.\rels_i$. Applying this to the invariant, we can deduce that it can be transformed to $\bigcap_{i = 1}^n \relr.\rels_i$.
+We know for each individual invariant $\relI$ that $\relr.\relI \subseteq \relI$ holds.
 
 \begin{eqnarray*}
-\edgein \relr.(\bigcap_{i = 1}^n \rels_i) &\impl & \exists e_1: (e,e_1) \in \relr \land (e_1,e') \in \bigcap_{i = 1}^n \rels_i \\
-& \impl & \exists e_1: (e,e_1)\in \relr \land \bigwedge_{i=1}^n (e_1,e') \in s_i \\
-&\impl & \exists e_1: \bigwedge_{i=1}^n (e,e_1) \in \relr \land (e_1,e') \in \rels_i \\
-&\impl & \edgein \bigcap_{i = 1}^n \relr.\rels_i = \bigcap_{i = 1}^n \rels_i
+\edgein \relr.(\bigcap_{i = 1}^n \relI_i) &\impl & \exists e_1: (e,e_1) \in \relr \land (e_1,e') \in \bigcap_{i = 1}^n \relI_i \\
+& \impl & \exists e_1: (e,e_1)\in \relr \land \bigwedge_{i=1}^n (e_1,e') \in s_I \\
+&\impl & \exists e_1: \bigwedge_{i=1}^n (e,e_1) \in \relr \land (e_1,e') \in \relI_i \\
+&\impl & \edgein \bigcap_{i = 1}^n \relr.\relI_i = \bigcap_{i = 1}^n \relI_i
 \end{eqnarray*}
 \end{proof}
 
-\paragraph{(P3)} $\bigcap_{i = 1}^n \rels_i \subseteq \rels_i$ for every $\rels_i$
+\paragraph{(P3)} $\bigcap_{i = 1}^n \relI_i \subseteq \rels_i$ for every $\rels_i$
 \begin{proof}
-As we can reformulate the term for every $\rels_j$ as $\rels_j \cap (\bigcap_{i=1}^n \rels_i) \subseteq \rels_j$ and we know from the soundness proof of ($\cap_L$) that $\relr \cap \relr' \subseteq \relr$ holds, \textbf{(P3)} holds for the invariant.
+As for every $\Rels_i$ it holds that $\relI_i \subseteq \Rels_i$, it must hold for the intersections of all invariants too.
 \end{proof}
 
 \begin{lemma}\label{lem:properties} The proof tableaus for the properties \textbf{\upshape (P1)}, \textbf{\upshape (P2)} and \textbf{\upshape (P3)} are finite. \end{lemma}
 \begin{proof}
-For \textbf{(P1)} $\relr \subseteq \I$ the proof is to apply the rules in the cyclic part of $\pi_\infty$. Since that part splits off one $\relr$ from the including terms resulting in $\relr^* \subseteq \Rels_i$ for any of the $s_i$, is must be possible to split the $\relr$ off here to produce $\0 \subseteq \rels_i$ which can then be closed by (\textsc{empty}). 
-As the section of the branch between the occurrences of the term is finite, the proof for \textbf{(P1)} must be finite as well. \\
-For \textbf{(P2)} $\relr.\I \subseteq \I$ a similar argument can be made. We know from the cyclic proof that it is possible to split off arbitrarily many $\relr$ from the $\rels_i$ terms and still retain the term itself. We use this in the proof of the property. Accordingly, the proof for this can be the finite section between the occurrences of the term, which produces $\I \subseteq \I$ and that can be resolved to \true{} with the (\textsc{reflexivity}) rule. \\
+For \textbf{(P1)} $\relr \subseteq \I$ the proof is to apply the finite transformation $\B_i$ and ($._{LR}$). Since these rules split off one $\relr$ from the including terms, transforming $\relr.\relr^* \subseteq \rels_i$ into $\relr^* \subseteq \Rels_i$ for any of the $s_i$, is must be possible to split the $\relr$ off here to produce $\0 \subseteq \rels_i$ which can then be closed by (\textsc{empty}). \\
+For \textbf{(P2)} $\relr.\I \subseteq \I$ a similar argument can be made. We know from the cyclic proof that it is possible to split off arbitrarily many $\relr$ from the $\rels_i$ terms and still retain the term itself. We use this in the proof of the property. Accordingly, the proof for this will be $\B_i$, which produces $\relr.\I \subseteq \relr.\I$ and that can be resolved to \true{} with the (\textsc{reflexivity}) rule. \\
 For \textbf{(P3)} $\forall i \in [1,n]: \I \subseteq \rels_i$ the proofs can be two rules long. First, we apply the ($\cap_{comm}$) rule to put the current term $\rels_j$ at the first position and then we invoke ($\cap_L$) to close the branch. This is a finite proof and thus, the application of the induction rule ($+_L$) yields a finite proof.
 \end{proof}
 
