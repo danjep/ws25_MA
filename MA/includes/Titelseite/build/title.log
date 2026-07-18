@@ -1,53 +1,53 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (MiKTeX 23.4) (preloaded format=xelatex 2023.6.6)  7 JUL 2026 11:20
+This is XeTeX, Version 3.141592653-2.6-0.999998 (MiKTeX 26.5) (preloaded format=xelatex 2026.7.9)  18 JUL 2026 13:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./title.tex
 (title.tex
-LaTeX2e <2022-11-01> patch level 1
-L3 programming layer <2023-03-30>
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
-Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
-File: size12.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
-\c@part=\count181
-\c@section=\count182
-\c@subsection=\count183
-\c@subsubsection=\count184
-\c@paragraph=\count185
-\c@subparagraph=\count186
-\c@figure=\count187
-\c@table=\count188
-\abovecaptionskip=\skip48
-\belowcaptionskip=\skip49
-\bibindent=\dimen140
+\c@part=\count273
+\c@section=\count274
+\c@subsection=\count275
+\c@subsubsection=\count276
+\c@paragraph=\count277
+\c@subparagraph=\count278
+\c@figure=\count279
+\c@table=\count280
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen150
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
-Package: geometry 2020/01/02 v5.9 Page Geometry
+Package: geometry 2026/03/07 v6.0 Page Geometry
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
-\KV@toks@=\toks16
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
-Package: iftex 2022/02/03 v1.0f TeX engine tests
+Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
-\Gm@cnth=\count189
-\Gm@cntv=\count190
-\c@Gm@tempcnt=\count191
-\Gm@bindingoffset=\dimen141
-\Gm@wd@mp=\dimen142
-\Gm@odd@mp=\dimen143
-\Gm@even@mp=\dimen144
-\Gm@layoutwidth=\dimen145
-\Gm@layoutheight=\dimen146
-\Gm@layouthoffset=\dimen147
-\Gm@layoutvoffset=\dimen148
-\Gm@dimlist=\toks17
+\Gm@cnth=\count281
+\Gm@cntv=\count282
+\c@Gm@tempcnt=\count283
+\Gm@bindingoffset=\dimen151
+\Gm@wd@mp=\dimen152
+\Gm@odd@mp=\dimen153
+\Gm@even@mp=\dimen154
+\Gm@layoutwidth=\dimen155
+\Gm@layoutheight=\dimen156
+\Gm@layouthoffset=\dimen157
+\Gm@layoutvoffset=\dimen158
+\Gm@dimlist=\toks18
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
@@ -57,119 +57,121 @@ Package: setspace 2022/12/04 v6.7b set line spacing
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
 e.sty
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
-Package: expl3 2023-03-30 L3 programming layer (loader) 
+Package: expl3 2026-06-18 L3 programming layer (loader) 
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-xet
 ex.def
-File: l3backend-xetex.def 2023-03-30 L3 backend support: XeTeX
-\g__graphics_track_int=\count192
-\l__pdf_internal_box=\box51
-\g__pdf_backend_object_int=\count193
-\g__pdf_backend_annotation_int=\count194
-\g__pdf_backend_link_int=\count195
+File: l3backend-xetex.def 2026-02-18 L3 backend support: XeTeX
+\g__graphics_track_int=\count284
+\g__pdfannot_backend_int=\count285
+\g__pdfannot_backend_link_int=\count286
 ))
-Package: xparse 2023-02-02 L3 Experimental document command parser
+Package: xparse 2025-10-09 L3 Experimental document command parser
 )
-Package: fontspec 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTeX
+Package: fontspec 2025/09/29 v2.9g Font selection for XeLaTeX and LuaLaTeX
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/fontspec\fontspec-xetex
 .sty
-Package: fontspec-xetex 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTe
+Package: fontspec-xetex 2025/09/29 v2.9g Font selection for XeLaTeX and LuaLaTe
 X
-\l__fontspec_script_int=\count196
-\l__fontspec_language_int=\count197
-\l__fontspec_strnum_int=\count198
-\l__fontspec_tmp_int=\count199
-\l__fontspec_tmpa_int=\count266
-\l__fontspec_tmpb_int=\count267
-\l__fontspec_tmpc_int=\count268
-\l__fontspec_em_int=\count269
-\l__fontspec_emdef_int=\count270
-\l__fontspec_strong_int=\count271
-\l__fontspec_strongdef_int=\count272
-\l__fontspec_tmpa_dim=\dimen149
-\l__fontspec_tmpb_dim=\dimen150
-\l__fontspec_tmpc_dim=\dimen151
+\l__fontspec_script_int=\count287
+\l__fontspec_language_int=\count288
+\l__fontspec_strnum_int=\count289
+\l__fontspec_tmp_int=\count290
+\l__fontspec_tmpa_int=\count291
+\l__fontspec_tmpb_int=\count292
+\l__fontspec_tmpc_int=\count293
+\l__fontspec_em_int=\count294
+\l__fontspec_emdef_int=\count295
+\l__fontspec_strong_int=\count296
+\l__fontspec_strongdef_int=\count297
+\l__fontspec_tmpa_dim=\dimen159
+\l__fontspec_tmpb_dim=\dimen160
+\l__fontspec_tmpc_dim=\dimen161
  (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
-Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/fontspec\fontspec.cfg))
 ) (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pdfpages.sty
-Package: pdfpages 2022/12/19 v0.5x Insert pages of external PDF documents (AM)
+Package: pdfpages 2026/03/30 v0.6h Insert pages of external PDF documents (AM)
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
-Package: ifthen 2022/04/13 v1.1d Standard LaTeX ifthen package (DPC)
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
-Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count273
-\calc@Bcount=\count274
-\calc@Adimen=\dimen152
-\calc@Bdimen=\dimen153
-\calc@Askip=\skip50
-\calc@Bskip=\skip51
-LaTeX Info: Redefining \setlength on input line 80.
-LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count275
-\calc@Cskip=\skip52
+Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
+\calc@Acount=\count298
+\calc@Bcount=\count299
+\calc@Adimen=\dimen162
+\calc@Bdimen=\dimen163
+\calc@Askip=\skip51
+\calc@Bskip=\skip52
+LaTeX Info: Redefining \setlength on input line 86.
+LaTeX Info: Redefining \addtolength on input line 87.
+\calc@Ccount=\count300
+\calc@Cskip=\skip53
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/eso-pic\eso-pic.sty
-Package: eso-pic 2023/05/03 v3.0c eso-pic (RN)
-\ESO@tempdima=\dimen154
-\ESO@tempdimb=\dimen155
+Package: eso-pic 2026/05/31 v3.0e eso-pic (RN)
+\ESO@tempdima=\dimen164
+\ESO@tempdimb=\dimen165
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
-Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: xetex.def on input line 227.
+Package xcolor Info: Driver file: xetex.def on input line 274.
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\xetex.def
-File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
+File: xetex.def 2025/11/01 v5.0p Graphics/color driver for xetex
 ) (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.lt
 x)
-Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1353.
-Package xcolor Info: Model `RGB' extended on input line 1369.
-Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1371.
-Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1372.
-Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1373.
-Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1374.
-Package xcolor Info: Model `Gray' substituted by `gray' on input line 1375.
-Package xcolor Info: Model `wave' substituted by `hsb' on input line 1376.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 ))
+(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count301
+)
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
-Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
-Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
-Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 )
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
 fg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: xetex.def on input line 107.
+Package graphics Info: Driver file: xetex.def on input line 106.
 )
-\Gin@req@height=\dimen156
-\Gin@req@width=\dimen157
+\Gin@req@height=\dimen166
+\Gin@req@width=\dimen167
 )
-\AM@pagewidth=\dimen158
-\AM@pageheight=\dimen159
-\AM@fboxrule=\dimen160
+\AM@pagewidth=\dimen168
+\AM@pageheight=\dimen169
+\AM@fboxrule=\dimen170
 
 (C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\ppxetex.def
-File: ppxetex.def 2022/12/19 v0.5x Pdfpages driver for XeTeX (AM)
+File: ppxetex.def 2026/03/30 v0.6h Pdfpages driver for XeTeX (AM)
 )
-\pdfpages@includegraphics@status=\count276
-\AM@pagebox=\box52
-\AM@global@opts=\toks18
-\AM@pagecnt=\count277
-\AM@toc@title=\toks19
-\AM@lof@heading=\toks20
-\c@AM@survey=\count278
-\AM@templatesizebox=\box53
+\pdfpages@includegraphics@status=\count302
+\AM@pagebox=\box53
+\AM@global@opts=\toks19
+\AM@pagecnt=\count303
+\AM@toc@title=\toks20
+\AM@lof@heading=\toks21
+\c@AM@survey=\count304
+\AM@templatesizebox=\box54
 )
 
 LaTeX Warning: Unused global option(s):
@@ -187,12 +189,6 @@ LaTeX Font Info:    ... okay on input line 12.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
 LaTeX Font Info:    ... okay on input line 12.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 12.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
-2.
-
-(C:\Users\danje\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1cmr.fd
-File: ts1cmr.fd 2022/07/10 v2.5l Standard LaTeX font definitions
-)
 LaTeX Font Info:    ... okay on input line 12.
 LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 12.
 LaTeX Font Info:    ... okay on input line 12.
@@ -236,7 +232,8 @@ LaTeX Font Info:    ... okay on input line 12.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
-Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
+Package fontspec Info: 
+(fontspec)             Adjusting the maths setup (use [no-math] to avoid
 (fontspec)             this).
 
 \symlegacymaths=\mathgroup4
@@ -312,15 +309,20 @@ File: TUBSlogo.jpg Graphic file (type bmp)
 
 [1
 
-] (C:\Users\danje\Repos\ws25_ma\MA\includes\Titelseite\build\title.aux) ) 
+] (C:\Users\danje\Repos\ws25_ma\MA\includes\Titelseite\build\title.aux)
+ ***********
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+ ***********
+ ) 
 Here is how much of TeX's memory you used:
- 5332 strings out of 411463
- 133853 string characters out of 5818008
- 1845290 words of memory out of 5000000
- 25552 multiletter control sequences out of 15000+600000
- 512343 words of font info for 39 fonts, out of 8000000 for 9000
+ 5661 strings out of 402628
+ 137302 string characters out of 5439107
+ 596429 words of memory out of 5000000
+ 34703 multiletter control sequences out of 15000+600000
+ 627777 words of font info for 47 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 72i,5n,77p,250b,182s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 73i,5n,90p,250b,185s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on C:\Users\danje\Repos\ws25_ma\MA\includes\Titelseite\build\tit
 le.pdf (1 page).
