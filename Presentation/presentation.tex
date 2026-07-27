@@ -1,7 +1,7 @@
 % HINT: add option aspectratio=169 for 16:9 aspect ratio
 % HINT: add 'handout' to activate handout mode (without overlays for printing)
-\documentclass[t,english,aspectratio=169,handout]{beamer}
-\setbeamerfont{frametitle}{family=\rmfamily }
+\documentclass[t,english,aspectratio=169,handout,11pt]{beamer}
+\setbeamerfont{frametitle}{family=\rmfamily}
 \usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
 % include package import and macro defintions
 \input{includes/preamble}
@@ -29,6 +29,7 @@
 %%%pythonmarker
 
 \begin{document}
+%\fontfamily{cmr}\selectfont
 
 \begin{frame}[plain]
 \titlepage
@@ -78,7 +79,7 @@
 \begin{minipage}{0.7\textwidth}
 \begin{itemize}
 	\item Memory Consistency Models describe restrictions to the possible executions
-	\item One Example is Sequential Consistency (\cite{Lam79})
+	\item One Example is Sequential Consistency (\cite{Lam79}), where
 	\begin{itemize}
 		\item Operations are executed as if they were in some sequential order
 		\item Operations of each thread follow the order in which they were written (program order (\po))
@@ -86,7 +87,7 @@
 	\item Forbids the $a=b=0$ execution
 \end{itemize}
 \end{minipage}\begin{minipage}{0.3\textwidth}
-\begin{figure} \small
+\begin{figure} \footnotesize
 	\begin{tikzpicture}[node distance=1.5cm and 1cm]
 \node[blank] (Init) {\texttt{W:x=0,y=0}};
 \node[blank, below left= 0.8cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
@@ -130,7 +131,7 @@
 
 \begin{frame}{The CAT Language}
 \begin{itemize}
-	\item Sequential Consistency in CAT: $\texttt{acyclic } \po \cup \co \cup \rf \cup \fr$ \quad ($\fr = \rf^\inv.\co$) \\
+	\item Sequential Consistency in CAT: \quad $\texttt{acyclic } \po \cup \co \cup \rf \cup \fr$ \quad ($\fr = \rf^\inv.\co$) \\
 	\begin{figure}\centering \includegraphics[scale=0.45]{includes/Figures/SCgraph.jpg}
 	\end{figure}
 	\item \po{} and \fr{} form a cycle
@@ -149,7 +150,28 @@
 \begin{itemize}
 	\item Produces implications of the form $\true \impl M_1 \subseteq M_2$ to prove this inclusion
 	\item Start at the bottom with the inclusion term
+	\begin{minipage}{0.65\textwidth}
 	\item Transforms the inclusion and branches out to end at (possibly multiple) leafs which are \true 
+	\item First, we remove the constraint
+	\item Then, we apply rules to the relational terms
+	\end{minipage}\begin{minipage}{0.35\textwidth}\centering
+	\item[] \begin{tikzpicture}
+\node[blank] (root) {$M_1 \subseteq M_2$};
+\node[blank, above of=root] (1) {\dots};
+\node[blank, above left of=1] (2) {\dots};
+\node[blank, above right of=1] (3) {\dots};
+\node[blank, above of=2] (4) {\textcolor{rfgreen}{\true}};
+\node[blank, above of=3] (5) {\textcolor{rfgreen}{\true}};
+
+\draw[arrow] (root) -- (1);
+\draw[arrow] (1) -- (2);
+\draw[arrow] (1) -- (3);
+\draw[arrow] (2) -- (4);
+\draw[arrow] (3) -- (5);
+\end{tikzpicture}
+	\end{minipage}
+
+	%\includegraphics[scale=0.5]{includes/Figures/psexample.jpg}
 %	\item[] \begin{figure} \small
 %	\begin{mathpar}
 %		\inferrule*[]{
@@ -170,29 +192,155 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{The Proof System}
+\begin{frame}{The Proof System: Removing the Constraints}
 \begin{itemize}
 	\item Every one of the constraints can be transformed into any other
-%	\begin{itemize}
-%		\item[] \begin{rules}{Constraint Transformation}
-%\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
-%\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
-%\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
-%\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
-%\end{rules}  
-%	\end{itemize}
-	\item Constraints can be eliminated when they are the same on both sides \\
-%	\begin{rules}{Constraint Elimination} 
-%\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
-%\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
-%\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
-%\end{rules}
-	
+	\begin{itemize}
+	\item[] \begin{minipage}{0.7\textwidth}
+	\vspace*{0.5cm}
+	\begin{rules}{Constraint Transformation}
+\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
+\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
+\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
+\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
+\end{rules}
+	\end{minipage}  \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Soundness}
+\begin{frame}{The Proof System: Removing the Constraints}
+\begin{itemize}
+	\item Constraints can be eliminated when they are the same on both sides \\
+	\begin{itemize}
+		\item[] \begin{rules}{Constraint Elimination} 
+\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
+\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
+\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
+\end{rules}
+	\end{itemize}
+	\item Now we are left with an inclusion between relational terms $\relr \subseteq \Rels$
+\end{itemize}
+\end{frame}
 
+\begin{frame}{The Proof System: Transformations}
+\begin{itemize}
+	\item Transformations are rules based on equivalences and thus are invertible
+	\item Examples are rules based on common operator properties like commutativity, distributivity and associativity
+	\item Some Transformations are based on operator definitions
+		\begin{mathpar} \footnotesize \inferrule*[left=($+$)]{\Omega[\sf r.r^*]}{\Omega[\sf r^+]} \and
+\inferrule*[left=($?$)]{\Omega[\sf r \cup \id]}{\Omega[\sf r?]} \and
+\inferrule*[left=($*$)]{\Omega[\sf \id \cup r^+]}{\Omega[\sf r^*]} \end{mathpar}
+	\item Other Transformations are based on properties of relations
+	\begin{mathpar} \footnotesize \inferrule*[left=($\0_{\cup}$)]{\Omega[\sf r]}{\Omega[\sf \0 \cup r]} \and
+\inferrule*[left=($\0_{\cap}$)]{\Omega[\0]}{\Omega[\sf r \cap \0]} \and
+\inferrule*[left=($\0_{conc}$)]{\Omega[\0]}{\Omega[\sf r.\0.s]} \end{mathpar}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Transformations}
+\begin{itemize}
+	\item {\fontfamily{lmr}\selectfont \textbf{Inversionlemma:} \textit{Let $\relr$ be a relational term that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to relations that cannot be decomposed further (in CAT: base relations) with $\semsof{\relr'} = \semsof{\relr}$.}}
+	\item Basically, Inversions can be assumed to only be used on base relations 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Transformations}
+\begin{itemize}
+	\item The proof of the lemma yields the rules for that transformation:
+	\small \begin{rules}{Inversion}  \inferrule*[left=($-1_{\cup}$)]{\Omega[\sf r^{-1} \cup s^{-1}]}{\Omega[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Omega[\sf r^{-1} \cap s^{-1}]}{\Omega[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Omega[\sf s^{-1}.r^{-1}]}{\Omega[\sf (r.s)^{-1}]} \and
+%\inferrule*[left=($-1_{\sim}$)]{\Omega[\sf \sim (r^{-1})]}{\Omega[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
+\inferrule*[left=($-1_{+}$)]{\Omega[\sf (r^{-1})^+]}{\Omega[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Omega[\sf (r^{-1})^*]}{\Omega[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Omega[\sf (r^{-1})?]}{\Omega[\sf (r?)^{-1}]} \and
+\inferrule*[left=($\inv_\times$)]{\Omega[(B \times A)]}{\Omega[(A \times B)^\inv]} \end{rules}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Implications}
+\begin{itemize}
+	\item Implications are context-sensitive and not always invertible.
+	\item Usually, we have two rules per operator, one for each side of the inclusion
+	\begin{itemize}
+		\item[] {\footnotesize \begin{rules}{Union}
+%\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
+\inferrule*[left=($\cup_{L}$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \and
+\inferrule*[left=($\cup_{R}$)]{\sf r \subseteq s}{\sf r \subseteq s \cup t} \and
+\end{rules}}
+	\end{itemize}
+	\item This is where branching is possible
+	\begin{itemize}
+		\item Here, $\relr \cup \rels \subseteq \relt$ is true, if $\relr \subseteq \relt$ and $\rels \subseteq \relt$ are both true.
+	\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Implications}
+\begin{itemize}
+	\item Moreover, we have axioms that are needed to close branches
+	\begin{itemize}
+		\item[] \footnotesize \begin{rules}{Axioms} \inferrule*[left=(ref)]{\it true}{\sf r \subseteq r} \and
+\inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
+\inferrule*[left=(full)]{true}{\relr \subseteq (E \times E)} \and 
+\inferrule*[left=($\cap_{L}$)]{\true}{\relr \cap \rels \subseteq \relr} \end{rules}
+	\end{itemize}
+	\item And rules for weakening and strengthening terms:
+	\begin{itemize}
+		\item[]\footnotesize \begin{rules}{Weak and Strength} \inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
+\inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} \end{rules}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Implications}
+\begin{itemize}
+	\item For handling transitive closures on the left side of the inclusion, we use an invariant:
+	\begin{itemize}
+		\item[] \footnotesize \begin{rules}{Transitive Closure}
+		\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf 		r^+ \subseteq s}
+		\end{rules}
+	\end{itemize}
+	\item Invariant $\relI$ is a smallest fixed point for $\relr^+$
+	\item The choice of the invariant is important, since not every inclusion can easily be resolved
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+\centering
+\includegraphics[scale=0.5]{includes/Figures/InvariantExample.jpg}
+\end{frame}
+
+\begin{frame}{The Proof System: Assumptions}
+\begin{itemize}
+	\item
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Assumptions}
+\begin{itemize}
+	\item The base relations of CAT have some inherent properties (e.g. \co{} is transitive)
+	\item We capture this in a set of rules: 
+	\vspace*{-0.7cm}\begin{mathpar}\hspace*{2cm} \small \inferrule*[left=($\co_{trans}$)]{true}{\co.\co \subseteq \co} \end{mathpar}
+	\item This kind of rule can be added for any assumptions that can be made about the MCMs
+	\item For definitions of non-base relations $\rels = \relr$, we can add rules of this form:
+	\begin{mathpar} \small \inferrule*[left=(def)]{\Omega[\relr]}{\Omega[\Rels]} \end{mathpar}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+\centering
+\includegraphics[scale=0.4]{includes/Figures/MCMexample.jpg}
+\end{frame}
+
+\begin{frame}{Soundness}
+\begin{itemize}
+	\item For soundness, we show monotinicity of the unary and binary operators $f,g$:
+	\begin{itemize}
+		\item For any $\Relr, \rels, \relt \subseteq (E \times E)$: $\relr \subseteq \Rels \impl f(\relr) \subseteq f(\rels)$ and $g(\relr,\relt) \subseteq g(\rels,\relt)$.
+	\end{itemize}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Completeness}

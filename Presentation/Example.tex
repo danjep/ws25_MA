@@ -1,0 +1,33 @@
+\documentclass[a4paper,11pt,english]{article}
+\usepackage[a4paper, left=0.5cm, right=0.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+
+\usepackage{mathpartir}
+
+\begin{document}
+\begin{mathpar}
+\inferrule*[Right=($+_L$)]{
+	\inferrule*[Left=($\cup_R$)]{
+		\inferrule*[Left=($._{LR}$)]{
+			\inferrule*[]{true}{a \subseteq a}
+			\\
+			\inferrule*[Right=($*$)($\cup_R$)]{
+				\inferrule*[Right=($\textsc{ref}$)]{true}{\textsf{id} \subseteq \textsf{id}}
+			}{\textsf{id} \subseteq (aa)^*}		
+		}{a \subseteq a(aa)^*}	
+	}{a \subseteq (aa)^* \cup a(aa)^*}
+	\\
+	\inferrule*[]{
+		\inferrule*[]{
+			\inferrule*[]{
+				\inferrule*[]{
+					\inferrule*[]{true}{\dots}				
+				}{(aa)^+ \subseteq (aa)^*}			
+			}{aa(aa)^* \subseteq (aa)^*}		
+		}{a(aa)^* \cup aa(aa)^*) \subseteq (aa)^* \cup a(aa)^*}	
+	}{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}
+	\\
+	\inferrule*[Right=(\textsc{ref})]{true}{\sf I \subseteq I}
+}{a^+ \subseteq (aa)^* \cup a(aa)^*}
+\end{mathpar}
+\end{document}
+
