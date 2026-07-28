@@ -1,0 +1,27 @@
+\documentclass[12pt,a4paper,english]{article}
+\usepackage[a4paper, left=0.5cm, right=0.8cm, top=2.3cm, bottom=3cm]{geometry} % kleinere Ränder
+
+\usepackage{mathpartir}
+
+\begin{document}
+\large
+\begin{minipage}{0.35\textwidth}
+\begin{mathpar}
+%\inferrule*[left=($\bot_1$)]{\Gamma, p[\bot_1]}{\bot_0}
+%\inferrule*[left=($\bot_0$)]{\Gamma, p, \neg p}{\bot_0}
+\inferrule*[left=($\neg{=}$)]{\Gamma, \neg (e=e)}{\bot_0}
+\end{mathpar}
+\end{minipage}\begin{minipage}{0.1\textwidth}
+\[\Rightarrow\]
+\end{minipage}\begin{minipage}{0.35\textwidth}
+\begin{mathpar}
+%\inferrule*[left=(empty)]{true}{\textsf{0} \subseteq \textsf{r}}
+%\inferrule*[left=(ref)]{true}{\textsf{r} \subseteq \textsf{r}} \and
+%\inferrule*[left=($\cap_L$)]{true}{\textsf{r} \cap \textsf{s} \subseteq \textsf{r}}
+\inferrule*[left=(full)]{true}{\textsf{r} \subseteq (E \times E)}
+\end{mathpar}
+\end{minipage}
+
+
+
+\end{document}

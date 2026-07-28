@@ -146,6 +146,8 @@
 \end{itemize}
 \end{frame}
 
+
+\section{The Proof System}
 \begin{frame}{The Proof System}
 \begin{itemize}
 	\item Produces implications of the form $\true \impl M_1 \subseteq M_2$ to prove this inclusion
@@ -314,12 +316,6 @@
 
 \begin{frame}{The Proof System: Assumptions}
 \begin{itemize}
-	\item
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Proof System: Assumptions}
-\begin{itemize}
 	\item The base relations of CAT have some inherent properties (e.g. \co{} is transitive)
 	\item We capture this in a set of rules: 
 	\vspace*{-0.7cm}\begin{mathpar}\hspace*{2cm} \small \inferrule*[left=($\co_{trans}$)]{true}{\co.\co \subseteq \co} \end{mathpar}
@@ -334,21 +330,136 @@
 \includegraphics[scale=0.4]{includes/Figures/MCMexample.jpg}
 \end{frame}
 
+
+\section{Soundness}
 \begin{frame}{Soundness}
 \begin{itemize}
-	\item For soundness, we show monotinicity of the unary and binary operators $f,g$:
+	\item For soundness, we show monotinicity of the unary and binary operators $f: (E \times E) \rightarrow (E \times E)$ and $g: (E\times E) \times (E \times E) \rightarrow (E \times E)$:
 	\begin{itemize}
 		\item For any $\Relr, \rels, \relt \subseteq (E \times E)$: $\relr \subseteq \Rels \impl f(\relr) \subseteq f(\rels)$ and $g(\relr,\relt) \subseteq g(\rels,\relt)$.
+	\end{itemize}
+	\item With monotonicity we prove the weakening and strengthening rules
+	\item Subsequently, we prove every implication, monotonicity helps here too
+	\begin{itemize}
+		\item As an example, the proof for ($\cup_L$):
+		\begin{eqnarray*}
+\edgein \relr \cup \Rels &\impl & \edgein \relt \cup \rels \reason{\relr \subseteq \relt \text{ and binary monotonicity} }\\
+&\impl & \edgein \relt \cup \relt \reason{\rels \subseteq \relt \text{ and binary monotonicity}} \\
+&\impl & \edgein \relt
+\end{eqnarray*}
 	\end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Completeness}
+\begin{frame}{Soundness}
+\begin{itemize}
+	\item Only the proof for ($+_L$) is different:
+	\begin{itemize}
+		\item Induction for $\relr^+ \subseteq \relI$ on the number of concatenated $\relr$
+		\item The premise $\relI \subseteq \rels$ then gives us the conclusion $\relr^+ \subseteq \Rels$
+	\end{itemize}
+	\item We expand the soundness for relational terms to MCMs
+	\begin{itemize}
+		\item Every MCM inclusion can be transformed into an relational inclusion
+		\item The rules for constraint elimination and transformation guarantee this
+	\end{itemize}
+\end{itemize}
+\end{frame}
 
+\section{Completeness}
+\begin{frame}{Completeness}
+\begin{itemize}
+	\item We show completeness by translating every proof $\pi$ of \cite{Gru+26} into our proof system
+	\begin{itemize}
+		\item For finite proofs a simple translation of the rules suffices
+		\item For infinite proofs we present a procedure to make them finite
+	\end{itemize}
+	\item We assume the proofs to start with a relational inclusion, since we can expand these to MCMs as mentioned before
+	\item Furthermore, we can assume the starting term in $\pi$ to be in the \textit{Relational Inclusion Standard Form} (RISF)
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Completeness}
+\begin{itemize}
+	\item The RISF is a logical formula with the following form:
+	\[\phi_{\relr} \land \neg \phi_{\rels} = (e_1.\relr \cap e_2) \neq \emptyset, \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+	\item \cite{Gru+26} start with a logical formula including event constants
+	\begin{itemize}
+		\item The events mark the positions in the relational terms
+		\item The formula as a whole describes a counterexample to the inclusion
+		\item Their proof system applies rules which decompose the logical formulas until there is a contradiction
+		\item The contradiction indicates that there exists no counterexample
+	\end{itemize}
+	
+\end{itemize}
+\end{frame}
 
+\begin{frame}{Completeness}
+\begin{minipage}{0.65\textwidth}
+\begin{itemize}
+	\item In $\pi$ a proof node consists of conjunct predicates, positive for the included term and negative for the including term 
+	\item A counterexample would be an edge $\edgein \relr$ which is not in $\rels$.
+	\item Branching occurs if there are multiple ways to obtain the counterexample
+	\item Both branches need to end in contradictions
+\end{itemize}	
+\end{minipage}\begin{minipage}{0.35\textwidth}
+\raggedleft \includegraphics[scale=0.3]{includes/Figures/psexample.jpg}
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Completeness: Branching}
+\begin{itemize}
+	\item For positive predicates, the branching occurs to handle unions
+	\begin{itemize}
+		\item[] \centering \includegraphics[scale=0.35]{includes/Figures/Branchingexample.jpg}
+	\end{itemize}
+	\item The counterexample could be in either of the terms
+	\item This translates into our rule \begin{mathpar}\inferrule*[left=($\cup_L$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \end{mathpar}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Branching}
+\begin{itemize}
+	\item For negative predicates, the branching handles intersections and cross products
+	\begin{itemize}
+		\item[] \centering \includegraphics[scale=0.5]{includes/Figures/Branchingexampleneg.jpg}
+	\end{itemize}
+	\item The counterexample would have to be both of the terms
+	\item We translate this into our rule \begin{mathpar} \inferrule*[left=($\cap_R$)]{\relr \subseteq \Rels \\ \relr \subseteq \relt}{\relr \subseteq \rels \cap \relt} \end{mathpar}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Splitting}
+\begin{itemize}
+	\item In $\pi$, some rules split a negative predicate into several non-atomic ones.
+	\begin{itemize}
+		\item[] \centering \includegraphics[scale=0.5]{includes/Figures/Splittingexample.jpg}
+	\end{itemize}
+	\item As can be seen in the example, the splitting occurs when decomposing a union or when the rules creates a duplicate 
+	\item The conjunction of negative predicates is equivalent to a union of terms in relational inclusion terms
+	\item Therefore we translate these rules to procedures that factor out unions or duplicate the current term and create a new union with two identical terms
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Closing the Branch}
+\begin{itemize}
+	\item In \cite{Gru+26} there are four rules which close the branch: \\ 
+	\vspace*{11pt}
+	\includegraphics[scale=0.35]{includes/Figures/predicaterules}\includegraphics[scale=0.35]{includes/Figures/bot1.jpg}
+	\item We can translate these into our axioms:\\
+	 \begin{rules}{Axioms} \inferrule*[left=(ref)]{\it true}{\sf r \subseteq r} \and
+\inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
+\inferrule*[left=(full)]{true}{\relr \subseteq (E \times E)} \and 
+\inferrule*[left=($\cap_{L}$)]{\true}{\relr \cap \rels \subseteq \relr} \end{rules}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Closing the Branch}
+\begin{itemize}
+	\item[] \includegraphics[scale=0.4]{includes/Figures/bot1trans}
+	\item[] \includegraphics[scale=0.37]{includes/Figures/neg=trans}
+	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Evaluation}
