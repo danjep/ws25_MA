@@ -422,10 +422,25 @@
 \begin{itemize}
 	\item For negative predicates, the branching handles intersections and cross products
 	\begin{itemize}
-		\item[] \centering \includegraphics[scale=0.5]{includes/Figures/Branchingexampleneg.jpg}
+		\item[]\vspace*{-6pt} \begin{minipage}{0.4\textwidth} \raggedright
+		\begin{mathpar}
+		\begin{bprooftree}
+        \LeftLabel{$(\neg{\anode}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\cap{\color{orange} \asetexpr}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \acube,\neg\anode\cap{\color{orange} \asetexpr}\neq\emptyset$}
+    \end{bprooftree}\end{mathpar}
+		\end{minipage}\begin{minipage}{0.5\textwidth} \centering
+		\begin{mathpar} \begin{bprooftree}
+        \LeftLabel{$(\neg{\times}\lrule)$}
+        \AxiomC{$\acube,\neg\acontextof{\anode\flexcomp{\color{orange} \asetexpr_1}\times{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\neg(\anode\cap{\color{orange} \asetexpr_1}\neq\emptyset) \rulespace \acube,\neg\acontextof{{\color{red} \asetexpr_2}}$}
+    		\end{bprooftree}\end{mathpar}
+		\end{minipage}		 
+		\vspace*{6pt}
+		%\item[] \centering \includegraphics[scale=0.5]{includes/Figures/Branchingexampleneg.jpg}
 	\end{itemize}
-	\item The counterexample would have to be both of the terms
-	\item We translate this into our rule \begin{mathpar} \inferrule*[left=($\cap_R$)]{\relr \subseteq \Rels \\ \relr \subseteq \relt}{\relr \subseteq \rels \cap \relt} \end{mathpar}
+	\item The counterexample would have to be in both of the terms
+	\item We translate the intersection rule into our rule \begin{mathpar} \inferrule*[left=($\cap_R$)]{\relr \subseteq \Rels \\ \relr \subseteq \relt}{\relr \subseteq \rels \cap \relt} \end{mathpar}
 \end{itemize}
 \end{frame}
 
@@ -456,10 +471,62 @@
 
 \begin{frame}{Completeness: Closing the Branch}
 \begin{itemize}
+	\item Rule ($\neg \emptyset$) never occurs in a decomposition of RISF $\impl$ no translation
 	\item[] \includegraphics[scale=0.4]{includes/Figures/bot1trans}
-	\item[] \includegraphics[scale=0.37]{includes/Figures/neg=trans}
+	\item[] \includegraphics[scale=0.38]{includes/Figures/neg=trans}
 	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Example}
+%\begin{figure}[H]\centering \small
+\footnotesize
+\vspace*{-11pt}
+\begin{mathpar} 
+	\inferrule*[Left=($\cup_2L$)]{(e_1.(\bot_2 \cup \id.\po) \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+		\inferrule*[Left=($\bot_2L$)]{(e_1.\bot_2 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+			\inferrule*[Left=($\bot_1$)]{(\bot_1 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+				\bot_0			
+			}
+		}
+		\\ \inferrule*[Right=($\id L$)]{(e_1.\id.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+			\inferrule*[Right=($\bot_0$)]{(e_1.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{\bot_0}		
+		}
+	}
+
+\end{mathpar}
+\dotfill %\rule{\textwidth}{0.3pt}
+\begin{mathpar}
+\inferrule*[left=($\cup_L$)]{
+	\inferrule*[Left=(empty)]{true}{\0 \subseteq \po}
+	\\
+	\inferrule*[Right=($\id_{conc}$)]{
+		\inferrule*[Right=(reflexivity)]{true}{\po \subseteq \po}	
+	}{\id.\po \subseteq \po}
+}{\0 \cup \id.\po \subseteq \po}
+\end{mathpar}
+%\end{figure}
+\end{frame}
+
+\begin{frame}{Completeness: Infinite Proofs}
+\begin{itemize}
+	\item An infinite proof $\pi_\infty$ use the progressing Kleene-star rules ($*L$) and ($*R$) infinitely often.
+	\begin{itemize}
+		\item Unroll the Kleene-star in the included term
+		\item Create the same proof node over and over
+	\end{itemize}
+	\item[] \hfill \includegraphics[scale=0.5]{includes/Figures/infiniteexample}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Infinite Proofs}
+\begin{itemize}
+	\item We replace the infinite branch with the invariant rule ($+_L$)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness}
+
 \end{frame}
 
 \begin{frame}{Evaluation}
