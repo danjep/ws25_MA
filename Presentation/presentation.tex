@@ -3,6 +3,7 @@
 \documentclass[t,english,aspectratio=169,handout,11pt]{beamer}
 \setbeamerfont{frametitle}{family=\rmfamily}
 \usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
+\usefonttheme[onlymath]{serif}
 % include package import and macro defintions
 \input{includes/preamble}
 \input{includes/preambleMA}
@@ -17,10 +18,10 @@
 \usetheme[authorinfo=1, progress=0, outline=0]{AIM}
 
 % metadata
+\institute{TU Braunschweig}
 \title{\textbf{\rmfamily An Inclusion-based Proof System \\for Memory Consistency Models}}
 \author{Danje Petersen}
-\institute{TU Braunschweig}
-\date{14. August 2026}
+\date{August 18, 2026}
 
 
 
@@ -32,90 +33,106 @@
 %\fontfamily{cmr}\selectfont
 
 \begin{frame}[plain]
+\includegraphics[scale=0.8]{includes/Figures/TUBSlogo}
 \titlepage
 \end{frame}
 
 \addtocounter{framenumber}{-1}
 
-\begin{frame}{Introduction}
-\begin{itemize}[<+->]
-	\item The use of concurrent threads is very common
-	\item Consider multiple concurrent threads that share memory
-	\begin{itemize}
-		\item They may interfere with each other's stored values
-		\item Interleaving and reordering may create multiple executions with different results
-	\end{itemize}
-	\item Memory Consistency Models describe restrictions to how they can be executed
-	\item It is important to verify and compare these models
+\begin{frame}{Why do we need a Proof System for MCMs?}
+\begin{itemize}
+	\item To show that updated versions of MCMs are stronger or weaker than older ones
+	\item To show that MCMs fulfill certain properties
+	\item To prove one MCM to be stronger than the other
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Introduction}
-\vspace{0.5cm}
+\begin{frame}{What even is a Memory Consistency Model?}
+\vspace*{11pt}
 \begin{minipage}{0.7\textwidth}
 \begin{itemize}[<+->]
-	\item Programs may not be executed in the order they were written in
-	\item Multiple Threads may get interleaved
+	\item Consider multiple concurrent threads that share memory
 	\item Different executions are possible
-	\begin{itemize}
-		\item Either thread is completely executed before the other ($a=0,b=1$ or $a=1,b=0$)
-		\item Both write before the reads ($a=b=1$)
-		\item Both reads before writes ($a=b=0$)
-	\end{itemize}
+	\item Reasons are interleaving and reordering of operations
+	\item Memory Consistency Models describe restrictions to how they can be executed
+	\item Sequential Consistency (\cite{Lam79}) would not allow $a=b=0$
 \end{itemize}
 \end{minipage}\begin{minipage}{0.3\textwidth} \centering
-	\begin{figure} \begin{tabular}{c||c}
+	\visible<1->{\begin{figure} \begin{tabular}{c||c}
 \multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
 %\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
  $T_1$ & $T_2$ \\[2mm]
 
 \texttt{x=1;} & \texttt{y=1;} \\
 \texttt{a=y;} & \texttt{b=x;} \\
-\end{tabular} \end{figure}
+\end{tabular} \end{figure}}
 \end{minipage}
 \end{frame}
 
-\begin{frame}{Memory Consistency Models}
-\begin{minipage}{0.7\textwidth}
+%\begin{frame}{Introduction}
+%\vspace{0.5cm}
+%\begin{minipage}{0.7\textwidth}
+%\begin{itemize}[<+->]
+%	\item Programs may not be executed in the order they were written in
+%	\item Multiple Threads may get interleaved
+%	\item Different executions are possible
+%	\begin{itemize}
+%		\item Either thread is completely executed before the other ($a=0,b=1$ or $a=1,b=0$)
+%		\item Both write before the reads ($a=b=1$)
+%		\item Both reads before writes ($a=b=0$)
+%	\end{itemize}
+%\end{itemize}
+%\end{minipage}\begin{minipage}{0.3\textwidth} \centering
+%	\visible<3->{\begin{figure} \begin{tabular}{c||c}
+%\multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
+%%\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
+% $T_1$ & $T_2$ \\[2mm]
+%
+%\texttt{x=1;} & \texttt{y=1;} \\
+%\texttt{a=y;} & \texttt{b=x;} \\
+%\end{tabular} \end{figure}}
+%\end{minipage}
+%\end{frame}
+
+%\begin{frame}{Memory Consistency Models}
+%\begin{minipage}{0.7\textwidth}
+%\begin{itemize}
+%	\item Memory Consistency Models describe restrictions to the possible executions
+%	\item One Example is Sequential Consistency (\cite{Lam79}), where
+%	\begin{itemize}
+%		\item Operations are executed as if they were in some sequential order
+%		\item Operations of each thread follow the order in which they were written (program order (\po))
+%	\end{itemize}
+%	\item Forbids the $a=b=0$ execution
+%\end{itemize}
+%\end{minipage}\begin{minipage}{0.3\textwidth}
+%\begin{figure} \footnotesize
+%	\begin{tikzpicture}[node distance=1.5cm and 1cm]
+%\node[blank] (Init) {\texttt{W:x=0,y=0}};
+%\node[blank, below left= 0.8cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
+%\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
+%\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
+%
+%\node[blank, below right= 0.8cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
+%\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
+%\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
+%
+%\draw[arrow] (Init) --node[above] {\po} (x<-1);
+%\draw[arrow] (Init) --node[above] {\po} (y<-1);
+%\draw[arrow] (x<-1) --node[right] {\po} (Ry);
+%\draw[arrow] (y<-1) --node[right] {\po} (Rx);
+%\draw[arrow] (Ry) --node[right] {\po} (a<-y);
+%\draw[arrow] (Rx) --node[right] {\po} (b<-x);
+%\end{tikzpicture}
+%	\end{figure}
+%\end{minipage}
+%\end{frame}
+
+
+\begin{frame}{How to formulate a Memory Consistency Model}
 \begin{itemize}
-	\item Memory Consistency Models describe restrictions to the possible executions
-	\item One Example is Sequential Consistency (\cite{Lam79}), where
-	\begin{itemize}
-		\item Operations are executed as if they were in some sequential order
-		\item Operations of each thread follow the order in which they were written (program order (\po))
-	\end{itemize}
-	\item Forbids the $a=b=0$ execution
-\end{itemize}
-\end{minipage}\begin{minipage}{0.3\textwidth}
-\begin{figure} \footnotesize
-	\begin{tikzpicture}[node distance=1.5cm and 1cm]
-\node[blank] (Init) {\texttt{W:x=0,y=0}};
-\node[blank, below left= 0.8cm and 0cm of Init] (x<-1) {\texttt{W:x=1}};
-\node[blank, below of=x<-1] (Ry) {\texttt{R:y}};
-\node[blank, below of=Ry] (a<-y) {\texttt{W:a=y}};
-
-\node[blank, below right= 0.8cm and 0cm of Init] (y<-1) {\texttt{W:y=1}};
-\node[blank, below of=y<-1] (Rx) {\texttt{R:x}};
-\node[blank, below of=Rx] (b<-x) {\texttt{W:b=x}};
-
-\draw[arrow] (Init) --node[above] {\po} (x<-1);
-\draw[arrow] (Init) --node[above] {\po} (y<-1);
-\draw[arrow] (x<-1) --node[right] {\po} (Ry);
-\draw[arrow] (y<-1) --node[right] {\po} (Rx);
-\draw[arrow] (Ry) --node[right] {\po} (a<-y);
-\draw[arrow] (Rx) --node[right] {\po} (b<-x);
-\end{tikzpicture}
-	\end{figure}
-\end{minipage}
-
-
-\end{frame}
-
-
-\begin{frame}{The CAT Language}
-\begin{itemize}
-	\item Defined by \cite{Alg+14}
-	\item Used for expressing axiomatic Memory Models
+	\item Use the CAT language defined by \cite{Alg+14}
+	\item Uses relations on the memory events like \emph{program order} (\po) or \emph{read from} (\rf)
 	\item[] \begin{figure}\vspace*{-0.5cm}\footnotesize
 \begin{align*}
 \langle cat\rangle &:= \bangle{constraint}~ \bangle{rel} \mid \langle cat \rangle~ \langle cat\rangle \\
@@ -123,16 +140,15 @@
 \bangle{rel} &:= \bangle{base\_rel} \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
 \bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \co \mid \loc \mid \ext \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
-\end{align*}
+\end{align*} \caption{Syntax of CAT, figure inspired by the one in \cite{Gru+26}}
 \end{figure}
-\item The \textcolor{red}{red}-colored part distinguishes rational CAT
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The CAT Language}
 \begin{itemize}
 	\item Sequential Consistency in CAT: \quad $\texttt{acyclic } \po \cup \co \cup \rf \cup \fr$ \quad ($\fr = \rf^\inv.\co$) \\
-	\begin{figure}\centering \includegraphics[scale=0.45]{includes/Figures/SCgraph.jpg}
+	\begin{figure}\centering \includegraphics[scale=0.35]{includes/Figures/SCgraph.jpg}
 	\end{figure}
 	\item \po{} and \fr{} form a cycle
 \end{itemize}
@@ -141,8 +157,19 @@
 \begin{frame}{Related Work}
 \begin{itemize}
 	\item KATER by \cite{Kok+23}
+	\begin{itemize}
+		\item On a fragment without intersection, difference, complement, converses and cross products
+	\end{itemize}
 	\item KATI by \cite{Kou+24}
+	\begin{itemize}
+		\item Includes converses and some intersections 
+		\item was not implemented
+	\end{itemize}
 	\item RAT CAT SAT by \cite{Gru+26}
+	\begin{itemize}
+		\item Includes the rational Fragment
+		\item Transforms inclusions into logical formulas and proves their unsatisfiability
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -310,8 +337,38 @@
 \end{frame}
 
 \begin{frame}{Example}
+\begin{itemize}
+	\item Here, we choose $\relI = (aa)^* \cup a(aa)^*$ as the invariant.
+\end{itemize} \vspace*{11pt}
 \centering
-\includegraphics[scale=0.5]{includes/Figures/InvariantExample.jpg}
+\begin{mathpar} \scriptsize
+\inferrule*[Right=($+_L$)]{
+	\inferrule*[Left=($\cup_R$)]{
+		\inferrule*[Left=($._{LR}$)]{
+			\inferrule*[Left=(ref)]{true}{a \subseteq a}
+			\\
+			\inferrule*[Right=($*$)]{
+				\inferrule*[Right=($\cup_R$)]{
+					\inferrule*[Right=(ref)]{true}{\id \subseteq \id}				
+				}{\textsf{id} \subseteq \textsf{id} \cup (aa)^+}
+			}{\textsf{id} \subseteq (aa)^*}		
+		}{a \subseteq a(aa)^*}	
+	}{a \subseteq (aa)^* \cup a(aa)^*}
+	\\
+	\inferrule*[right=($._{\cup dist}$)]{
+		\inferrule*[Right=($\cup_{RL}$)]{
+			\inferrule*[Right=($+$)]{
+				\inferrule*[]{
+					\inferrule*[]{true}{\dots}				
+				}{(aa)^+ \subseteq (aa)^*}			
+			}{aa(aa)^* \subseteq (aa)^*}		
+		}{a(aa)^* \cup aa(aa)^*) \subseteq (aa)^* \cup a(aa)^*}	
+	}{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}
+	\\
+	\inferrule*[Right=(\textsc{ref})]{true}{\sf I \subseteq I}
+}{a^+ \subseteq (aa)^* \cup a(aa)^*}
+\end{mathpar}
+
 \end{frame}
 
 \begin{frame}{The Proof System: Assumptions}
@@ -327,7 +384,25 @@
 
 \begin{frame}{Example}
 \centering
-\includegraphics[scale=0.4]{includes/Figures/MCMexample.jpg}
+\begin{mathpar} \small
+\inferrule*[left=(def)]{
+	\inferrule*[Left=($i \mapsto a$)]{
+		\inferrule*[Left=(acyclic)]{
+			\inferrule*[Left=($\cup_{RL}$)]{
+				\inferrule*[Left=($\cup_L$)]{
+					\inferrule*[Left=($\cup_R$)]{
+						\inferrule*[Left=(ppo)]{true}{\textsf{ppo} \subseteq \po}	
+					}{\textsf{ppo} \subseteq \po \cup \rf}
+					\\
+					\inferrule*[Right=($\cup_R$)]{
+						\inferrule*[Right=($\cap_L$)]{true}{\rf \cap \ext \subseteq \rf}					
+					}{\rf \cap \ext \subseteq \po \cup \rf}
+				}{\textsf{ppo} \cup (\rf \cap \ext) \subseteq \po \cup \rf}
+			}{\textsf{ppo} \cup (\rf \cap \ext) \cup \co \cup \fr \subseteq \po \cup \rf \cup \co \cup \fr}
+		}{\texttt{acyclic } \po \cup \rf \cup \co \cup \fr \subseteq \texttt{acyclic } \textsf{ppo} \cup (\rf \cap \ext) \cup \co \cup \fr}
+	}{\texttt{acyclic } \po \cup \rf \cup \co \cup \fr \subseteq \texttt{irreflexive } (\textsf{ppo} \cup (\rf \cap \ext) \cup \co \cup \fr)^+}
+}{SC \subseteq TSO}
+\end{mathpar}
 \end{frame}
 
 
@@ -410,8 +485,12 @@
 \begin{frame}{Completeness: Branching}
 \begin{itemize}
 	\item For positive predicates, the branching occurs to handle unions
-	\begin{itemize}
-		\item[] \centering \includegraphics[scale=0.35]{includes/Figures/Branchingexample.jpg}
+	\begin{itemize} \vspace*{-6pt}
+		\item[] \begin{mathpar}  \begin{bprooftree}
+        \LeftLabel{$({\cup_2}\lrule)$}
+        \AxiomC{$\acube,\acontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\cup{\color{red}\arelexpr_2})}$}
+        \UnaryInfC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr_1}} \rulespace \acube,\acontextof{\anode\flexcomp{\color{red} \arelexpr_2}}$}
+    \end{bprooftree} \end{mathpar}
 	\end{itemize}
 	\item The counterexample could be in either of the terms
 	\item This translates into our rule \begin{mathpar}\inferrule*[left=($\cup_L$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \end{mathpar}
@@ -448,7 +527,16 @@
 \begin{itemize}
 	\item In $\pi$, some rules split a negative predicate into several non-atomic ones.
 	\begin{itemize}
-		\item[] \centering \includegraphics[scale=0.5]{includes/Figures/Splittingexample.jpg}
+		\item[] \vspace*{-11pt}\begin{mathpar}   \begin{bprooftree}
+        \LeftLabel{$(\neg{\cup_1})$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}\cup{\color{red} \asetexpr_2}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}},\neg\acontextof{{\color{red} \asetexpr_2}}$}
+    \end{bprooftree} \and  \begin{bprooftree}
+        \LeftLabel{$(\neg{\top_1})$}
+        \AxiomC{$\acube,\neg\acontextof{{\color{orange} \top_1}}$}
+        \UnaryInfC{$\acube,\neg\acontextof{{\color{orange} \top_1}},\neg\acontextof{\anode}$}
+    \end{bprooftree}
+    \end{mathpar}
 	\end{itemize}
 	\item As can be seen in the example, the splitting occurs when decomposing a union or when the rules creates a duplicate 
 	\item The conjunction of negative predicates is equivalent to a union of terms in relational inclusion terms
@@ -459,8 +547,25 @@
 \begin{frame}{Completeness: Closing the Branch}
 \begin{itemize}
 	\item In \cite{Gru+26} there are four rules which close the branch: \\ 
-	\vspace*{11pt}
-	\includegraphics[scale=0.35]{includes/Figures/predicaterules}\includegraphics[scale=0.35]{includes/Figures/bot1.jpg}
+	\vspace*{-11pt}
+	\begin{mathpar}\small \begin{bprooftree}
+        \LeftLabel{$({\bot_1})$}
+        \AxiomC{$\acube,\acontextof{\bot_1}$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree} \and \begin{bprooftree}
+        \LeftLabel{$(\neg{\emptyset})$}
+        \AxiomC{$\acube,\neg(\anode\neq\emptyset)$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree} \and    \begin{bprooftree}
+        \LeftLabel{$(\neg{=})$}
+        \AxiomC{$\acube,\neg(\anode =\anode)$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree} \and	\begin{bprooftree}
+        \LeftLabel{$(\bot_0)$}
+        \AxiomC{$\acube,\apredexpr,\neg\apredexpr$}
+        \UnaryInfC{$\bot_0$}
+    \end{bprooftree}	
+	\end{mathpar}
 	\item We can translate these into our axioms:\\
 	 \begin{rules}{Axioms} \inferrule*[left=(ref)]{\it true}{\sf r \subseteq r} \and
 \inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
@@ -477,6 +582,7 @@
 	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Completeness: Example}
 %\begin{figure}[H]\centering \small
@@ -510,34 +616,103 @@
 
 \begin{frame}{Completeness: Infinite Proofs}
 \begin{itemize}
-	\item An infinite proof $\pi_\infty$ use the progressing Kleene-star rules ($*L$) and ($*R$) infinitely often.
+	\item An infinite proof $\pi_\infty$ uses the progressing Kleene-star rules ($*L$) and ($*R$) infinitely often.
+	
+	\begin{minipage}{0.4\textwidth}
 	\begin{itemize}
 		\item Unroll the Kleene-star in the included term
 		\item Create the same proof node over and over
 	\end{itemize}
-	\item[] \hfill \includegraphics[scale=0.5]{includes/Figures/infiniteexample}
+	\end{minipage}\begin{minipage}{0.6\textwidth}
+	\item[] {\raggedleft  \begin{figure}\small \begin{mathpar}
+\inferrule*[left=($*L$)]{
+	\inferrule*[]{\pi_0}{\Gamma, p[e_1]}
+	\\
+	\inferrule*[]{
+		\inferrule*[]{
+			\inferrule*[Left=($*L$)]{
+				\inferrule*[]{\pi_1}{\Gamma, p[f_1]}
+				\\
+				\inferrule*[]{\dots}{\Gamma, p[(f_1.\relr).\relr^*]}
+			}{\Gamma, p[f_1.\relr^*]}
+		}{\dots}	
+	}{\Gamma, p[(e_1.\relr).\Relr^*]}
+}{\Gamma, p[e_1.\relr^*]}
+\end{mathpar} \caption{Example for an infinite branch $\pi_\infty$} \end{figure}}
+	\end{minipage}
+	
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Completeness: Infinite Proofs}
 \begin{itemize}
 	\item We replace the infinite branch with the invariant rule ($+_L$)
+	\item Instead of unrolling the Kleene-star, we find an invariant
+	\begin{itemize}
+		\item This may be a transitive part of $\rels$
+		\item Or we need to compute a smallest fixed point of $\relr^+$
+	\end{itemize}
+	\item In either case: If the set of events is finite, there exists an invariant for true inclusions
+	\item Every branch resulting from the ($+_L$) rule is finite
+	\item For an infinite branch with multiple different backlinks, we use the intersection of all invariants
+	\begin{itemize}
+		\item $\I = \bigcap_{i=1}^n \relI$
+\end{itemize}	 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Completeness}
+%\begin{frame}{Completeness}
+%
+%\end{frame}
 
+\begin{frame}{Evaluation}
+\begin{itemize}
+	\item The proof system can compare MCMs defined in rational CAT
+	\item It produces smaller proof nodes in comparison to \cite{Gru+26}
+	\begin{itemize}
+		\item The reason is that we don't use event constants
+	\end{itemize}
+	\item And shorter proofs in many cases
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Evaluation}
+\centering \includegraphics[scale=0.4]{includes/Figures/shortproofs}
+\end{frame}
 
+\begin{frame}{Evaluation}
+\begin{itemize}
+	\item The proof system can compare MCMs defined in rational CAT
+	\item It produces smaller proof nodes in comparison to \cite{Gru+26}
+	\begin{itemize}
+		\item The reason is that we don't use event constants
+	\end{itemize}
+	\item And shorter proofs in many cases
+	\item Shortcomings of the proof system are 
+	\begin{itemize}
+		\item it is hard to automatize
+		\item it cannot handle recursion very well
+		\item when used incorrectly, infinite branches may occur
+	\end{itemize}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Conclusion}
-
+\begin{itemize}
+	\item As stated in the task for the thesis, there is now a new proof system for comparing MCMs which
+	\begin{itemize}
+		\item is not cyclic
+		\item does not resolve inclusions to event level
+		\item does not require infinite branches
+	\end{itemize}
+	\item We were able to show soundness by proving every rule
+	\item And completeness by translating every proof of \cite{Gru+26}'s system into ours
+	\item We are not yet able to automatize the system or handle recursive definitions
+	\item We produce smaller proofs and proof nodes than \cite{Gru+26}
+\end{itemize}
 \end{frame}
 
-\begin{frame}{References}
+\begin{frame}[allowframebreaks]{References}
 \renewcommand{\bibfont}{\small}
 \printbibliography
 \end{frame}
