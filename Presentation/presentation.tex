@@ -1,6 +1,6 @@
 % HINT: add option aspectratio=169 for 16:9 aspect ratio
 % HINT: add 'handout' to activate handout mode (without overlays for printing)
-\documentclass[t,english,aspectratio=169,handout,11pt]{beamer}
+\documentclass[t,english,aspectratio=169,11pt]{beamer}
 \setbeamerfont{frametitle}{family=\rmfamily}
 \usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
 \usefonttheme[onlymath]{serif}
@@ -49,15 +49,18 @@
 
 \begin{frame}{What even is a Memory Consistency Model?}
 \vspace*{11pt}
-\begin{minipage}{0.7\textwidth}
+\begin{minipage}{0.75\textwidth}
 \begin{itemize}[<+->]
 	\item Consider multiple concurrent threads that share memory
 	\item Different executions are possible
 	\item Reasons are interleaving and reordering of operations
 	\item Memory Consistency Models describe restrictions to how they can be executed
 	\item Sequential Consistency (\cite{Lam79}) would not allow $a=b=0$
+	\begin{itemize}
+		\item Allows no reordering within a thread
+	\end{itemize}
 \end{itemize}
-\end{minipage}\begin{minipage}{0.3\textwidth} \centering
+\end{minipage}\begin{minipage}{0.25\textwidth} \centering
 	\visible<1->{\begin{figure} \begin{tabular}{c||c}
 \multicolumn{2}{c}{\texttt{Init:x=y=0;}} \\[2mm]
 %\textit{Thread 1:} & \textit{Thread 2:}\\[4mm]
@@ -140,8 +143,9 @@
 \bangle{rel} &:= \bangle{base\_rel} \mid \langle rel \rangle . \bangle{rel} \mid \bangle{rel}^* \mid \bangle{rel} \cup \bangle{rel} \mid \bangle{rel} \cap \bangle{rel} \\ &\quad \mid \bangle{rel}^{-1} \mid \bangle{rel}^+ \mid \bangle{rel}? \mid \bangle{base\_set} \times \bangle{base\_set} \mid \textcolor{red}{\bangle{rel}\setminus \bangle{rel} \mid{} \sim\bangle{rel}} \\
 \bangle{base\_rel} &:= \textsf{po} \mid \text{\rf} \mid \textsf{rmw} \mid \co \mid \loc \mid \ext \mid \textsf{id} \mid \textsf{0} \\
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
-\end{align*} \caption{Syntax of CAT, figure inspired by the one in \cite{Gru+26}}
+\end{align*} %\caption{Syntax of CAT, figure inspired by the one in \cite{Gru+26}}
 \end{figure}
+\item Without the \textcolor{red}{red}-colored part, we have a fragment called \emph{rational CAT}
 \end{itemize}
 \end{frame}
 
@@ -167,9 +171,10 @@
 	\end{itemize}
 	\item RAT CAT SAT by \cite{Gru+26}
 	\begin{itemize}
-		\item Includes the rational Fragment
+		\item Handles the rational Fragment
 		\item Transforms inclusions into logical formulas and proves their unsatisfiability
 	\end{itemize}
+	\item Our proof system will be handling the rational Fragment too
 \end{itemize}
 \end{frame}
 
@@ -178,23 +183,25 @@
 \begin{frame}{The Proof System}
 \begin{itemize}
 	\item Produces implications of the form $\true \impl M_1 \subseteq M_2$ to prove this inclusion
+	\begin{minipage}{0.65\textwidth}\vspace*{-28pt}
 	\item Start at the bottom with the inclusion term
-	\begin{minipage}{0.65\textwidth}
-	\item Transforms the inclusion and branches out to end at (possibly multiple) leafs which are \true 
+	\item Transforms the inclusion and branches out to end at \\(possibly multiple) leafs which are $\true$ 
 	\item First, we remove the constraint
 	\item Then, we apply rules to the relational terms
 	\end{minipage}\begin{minipage}{0.35\textwidth}\centering
-	\item[] \begin{tikzpicture}
+	\item[] \vspace*{22pt}\begin{tikzpicture}
 \node[blank] (root) {$M_1 \subseteq M_2$};
 \node[blank, above of=root] (1) {\dots};
-\node[blank, above left of=1] (2) {\dots};
-\node[blank, above right of=1] (3) {\dots};
+\node[blank, above of=1] (rel) {$\relr \subseteq \rels$};
+\node[blank, above left of=rel] (2) {\dots};
+\node[blank, above right of=rel] (3) {\dots};
 \node[blank, above of=2] (4) {\textcolor{rfgreen}{\true}};
 \node[blank, above of=3] (5) {\textcolor{rfgreen}{\true}};
 
 \draw[arrow] (root) -- (1);
-\draw[arrow] (1) -- (2);
-\draw[arrow] (1) -- (3);
+\draw[arrow] (1) -- (rel);
+\draw[arrow] (rel) -- (2);
+\draw[arrow] (rel) -- (3);
 \draw[arrow] (2) -- (4);
 \draw[arrow] (3) -- (5);
 \end{tikzpicture}
@@ -222,34 +229,52 @@
 \end{frame}
 
 \begin{frame}{The Proof System: Removing the Constraints}
+\begin{minipage}{0.6\textwidth}
 \begin{itemize}
 	\item Every one of the constraints can be transformed into any other
-	\begin{itemize}
-	\item[] \begin{minipage}{0.7\textwidth}
+	\item Constraints can then be eliminated, if they are the same on both sides
+\end{itemize}	
+\end{minipage}\begin{minipage}{0.4\textwidth}
 	\vspace*{0.5cm}
-	\begin{rules}{Constraint Transformation}
-\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
-\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
-\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
-\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
+	\begin{tikzpicture}[node distance=2.2cm]
+	\node[blank] (empty) {\texttt{empty}};
+	\node[blank, below left of=empty] (acy) {\texttt{acyclic}};
+	\node[blank, below right of=empty] (irr) {\texttt{irreflexive}};
+	
+	\draw[arrow] (empty) -- (irr);
+	\draw[arrow] (irr) -- (empty);
+	\draw[arrow] (acy) -- (irr);
+	\draw[arrow] (empty) -- (acy);
+	\end{tikzpicture}
+%	\begin{rules}{Constraint Transformation} \footnotesize
+%\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
+%\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
+%\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
+%\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
+%\end{rules}
+\end{minipage}  \centering
+\vfill
+\begin{minipage}{0.8\textwidth}
+\centering
+\begin{rules}{\footnotesize Constraint Elimination} \scriptsize
+\inferrule*[left= \footnotesize (empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
+\inferrule*[left=\footnotesize (acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
+\inferrule*[left=\footnotesize(irreflexive)] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
 \end{rules}
-	\end{minipage}  \end{itemize}
-\end{itemize}
+
+\end{minipage}
+
 \end{frame}
 
-\begin{frame}{The Proof System: Removing the Constraints}
-\begin{itemize}
-	\item Constraints can be eliminated when they are the same on both sides \\
-	\begin{itemize}
-		\item[] \begin{rules}{Constraint Elimination} 
-\inferrule*[left=(empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
-\inferrule*[left=(acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
-\inferrule*[left={(irreflexive)}] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
-\end{rules}
-	\end{itemize}
-	\item Now we are left with an inclusion between relational terms $\relr \subseteq \Rels$
-\end{itemize}
-\end{frame}
+%\begin{frame}{The Proof System: Removing the Constraints}
+%\begin{itemize}
+%	\item Constraints can be eliminated when they are the same on both sides \\
+%	\begin{itemize}
+%		\item[] 
+%	\end{itemize}
+%	\item Now we are left with an inclusion between relational terms $\relr \subseteq \Rels$
+%\end{itemize}
+%\end{frame}
 
 \begin{frame}{The Proof System: Transformations}
 \begin{itemize}
@@ -263,27 +288,6 @@
 	\begin{mathpar} \footnotesize \inferrule*[left=($\0_{\cup}$)]{\Omega[\sf r]}{\Omega[\sf \0 \cup r]} \and
 \inferrule*[left=($\0_{\cap}$)]{\Omega[\0]}{\Omega[\sf r \cap \0]} \and
 \inferrule*[left=($\0_{conc}$)]{\Omega[\0]}{\Omega[\sf r.\0.s]} \end{mathpar}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Proof System: Transformations}
-\begin{itemize}
-	\item {\fontfamily{lmr}\selectfont \textbf{Inversionlemma:} \textit{Let $\relr$ be a relational term that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to relations that cannot be decomposed further (in CAT: base relations) with $\semsof{\relr'} = \semsof{\relr}$.}}
-	\item Basically, Inversions can be assumed to only be used on base relations 
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Proof System: Transformations}
-\begin{itemize}
-	\item The proof of the lemma yields the rules for that transformation:
-	\small \begin{rules}{Inversion}  \inferrule*[left=($-1_{\cup}$)]{\Omega[\sf r^{-1} \cup s^{-1}]}{\Omega[\sf (r \cup s)^{-1}]} \and
-\inferrule*[left=($-1_{\cap}$)]{\Omega[\sf r^{-1} \cap s^{-1}]}{\Omega[\sf (r \cap s)^{-1}]} \and
-\inferrule*[left=($-1_{.}$)]{\Omega[\sf s^{-1}.r^{-1}]}{\Omega[\sf (r.s)^{-1}]} \and
-%\inferrule*[left=($-1_{\sim}$)]{\Omega[\sf \sim (r^{-1})]}{\Omega[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
-\inferrule*[left=($-1_{+}$)]{\Omega[\sf (r^{-1})^+]}{\Omega[\sf (r^+)^{-1}]} \and
-\inferrule*[left=($-1_{*}$)]{\Omega[\sf (r^{-1})^*]}{\Omega[\sf (r^*)^{-1}]} \and
-\inferrule*[left=($-1_{?}$)]{\Omega[\sf (r^{-1})?]}{\Omega[\sf (r?)^{-1}]} \and
-\inferrule*[left=($\inv_\times$)]{\Omega[(B \times A)]}{\Omega[(A \times B)^\inv]} \end{rules}
 \end{itemize}
 \end{frame}
 
@@ -341,7 +345,7 @@
 	\item Here, we choose $\relI = (aa)^* \cup a(aa)^*$ as the invariant.
 \end{itemize} \vspace*{11pt}
 \centering
-\begin{mathpar} \scriptsize
+\begin{mathpar} \scriptsize \hspace*{0.5cm}
 \inferrule*[Right=($+_L$)]{
 	\inferrule*[Left=($\cup_R$)]{
 		\inferrule*[Left=($._{LR}$)]{
@@ -384,6 +388,8 @@
 
 \begin{frame}{Example}
 \centering
+\vspace*{-1cm}
+\begin{figure}
 \begin{mathpar} \small
 \inferrule*[left=(def)]{
 	\inferrule*[Left=($i \mapsto a$)]{
@@ -402,7 +408,8 @@
 		}{\texttt{acyclic } \po \cup \rf \cup \co \cup \fr \subseteq \texttt{acyclic } \textsf{ppo} \cup (\rf \cap \ext) \cup \co \cup \fr}
 	}{\texttt{acyclic } \po \cup \rf \cup \co \cup \fr \subseteq \texttt{irreflexive } (\textsf{ppo} \cup (\rf \cap \ext) \cup \co \cup \fr)^+}
 }{SC \subseteq TSO}
-\end{mathpar}
+\end{mathpar} %\caption{Proving an inclusion between MCMs in our proof system.}
+\end{figure}
 \end{frame}
 
 
@@ -520,6 +527,7 @@
 	\end{itemize}
 	\item The counterexample would have to be in both of the terms
 	\item We translate the intersection rule into our rule \begin{mathpar} \inferrule*[left=($\cap_R$)]{\relr \subseteq \Rels \\ \relr \subseteq \relt}{\relr \subseteq \rels \cap \relt} \end{mathpar}
+	\item For the cross-product, we would create new branch, showing that the cross product exists at the same position in the included term and continue the decomposition in the other
 \end{itemize}
 \end{frame}
 
@@ -574,21 +582,12 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Completeness: Closing the Branch}
-\begin{itemize}
-	\item Rule ($\neg \emptyset$) never occurs in a decomposition of RISF $\impl$ no translation
-	\item[] \includegraphics[scale=0.4]{includes/Figures/bot1trans}
-	\item[] \includegraphics[scale=0.38]{includes/Figures/neg=trans}
-	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
-\end{itemize}
-\end{frame}
-
 
 \begin{frame}{Completeness: Example}
 %\begin{figure}[H]\centering \small
 \footnotesize
 \vspace*{-11pt}
-\begin{mathpar} 
+\begin{mathpar} \hspace*{0.5cm}
 	\inferrule*[Left=($\cup_2L$)]{(e_1.(\bot_2 \cup \id.\po) \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
 		\inferrule*[Left=($\bot_2L$)]{(e_1.\bot_2 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
 			\inferrule*[Left=($\bot_1$)]{(\bot_1 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
@@ -618,7 +617,7 @@
 \begin{itemize}
 	\item An infinite proof $\pi_\infty$ uses the progressing Kleene-star rules ($*L$) and ($*R$) infinitely often.
 	
-	\begin{minipage}{0.4\textwidth}
+	\begin{minipage}{0.4\textwidth} \vspace*{-2cm}
 	\begin{itemize}
 		\item Unroll the Kleene-star in the included term
 		\item Create the same proof node over and over
@@ -638,7 +637,7 @@
 		}{\dots}	
 	}{\Gamma, p[(e_1.\relr).\Relr^*]}
 }{\Gamma, p[e_1.\relr^*]}
-\end{mathpar} \caption{Example for an infinite branch $\pi_\infty$} \end{figure}}
+\end{mathpar} \end{figure}}
 	\end{minipage}
 	
 \end{itemize}
@@ -715,5 +714,58 @@
 \begin{frame}[allowframebreaks]{References}
 \renewcommand{\bibfont}{\small}
 \printbibliography
+\end{frame}
+
+\begin{frame}{The Proof System: Transformations}
+\begin{itemize}
+	\item {\fontfamily{lmr}\selectfont \textbf{Inversionlemma:} \textit{Let $\relr$ be a relational term that features an inversion. There is an expression $\relr'$ that only features inversions that are applied to relations that cannot be decomposed further (in CAT: base relations) with $\semsof{\relr'} = \semsof{\relr}$.}}
+	\item Basically, Inversions can be assumed to only be used on base relations 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Proof System: Transformations}
+\begin{itemize}
+	\item The proof of the lemma yields the rules for that transformation:
+	\small \begin{rules}{Inversion}  \inferrule*[left=($-1_{\cup}$)]{\Omega[\sf r^{-1} \cup s^{-1}]}{\Omega[\sf (r \cup s)^{-1}]} \and
+\inferrule*[left=($-1_{\cap}$)]{\Omega[\sf r^{-1} \cap s^{-1}]}{\Omega[\sf (r \cap s)^{-1}]} \and
+\inferrule*[left=($-1_{.}$)]{\Omega[\sf s^{-1}.r^{-1}]}{\Omega[\sf (r.s)^{-1}]} \and
+%\inferrule*[left=($-1_{\sim}$)]{\Omega[\sf \sim (r^{-1})]}{\Omega[\sf (\sim r)^{-1}]} \and nicht nötig wenn kein Komplement erlaubt wird
+\inferrule*[left=($-1_{+}$)]{\Omega[\sf (r^{-1})^+]}{\Omega[\sf (r^+)^{-1}]} \and
+\inferrule*[left=($-1_{*}$)]{\Omega[\sf (r^{-1})^*]}{\Omega[\sf (r^*)^{-1}]} \and
+\inferrule*[left=($-1_{?}$)]{\Omega[\sf (r^{-1})?]}{\Omega[\sf (r?)^{-1}]} \and
+\inferrule*[left=($\inv_\times$)]{\Omega[(B \times A)]}{\Omega[(A \times B)^\inv]} \end{rules}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness: Hypotheses}
+\begin{itemize}
+	\item A hypothesis $\relr \subseteq \Relr'$ in RAT-CAT-SAT has the form
+	\begin{mathpar} \footnotesize \inferrule*[left=($\relr \leq \relr'$)]{\Gamma, \neg p[e.\relr']}{\Gamma, \neg p[e.\relr'], \neg p[e.\relr]} \end{mathpar} 
+	\item We translate this into our system as:
+	\begin{mathpar} \footnotesize
+\inferrule*[left=(strength)]{
+	\rels \subseteq \Delta[\relr'] \cup \Delta[\relr]
+	\\
+	\inferrule*[Right=(weak)]{
+		\inferrule*[Left=(assume)]{true}{\relr \subseteq \relr'}
+		\\
+		\inferrule*[Right=($\cup_L$)]{
+			\inferrule*[Right=(reflexivity)]{true}{\Delta[\relr'] \subseteq \Delta[\relr']}
+		}{\Delta[\relr'] \cup \Delta[\relr'] \subseteq \Delta[\relr']}
+	}{\Delta[\relr'] \cup \Delta[\relr] \subseteq \Delta[\relr']}
+}{\rels \subseteq \Delta[\relr']}
+\end{mathpar}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Completeness: Closing the Branch}
+\begin{itemize}
+	\item Rule ($\neg \emptyset$) never occurs in a decomposition of RISF $\impl$ no translation
+	\item[] \includegraphics[scale=0.4]{includes/Figures/bot1trans}
+	\item[] \includegraphics[scale=0.38]{includes/Figures/neg=trans}
+	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
+\end{itemize}
 \end{frame}
 \end{document}

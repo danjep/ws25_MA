@@ -23,6 +23,8 @@
 % Deactivate clutter
 \setbeamertemplate{navigation symbols}{}
 
+%\setbeamertemplate{caption}[numbered]
+
 \setbeamersize{text margin left=7mm,text margin right=14mm}
 
 % necessary to display footnotes
@@ -47,13 +49,13 @@
   \addtocounter{framenumber}{-1} % do not count these frames!
 }
 \fi
-
+\definecolor{tubsRed}{RGB}{190,30,60}
 
 \setbeamertemplate{section page}
 {
   \begin{minipage}[c][\paperheight]{\textwidth}
     \begin{center}
-      \Large{\textcolor{mDarkTeal}{\insertsection}}\par
+      \Large{\textcolor{tubsRed}{\insertsection}}\par
     \end{center}
   \end{minipage}
 }
