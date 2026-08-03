@@ -47,6 +47,16 @@
 %\usepackage[outputdir=output]{minted}
 \usepackage{appendixnumberbeamer}
 
+\newcounter{totalsections}
+\setcounter{totalsections}{0}
+
+\let\oldsection\section
+\renewcommand{\section}[2][]{%
+    \stepcounter{totalsections}%
+    \oldsection[#1]{#2}%
+}
+
+
 % Tables
 \usepackage{booktabs}
 \usepackage{multicol}

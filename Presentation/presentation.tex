@@ -1,6 +1,6 @@
 % HINT: add option aspectratio=169 for 16:9 aspect ratio
 % HINT: add 'handout' to activate handout mode (without overlays for printing)
-\documentclass[t,english,aspectratio=169,11pt]{beamer}
+\documentclass[t,english,aspectratio=169,11pt,handout]{beamer}
 \setbeamerfont{frametitle}{family=\rmfamily}
 \usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
 \usefonttheme[onlymath]{serif}
@@ -15,7 +15,7 @@
 % Set authorinfo={0,1} to (de)activate short author and short title in footer
 % Set progress={0,1} to switch between x and x/total display of pages in the bottom right corner
 % Set outline={0,1} to (de)activate outline slides at the beginning of each section
-\usetheme[authorinfo=1, progress=0, outline=0]{AIM}
+\usetheme[authorinfo=1, progress=0, outline=1]{AIM}
 
 % metadata
 \institute{TU Braunschweig}
@@ -38,9 +38,9 @@
 \end{frame}
 
 \addtocounter{framenumber}{-1}
-
+\section{Introduction}
 \begin{frame}{Why do we need a Proof System for MCMs?}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item To show that updated versions of MCMs are stronger or weaker than older ones
 	\item To show that MCMs fulfill certain properties
 	\item To prove one MCM to be stronger than the other
@@ -133,9 +133,8 @@
 
 
 \begin{frame}{How to formulate a Memory Consistency Model}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Use the CAT language defined by \cite{Alg+14}
-	\item Uses relations on the memory events like \emph{program order} (\po) or \emph{read from} (\rf)
 	\item[] \begin{figure}\vspace*{-0.5cm}\footnotesize
 \begin{align*}
 \langle cat\rangle &:= \bangle{constraint}~ \bangle{rel} \mid \langle cat \rangle~ \langle cat\rangle \\
@@ -145,32 +144,34 @@
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*} %\caption{Syntax of CAT, figure inspired by the one in \cite{Gru+26}}
 \end{figure}
-\item Without the \textcolor{red}{red}-colored part, we have a fragment called \emph{rational CAT}
+	\item Uses relations on the memory events like \emph{program order} (\po) or \emph{read from} (\rf)
+	\item Without the \textcolor{red}{red}-colored part, we have a fragment called \emph{rational CAT}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The CAT Language}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Sequential Consistency in CAT: \quad $\texttt{acyclic } \po \cup \co \cup \rf \cup \fr$ \quad ($\fr = \rf^\inv.\co$) \\
-	\begin{figure}\centering \includegraphics[scale=0.35]{includes/Figures/SCgraph.jpg}
-	\end{figure}
+	\visible<2->{ \begin{figure}\centering \includegraphics[scale=0.35]{includes/Figures/SCgraph.jpg}
+	\end{figure}}
 	\item \po{} and \fr{} form a cycle
 \end{itemize}
 \end{frame}
 
+\section{Related Work}
 \begin{frame}{Related Work}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item KATER by \cite{Kok+23}
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item On a fragment without intersection, difference, complement, converses and cross products
 	\end{itemize}
 	\item KATI by \cite{Kou+24}
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item Includes converses and some intersections 
 		\item was not implemented
 	\end{itemize}
 	\item RAT CAT SAT by \cite{Gru+26}
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item Handles the rational Fragment
 		\item Transforms inclusions into logical formulas and proves their unsatisfiability
 	\end{itemize}
@@ -181,62 +182,47 @@
 
 \section{The Proof System}
 \begin{frame}{The Proof System}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Produces implications of the form $\true \impl M_1 \subseteq M_2$ to prove this inclusion
+\end{itemize}
 	\begin{minipage}{0.65\textwidth}\vspace*{-28pt}
+	\begin{itemize}[<+->]
 	\item Start at the bottom with the inclusion term
-	\item Transforms the inclusion and branches out to end at \\(possibly multiple) leafs which are $\true$ 
+	\item Transforms the inclusion and branches out to end at (possibly multiple) leafs which are $\true$ 
 	\item First, we remove the constraint
 	\item Then, we apply rules to the relational terms
+	\end{itemize}
 	\end{minipage}\begin{minipage}{0.35\textwidth}\centering
-	\item[] \vspace*{22pt}\begin{tikzpicture}
-\node[blank] (root) {$M_1 \subseteq M_2$};
-\node[blank, above of=root] (1) {\dots};
-\node[blank, above of=1] (rel) {$\relr \subseteq \rels$};
-\node[blank, above left of=rel] (2) {\dots};
-\node[blank, above right of=rel] (3) {\dots};
-\node[blank, above of=2] (4) {\textcolor{rfgreen}{\true}};
-\node[blank, above of=3] (5) {\textcolor{rfgreen}{\true}};
+	 \vspace*{22pt}\begin{tikzpicture}
+\visible<2->{\node[blank] (root) {$M_1 \subseteq M_2$};}
+\visible<4->{\node[blank, above of=root] (1) {\dots};
+\node[blank, above of=1] (rel) {$\relr \subseteq \rels$};}
+\visible<5->{\node[blank, above left of=rel] (2) {\dots};
+\node[blank, above right of=rel] (3) {\dots};}
+\visible<3->{\node[blank, above of=2] (4) {\textcolor{rfgreen}{\true}};
+\node[blank, above of=3] (5) {\textcolor{rfgreen}{\true}};}
 
-\draw[arrow] (root) -- (1);
-\draw[arrow] (1) -- (rel);
-\draw[arrow] (rel) -- (2);
+\visible<3>{\draw[arrow] (root) -- (4);
+\draw[arrow] (root) -- (5);}
+\visible<4->{\draw[arrow] (root) -- (1);
+\draw[arrow] (1) -- (rel);}
+\visible<5->{\draw[arrow] (rel) -- (2);
 \draw[arrow] (rel) -- (3);
 \draw[arrow] (2) -- (4);
-\draw[arrow] (3) -- (5);
+\draw[arrow] (3) -- (5);}
 \end{tikzpicture}
 	\end{minipage}
-
-	%\includegraphics[scale=0.5]{includes/Figures/psexample.jpg}
-%	\item[] \begin{figure} \small
-%	\begin{mathpar}
-%		\inferrule*[]{
-%			\inferrule*[]{
-%				\inferrule*[]{
-%					\inferrule*[]{
-%						\inferrule*[]{true}{\dots}
-%					}{\dots}
-%					\\
-%					\inferrule*[]{
-%						\inferrule*[]{true}{\dots}
-%					}{\dots}				
-%				}{\relr \subseteq \Rels}			
-%			}{\dots}
-%		}{M_1 \subseteq M_2}
-%	\end{mathpar}
-%	\end{figure}
-\end{itemize}
 \end{frame}
 
 \begin{frame}{The Proof System: Removing the Constraints}
 \begin{minipage}{0.6\textwidth}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Every one of the constraints can be transformed into any other
 	\item Constraints can then be eliminated, if they are the same on both sides
 \end{itemize}	
 \end{minipage}\begin{minipage}{0.4\textwidth}
 	\vspace*{0.5cm}
-	\begin{tikzpicture}[node distance=2.2cm]
+	\visible<1->{\begin{tikzpicture}[node distance=2.2cm]
 	\node[blank] (empty) {\texttt{empty}};
 	\node[blank, below left of=empty] (acy) {\texttt{acyclic}};
 	\node[blank, below right of=empty] (irr) {\texttt{irreflexive}};
@@ -245,25 +231,17 @@
 	\draw[arrow] (irr) -- (empty);
 	\draw[arrow] (acy) -- (irr);
 	\draw[arrow] (empty) -- (acy);
-	\end{tikzpicture}
-%	\begin{rules}{Constraint Transformation} \footnotesize
-%\inferrule*[left=($a\rightarrow i$)]{\texttt{irreflexive}~ \sf r^+}{\texttt{acyclic}~ \sf r} \and
-%\inferrule*[left=($e \rightarrow i$)]{\texttt{irreflexive}~ \sf r.r^{-1}}{\texttt{empty}~ \sf r} \and
-%\inferrule*[left=($i \rightarrow e$)]{\texttt{empty}~ \sf r \cap \id}{\texttt{irreflexive}~ \sf r} \and
-%\inferrule*[left=($e \rightarrow a$)]{\texttt{acyclic}~ \sf r\cup r^{-1}}{\texttt{empty}~ \sf r}
-%\end{rules}
+	\end{tikzpicture}}
 \end{minipage}  \centering
 \vfill
 \begin{minipage}{0.8\textwidth}
 \centering
-\begin{rules}{\footnotesize Constraint Elimination} \scriptsize
+\visible<2->{\begin{rules}{\footnotesize Constraint Elimination} \scriptsize
 \inferrule*[left= \footnotesize (empty)] {\sf r_1 \subseteq r_2}{\sf \texttt{empty}~ r_2 \subseteq \sf \texttt{empty}~ r_1} \and 
 \inferrule*[left=\footnotesize (acyclic)] {\sf r_1 \subseteq r_2}{\sf \texttt{acyclic}~ r_2 \subseteq \texttt{acyclic}~ r_1} \and
 \inferrule*[left=\footnotesize(irreflexive)] {\sf r_1 \subseteq r_2}{\sf \texttt{irreflexive}~ r_2 \subseteq \texttt{irreflexive}~ r_1}
-\end{rules}
-
+\end{rules}}
 \end{minipage}
-
 \end{frame}
 
 %\begin{frame}{The Proof System: Removing the Constraints}
@@ -277,7 +255,7 @@
 %\end{frame}
 
 \begin{frame}{The Proof System: Transformations}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Transformations are rules based on equivalences and thus are invertible
 	\item Examples are rules based on common operator properties like commutativity, distributivity and associativity
 	\item Some Transformations are based on operator definitions
@@ -292,10 +270,10 @@
 \end{frame}
 
 \begin{frame}{The Proof System: Implications}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Implications are context-sensitive and not always invertible.
 	\item Usually, we have two rules per operator, one for each side of the inclusion
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item[] {\footnotesize \begin{rules}{Union}
 %\inferrule*[left=($\cup_{2R}$)]{\it true}{\sf r \subseteq r \cup s} \and durch (U3R) und (ref)
 \inferrule*[left=($\cup_{L}$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \and
@@ -303,7 +281,7 @@
 \end{rules}}
 	\end{itemize}
 	\item This is where branching is possible
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item Here, $\relr \cup \rels \subseteq \relt$ is true, if $\relr \subseteq \relt$ and $\rels \subseteq \relt$ are both true.
 	\end{itemize}
 
@@ -311,16 +289,16 @@
 \end{frame}
 
 \begin{frame}{The Proof System: Implications}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Moreover, we have axioms that are needed to close branches
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item[] \footnotesize \begin{rules}{Axioms} \inferrule*[left=(ref)]{\it true}{\sf r \subseteq r} \and
 \inferrule*[left=(empty)]{true}{\0 \subseteq \relr} \and
 \inferrule*[left=(full)]{true}{\relr \subseteq (E \times E)} \and 
 \inferrule*[left=($\cap_{L}$)]{\true}{\relr \cap \rels \subseteq \relr} \end{rules}
 	\end{itemize}
 	\item And rules for weakening and strengthening terms:
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item[]\footnotesize \begin{rules}{Weak and Strength} \inferrule*[left=(strength)]{{\sf r \subseteq} \Delta[\sf s] \\ \sf s \subseteq t}{{\sf r \subseteq} \Delta[\sf t]} \and
 \inferrule*[left=(weak)]{\Delta[\sf r] \subseteq s \\ \sf t \subseteq r}{\Delta[\sf t] \subseteq s} \end{rules}
 	\end{itemize}
@@ -328,9 +306,9 @@
 \end{frame}
 
 \begin{frame}{The Proof System: Implications}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item For handling transitive closures on the left side of the inclusion, we use an invariant:
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item[] \footnotesize \begin{rules}{Transitive Closure}
 		\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf 		r^+ \subseteq s}
 		\end{rules}
@@ -341,7 +319,7 @@
 \end{frame}
 
 \begin{frame}{Example}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Here, we choose $\relI = (aa)^* \cup a(aa)^*$ as the invariant.
 \end{itemize} \vspace*{11pt}
 \centering
@@ -376,7 +354,7 @@
 \end{frame}
 
 \begin{frame}{The Proof System: Assumptions}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item The base relations of CAT have some inherent properties (e.g. \co{} is transitive)
 	\item We capture this in a set of rules: 
 	\vspace*{-0.7cm}\begin{mathpar}\hspace*{2cm} \small \inferrule*[left=($\co_{trans}$)]{true}{\co.\co \subseteq \co} \end{mathpar}
@@ -415,13 +393,13 @@
 
 \section{Soundness}
 \begin{frame}{Soundness}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item For soundness, we show monotinicity of the unary and binary operators $f: (E \times E) \rightarrow (E \times E)$ and $g: (E\times E) \times (E \times E) \rightarrow (E \times E)$:
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item For any $\Relr, \rels, \relt \subseteq (E \times E)$: $\relr \subseteq \Rels \impl f(\relr) \subseteq f(\rels)$ and $g(\relr,\relt) \subseteq g(\rels,\relt)$.
 	\end{itemize}
 	\item With monotonicity we prove the weakening and strengthening rules
-	\item Subsequently, we prove every implication, monotonicity helps here too
+	\item Subsequently, we prove every implication - monotonicity helps here too
 	\begin{itemize}
 		\item As an example, the proof for ($\cup_L$):
 		\begin{eqnarray*}
@@ -434,7 +412,7 @@
 \end{frame}
 
 \begin{frame}{Soundness}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item Only the proof for ($+_L$) is different:
 	\begin{itemize}
 		\item Induction for $\relr^+ \subseteq \relI$ on the number of concatenated $\relr$
@@ -450,21 +428,12 @@
 
 \section{Completeness}
 \begin{frame}{Completeness}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item We show completeness by translating every proof $\pi$ of \cite{Gru+26} into our proof system
-	\begin{itemize}
-		\item For finite proofs a simple translation of the rules suffices
-		\item For infinite proofs we present a procedure to make them finite
-	\end{itemize}
-	\item We assume the proofs to start with a relational inclusion, since we can expand these to MCMs as mentioned before
-	\item Furthermore, we can assume the starting term in $\pi$ to be in the \textit{Relational Inclusion Standard Form} (RISF)
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Completeness}
-\begin{itemize}
-	\item The RISF is a logical formula with the following form:
-	\[\phi_{\relr} \land \neg \phi_{\rels} = (e_1.\relr \cap e_2) \neq \emptyset, \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+%	\begin{itemize}
+%		\item For finite proofs a simple translation of the rules suffices
+%		\item For infinite proofs we present a procedure to make them finite
+%	\end{itemize}
 	\item \cite{Gru+26} start with a logical formula including event constants
 	\begin{itemize}
 		\item The events mark the positions in the relational terms
@@ -472,14 +441,22 @@
 		\item Their proof system applies rules which decompose the logical formulas until there is a contradiction
 		\item The contradiction indicates that there exists no counterexample
 	\end{itemize}
-	
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Completeness}
+\begin{itemize}[<+->]
+	\item We assume the proofs to start with a relational inclusion, since we can expand these to MCMs as mentioned before
+	\item Furthermore, we can assume the starting term in $\pi$ to be in the \textit{Relational Inclusion Standard Form} (RISF):
+	\[\phi_{\relr} \land \neg \phi_{\rels} = (e_1.\relr \cap e_2) \neq \emptyset, \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+	\item In $\pi$ a proof node consists of conjunct predicates, positive for the included term and negative for the including term 
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Completeness}
 \begin{minipage}{0.65\textwidth}
-\begin{itemize}
-	\item In $\pi$ a proof node consists of conjunct predicates, positive for the included term and negative for the including term 
+\begin{itemize}[<+->]
+	
 	\item A counterexample would be an edge $\edgein \relr$ which is not in $\rels$.
 	\item Branching occurs if there are multiple ways to obtain the counterexample
 	\item Both branches need to end in contradictions
@@ -490,9 +467,9 @@
 \end{frame}
 
 \begin{frame}{Completeness: Branching}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item For positive predicates, the branching occurs to handle unions
-	\begin{itemize} \vspace*{-6pt}
+	\begin{itemize}[<.->] \vspace*{-6pt}
 		\item[] \begin{mathpar}  \begin{bprooftree}
         \LeftLabel{$({\cup_2}\lrule)$}
         \AxiomC{$\acube,\acontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\cup{\color{red}\arelexpr_2})}$}
@@ -505,10 +482,10 @@
 \end{frame}
 
 \begin{frame}{Completeness: Branching}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item For negative predicates, the branching handles intersections and cross products
-	\begin{itemize}
-		\item[]\vspace*{-6pt} \begin{minipage}{0.4\textwidth} \raggedright
+	\vspace*{-11pt} \begin{itemize}[<.->]
+		\item[] \begin{minipage}{0.4\textwidth} \raggedright
 		\begin{mathpar}
 		\begin{bprooftree}
         \LeftLabel{$(\neg{\anode}\lrule)$}
@@ -527,14 +504,14 @@
 	\end{itemize}
 	\item The counterexample would have to be in both of the terms
 	\item We translate the intersection rule into our rule \begin{mathpar} \inferrule*[left=($\cap_R$)]{\relr \subseteq \Rels \\ \relr \subseteq \relt}{\relr \subseteq \rels \cap \relt} \end{mathpar}
-	\item For the cross-product, we would create new branch, showing that the cross product exists at the same position in the included term and continue the decomposition in the other
+	\item For the cross-product, our procedure consists of splitting the term off and continuing with the remaining term
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Completeness: Splitting}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item In $\pi$, some rules split a negative predicate into several non-atomic ones.
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item[] \vspace*{-11pt}\begin{mathpar}   \begin{bprooftree}
         \LeftLabel{$(\neg{\cup_1})$}
         \AxiomC{$\acube,\neg\acontextof{{\color{orange} \asetexpr_1}\cup{\color{red} \asetexpr_2}}$}
@@ -553,7 +530,7 @@
 \end{frame}
 
 \begin{frame}{Completeness: Closing the Branch}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item In \cite{Gru+26} there are four rules which close the branch: \\ 
 	\vspace*{-11pt}
 	\begin{mathpar}\small \begin{bprooftree}
@@ -583,47 +560,18 @@
 \end{frame}
 
 
-\begin{frame}{Completeness: Example}
-%\begin{figure}[H]\centering \small
-\footnotesize
-\vspace*{-11pt}
-\begin{mathpar} \hspace*{0.5cm}
-	\inferrule*[Left=($\cup_2L$)]{(e_1.(\bot_2 \cup \id.\po) \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
-		\inferrule*[Left=($\bot_2L$)]{(e_1.\bot_2 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
-			\inferrule*[Left=($\bot_1$)]{(\bot_1 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
-				\bot_0			
-			}
-		}
-		\\ \inferrule*[Right=($\id L$)]{(e_1.\id.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
-			\inferrule*[Right=($\bot_0$)]{(e_1.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{\bot_0}		
-		}
-	}
-
-\end{mathpar}
-\dotfill %\rule{\textwidth}{0.3pt}
-\begin{mathpar}
-\inferrule*[left=($\cup_L$)]{
-	\inferrule*[Left=(empty)]{true}{\0 \subseteq \po}
-	\\
-	\inferrule*[Right=($\id_{conc}$)]{
-		\inferrule*[Right=(reflexivity)]{true}{\po \subseteq \po}	
-	}{\id.\po \subseteq \po}
-}{\0 \cup \id.\po \subseteq \po}
-\end{mathpar}
-%\end{figure}
-\end{frame}
-
 \begin{frame}{Completeness: Infinite Proofs}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item An infinite proof $\pi_\infty$ uses the progressing Kleene-star rules ($*L$) and ($*R$) infinitely often.
-	
-	\begin{minipage}{0.4\textwidth} \vspace*{-2cm}
-	\begin{itemize}
+\end{itemize}
+	\begin{minipage}{0.4\textwidth} %\vspace*{-2cm}
+	\begin{itemize}[<+->]
 		\item Unroll the Kleene-star in the included term
-		\item Create the same proof node over and over
+		\item<4-> Create the same proof node over and over
+		\item<5-> Connect them via backlinks ($\bullet$)
 	\end{itemize}
 	\end{minipage}\begin{minipage}{0.6\textwidth}
-	\item[] {\raggedleft  \begin{figure}\small \begin{mathpar}
+	\visible<3->{\raggedleft  \begin{figure}\small \begin{mathpar}
 \inferrule*[left=($*L$)]{
 	\inferrule*[]{\pi_0}{\Gamma, p[e_1]}
 	\\
@@ -633,28 +581,27 @@
 				\inferrule*[]{\pi_1}{\Gamma, p[f_1]}
 				\\
 				\inferrule*[]{\dots}{\Gamma, p[(f_1.\relr).\relr^*]}
-			}{\Gamma, p[f_1.\relr^*]}
+			}{\Gamma, p[f_1.\relr^*] \quad \bullet}
 		}{\dots}	
 	}{\Gamma, p[(e_1.\relr).\Relr^*]}
-}{\Gamma, p[e_1.\relr^*]}
+}{\Gamma, p[e_1.\relr^*] \quad \bullet}
 \end{mathpar} \end{figure}}
 	\end{minipage}
-	
-\end{itemize}
 \end{frame}
 
+
 \begin{frame}{Completeness: Infinite Proofs}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item We replace the infinite branch with the invariant rule ($+_L$)
 	\item Instead of unrolling the Kleene-star, we find an invariant
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item This may be a transitive part of $\rels$
 		\item Or we need to compute a smallest fixed point of $\relr^+$
 	\end{itemize}
 	\item In either case: If the set of events is finite, there exists an invariant for true inclusions
 	\item Every branch resulting from the ($+_L$) rule is finite
 	\item For an infinite branch with multiple different backlinks, we use the intersection of all invariants
-	\begin{itemize}
+	\begin{itemize}[<.->]
 		\item $\I = \bigcap_{i=1}^n \relI$
 \end{itemize}	 
 \end{itemize}
@@ -663,41 +610,34 @@
 %\begin{frame}{Completeness}
 %
 %\end{frame}
-
+\section{Evaluation}
 \begin{frame}{Evaluation}
 \begin{itemize}
-	\item The proof system can compare MCMs defined in rational CAT
-	\item It produces smaller proof nodes in comparison to \cite{Gru+26}
-	\begin{itemize}
+	\item<1-3,5-> The proof system can compare MCMs defined in rational CAT
+	\item<2-3,5-> It produces smaller proof nodes in comparison to \cite{Gru+26}
+	\begin{itemize}[<.->]
 		\item The reason is that we don't use event constants
 	\end{itemize}
-	\item And shorter proofs in many cases
+	\item<3,5-> And shorter proofs in many cases
+\end{itemize}
+\only<4| handout:0>{\centering \vspace*{-2cm} \includegraphics[scale=0.4]{includes/Figures/shortproofs}}
+\begin{itemize}
+	\item<5-> Shortcomings of the proof system are 
+	\begin{itemize}
+		\item<5-> it is hard to automatize
+		\item<6-> it cannot handle recursion very well
+		\item<7-> when used incorrectly, infinite branches may occur
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Evaluation}
+\begin{frame}<beamer:0>{Evaluation}
 \centering \includegraphics[scale=0.4]{includes/Figures/shortproofs}
 \end{frame}
 
-\begin{frame}{Evaluation}
-\begin{itemize}
-	\item The proof system can compare MCMs defined in rational CAT
-	\item It produces smaller proof nodes in comparison to \cite{Gru+26}
-	\begin{itemize}
-		\item The reason is that we don't use event constants
-	\end{itemize}
-	\item And shorter proofs in many cases
-	\item Shortcomings of the proof system are 
-	\begin{itemize}
-		\item it is hard to automatize
-		\item it cannot handle recursion very well
-		\item when used incorrectly, infinite branches may occur
-	\end{itemize}
-\end{itemize}
-\end{frame}
-
+\section{Conclusion}
 \begin{frame}{Conclusion}
-\begin{itemize}
+\begin{itemize}[<+->]
 	\item As stated in the task for the thesis, there is now a new proof system for comparing MCMs which
 	\begin{itemize}
 		\item is not cyclic
@@ -710,6 +650,7 @@
 	\item We produce smaller proofs and proof nodes than \cite{Gru+26}
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}[allowframebreaks]{References}
 \renewcommand{\bibfont}{\small}
@@ -758,8 +699,6 @@
 \end{itemize}
 \end{frame}
 
-
-
 \begin{frame}{Completeness: Closing the Branch}
 \begin{itemize}
 	\item Rule ($\neg \emptyset$) never occurs in a decomposition of RISF $\impl$ no translation
@@ -768,4 +707,35 @@
 	\item[] \includegraphics[scale=0.4]{includes/Figures/bot0trans}
 \end{itemize}
 \end{frame}
+
+\begin{frame}{Completeness: Example}
+%\begin{figure}[H]\centering \small
+\footnotesize
+\vspace*{-11pt}
+\begin{mathpar} \hspace*{0.5cm}
+	\inferrule*[Left=($\cup_2L$)]{(e_1.(\bot_2 \cup \id.\po) \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+		\inferrule*[Left=($\bot_2L$)]{(e_1.\bot_2 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+			\inferrule*[Left=($\bot_1$)]{(\bot_1 \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+				\bot_0			
+			}
+		}
+		\\ \inferrule*[Right=($\id L$)]{(e_1.\id.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{
+			\inferrule*[Right=($\bot_0$)]{(e_1.\po \cap e_2) \neq \emptyset, \neg ((e_1.\po \cap e_2) \neq \emptyset)}{\bot_0}		
+		}
+	}
+
+\end{mathpar}
+\dotfill %\rule{\textwidth}{0.3pt}
+\begin{mathpar}
+\inferrule*[left=($\cup_L$)]{
+	\inferrule*[Left=(empty)]{true}{\0 \subseteq \po}
+	\\
+	\inferrule*[Right=($\id_{conc}$)]{
+		\inferrule*[Right=(reflexivity)]{true}{\po \subseteq \po}	
+	}{\id.\po \subseteq \po}
+}{\0 \cup \id.\po \subseteq \po}
+\end{mathpar}
+%\end{figure}
+\end{frame}
+
 \end{document}

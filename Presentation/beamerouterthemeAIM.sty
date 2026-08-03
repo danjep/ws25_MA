@@ -1,8 +1,8 @@
 \mode<presentation>
 
-% Frame title
+\newlength{\progressbarwidth}
 \defbeamertemplate*{frametitle}{AIM}[1][]{
-  \begin{beamercolorbox}[wd=\paperwidth,ht=1.4cm]{frametitle}
+\begin{beamercolorbox}[wd=\paperwidth,ht=1.4cm]{frametitle}
     \begin{tikzpicture}
       %\fill[blue!50!black!60] (0,0) rectangle(\the\paperwidth,1.4cm); %blue!50!black!60
       \ifx\insertframesubtitle\@empty
@@ -19,7 +19,8 @@
   \vspace*{-0.5cm}
   \else
   \vspace*{-0.15cm}
-  \fi
+  \fi  
 }
+
 
 \mode<all>
