@@ -1,6 +1,6 @@
 % HINT: add option aspectratio=169 for 16:9 aspect ratio
 % HINT: add 'handout' to activate handout mode (without overlays for printing)
-\documentclass[t,english,aspectratio=169,11pt,handout]{beamer}
+\documentclass[t,english,aspectratio=169,11pt]{beamer}
 \setbeamerfont{frametitle}{family=\rmfamily}
 \usepackage[backend=biber,style=authoryear,maxnames=2]{biblatex}
 \usefonttheme[onlymath]{serif}
@@ -144,7 +144,7 @@
 \bangle{base\_set} &:= \text{R} \mid \text{W} \mid \text{F} \mid \text{B} \mid \text{M} \mid \text{IW} \mid \text{E}
 \end{align*} %\caption{Syntax of CAT, figure inspired by the one in \cite{Gru+26}}
 \end{figure}
-	\item Uses relations on the memory events like \emph{program order} (\po) or \emph{read from} (\rf)
+	\item Uses relations on the memory events like \emph{program-order} (\po) or \emph{read-from} (\rf)
 	\item Without the \textcolor{red}{red}-colored part, we have a fragment called \emph{rational CAT}
 \end{itemize}
 \end{frame}
@@ -160,7 +160,9 @@
 
 \section{Related Work}
 \begin{frame}{Related Work}
+\pause
 \begin{itemize}[<+->]
+	\item There already exist some proof systems and tools
 	\item KATER by \cite{Kok+23}
 	\begin{itemize}[<.->]
 		\item On a fragment without intersection, difference, complement, converses and cross products
@@ -170,7 +172,7 @@
 		\item Includes converses and some intersections 
 		\item was not implemented
 	\end{itemize}
-	\item RAT CAT SAT by \cite{Gru+26}
+	\item RAT-CAT by \cite{Gru+26}
 	\begin{itemize}[<.->]
 		\item Handles the rational Fragment
 		\item Transforms inclusions into logical formulas and proves their unsatisfiability
@@ -189,8 +191,8 @@
 	\begin{itemize}[<+->]
 	\item Start at the bottom with the inclusion term
 	\item Transforms the inclusion and branches out to end at (possibly multiple) leafs which are $\true$ 
-	\item First, we remove the constraint
-	\item Then, we apply rules to the relational terms
+	\item First, we remove the constraint from the CAT expression
+	\item Then, we apply rules to the relational terms until we can close every branch with an axiom
 	\end{itemize}
 	\end{minipage}\begin{minipage}{0.35\textwidth}\centering
 	 \vspace*{22pt}\begin{tikzpicture}
@@ -310,7 +312,7 @@
 	\item For handling transitive closures on the left side of the inclusion, we use an invariant:
 	\begin{itemize}[<.->]
 		\item[] \footnotesize \begin{rules}{Transitive Closure}
-		\inferrule*[left=($+L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf 		r^+ \subseteq s}
+		\inferrule*[left=($+_L$)]{\sf r \subseteq I \\ \sf r.I \subseteq I \\ \sf I \subseteq s}{\sf 		r^+ \subseteq s}
 		\end{rules}
 	\end{itemize}
 	\item Invariant $\relI$ is a smallest fixed point for $\relr^+$
@@ -321,30 +323,26 @@
 \begin{frame}{Example}
 \begin{itemize}[<+->]
 	\item Here, we choose $\relI = (aa)^* \cup a(aa)^*$ as the invariant.
-\end{itemize} \vspace*{11pt}
+\end{itemize} \vspace*{21pt}
 \centering
 \begin{mathpar} \scriptsize \hspace*{0.5cm}
 \inferrule*[Right=($+_L$)]{
-	\inferrule*[Left=($\cup_R$)]{
-		\inferrule*[Left=($._{LR}$)]{
+	\inferrule*[]{
+		\inferrule*[]{
 			\inferrule*[Left=(ref)]{true}{a \subseteq a}
 			\\
-			\inferrule*[Right=($*$)]{
-				\inferrule*[Right=($\cup_R$)]{
-					\inferrule*[Right=(ref)]{true}{\id \subseteq \id}				
-				}{\textsf{id} \subseteq \textsf{id} \cup (aa)^+}
-			}{\textsf{id} \subseteq (aa)^*}		
-		}{a \subseteq a(aa)^*}	
+			\inferrule*[]{
+				\inferrule*[Right=(ref)]{true}{\id \subseteq \id}				
+			}{\dots}	
+		}{\dots}	
 	}{a \subseteq (aa)^* \cup a(aa)^*}
 	\\
 	\inferrule*[right=($._{\cup dist}$)]{
-		\inferrule*[Right=($\cup_{RL}$)]{
-			\inferrule*[Right=($+$)]{
-				\inferrule*[]{
-					\inferrule*[]{true}{\dots}				
-				}{(aa)^+ \subseteq (aa)^*}			
-			}{aa(aa)^* \subseteq (aa)^*}		
-		}{a(aa)^* \cup aa(aa)^*) \subseteq (aa)^* \cup a(aa)^*}	
+		\inferrule*[]{
+			\inferrule*[]{
+				\inferrule*[]{true}{\dots}				
+			}{(aa)^+ \subseteq (aa)^*}			
+		}{\dots}	
 	}{a.((aa)^* \cup a(aa)^*) \subseteq (aa)^* \cup a(aa)^*}
 	\\
 	\inferrule*[Right=(\textsc{ref})]{true}{\sf I \subseteq I}
@@ -429,7 +427,7 @@
 \section{Completeness}
 \begin{frame}{Completeness}
 \begin{itemize}[<+->]
-	\item We show completeness by translating every proof $\pi$ of \cite{Gru+26} into our proof system
+	\item We show completeness by translating every proof $\pi$ of RAT-CAT (\cite{Gru+26}) into our proof system
 %	\begin{itemize}
 %		\item For finite proofs a simple translation of the rules suffices
 %		\item For infinite proofs we present a procedure to make them finite
@@ -449,50 +447,44 @@
 	\item We assume the proofs to start with a relational inclusion, since we can expand these to MCMs as mentioned before
 	\item Furthermore, we can assume the starting term in $\pi$ to be in the \textit{Relational Inclusion Standard Form} (RISF):
 	\[\phi_{\relr} \land \neg \phi_{\rels} = (e_1.\relr \cap e_2) \neq \emptyset, \neg ((e_1.\rels \cap e_2) \neq \emptyset)\]
+	\item A counterexample would be an edge $\edgein \relr$ which is not in $\rels$.
 	\item In $\pi$ a proof node consists of conjunct predicates, positive for the included term and negative for the including term 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Completeness}
+\begin{frame}{Completeness: Branching}
 \begin{minipage}{0.65\textwidth}
 \begin{itemize}[<+->]
-	
-	\item A counterexample would be an edge $\edgein \relr$ which is not in $\rels$.
 	\item Branching occurs if there are multiple ways to obtain the counterexample
 	\item Both branches need to end in contradictions
+	\item For positive predicates, the branching occurs to handle unions
+	\item This translates into our rule \begin{mathpar}\inferrule*[left=($\cup_L$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \end{mathpar}
 \end{itemize}	
 \end{minipage}\begin{minipage}{0.35\textwidth}
-\raggedleft \includegraphics[scale=0.3]{includes/Figures/psexample.jpg}
-\end{minipage}
-\end{frame}
-
-\begin{frame}{Completeness: Branching}
-\begin{itemize}[<+->]
-	\item For positive predicates, the branching occurs to handle unions
-	\begin{itemize}[<.->] \vspace*{-6pt}
-		\item[] \begin{mathpar}  \begin{bprooftree}
+\raggedleft \includegraphics[scale=0.3]{includes/Figures/psexample.jpg} \\
+\vspace*{0.7cm}
+\visible<3->{\begin{mathpar}\begin{bprooftree}
         \LeftLabel{$({\cup_2}\lrule)$}
         \AxiomC{$\acube,\acontextof{\anode\flexcomp({\color{orange} \arelexpr_1}\cup{\color{red}\arelexpr_2})}$}
         \UnaryInfC{$\acube,\acontextof{\anode\flexcomp{\color{orange} \arelexpr_1}} \rulespace \acube,\acontextof{\anode\flexcomp{\color{red} \arelexpr_2}}$}
-    \end{bprooftree} \end{mathpar}
-	\end{itemize}
-	\item The counterexample could be in either of the terms
-	\item This translates into our rule \begin{mathpar}\inferrule*[left=($\cup_L$)]{\relr \subseteq \relt \\ \rels \subseteq \relt}{\relr \cup \rels \subseteq \relt} \end{mathpar}
-\end{itemize}
+    \end{bprooftree}\end{mathpar}}
+\end{minipage}
 \end{frame}
+
 
 \begin{frame}{Completeness: Branching}
 \begin{itemize}[<+->]
 	\item For negative predicates, the branching handles intersections and cross products
 	\vspace*{-11pt} \begin{itemize}[<.->]
-		\item[] \begin{minipage}{0.4\textwidth} \raggedright
+		\item[] \begin{minipage}{0.4\textwidth} \centering
 		\begin{mathpar}
 		\begin{bprooftree}
         \LeftLabel{$(\neg{\anode}\lrule)$}
         \AxiomC{$\acube,\neg\acontextof{\anode\cap{\color{orange} \asetexpr}}$}
         \UnaryInfC{$\acube,\neg\acontextof{\anode} \rulespace \acube,\neg\anode\cap{\color{orange} \asetexpr}\neq\emptyset$}
     \end{bprooftree}\end{mathpar}
-		\end{minipage}\begin{minipage}{0.5\textwidth} \centering
+		\end{minipage}\begin{minipage}{0.1\textwidth} \hfill
+		\end{minipage}\begin{minipage}{0.4\textwidth} \centering
 		\begin{mathpar} \begin{bprooftree}
         \LeftLabel{$(\neg{\times}\lrule)$}
         \AxiomC{$\acube,\neg\acontextof{\anode\flexcomp{\color{orange} \asetexpr_1}\times{\color{red} \asetexpr_2}}$}
@@ -531,7 +523,7 @@
 
 \begin{frame}{Completeness: Closing the Branch}
 \begin{itemize}[<+->]
-	\item In \cite{Gru+26} there are four rules which close the branch: \\ 
+	\item In RAT-CAT (\cite{Gru+26}) there are four rules which close the branch: \\ 
 	\vspace*{-11pt}
 	\begin{mathpar}\small \begin{bprooftree}
         \LeftLabel{$({\bot_1})$}
@@ -614,7 +606,7 @@
 \begin{frame}{Evaluation}
 \begin{itemize}
 	\item<1-3,5-> The proof system can compare MCMs defined in rational CAT
-	\item<2-3,5-> It produces smaller proof nodes in comparison to \cite{Gru+26}
+	\item<2-3,5-> It produces smaller proof nodes in comparison to RAT-CAT
 	\begin{itemize}[<.->]
 		\item The reason is that we don't use event constants
 	\end{itemize}
